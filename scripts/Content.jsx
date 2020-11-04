@@ -22,6 +22,9 @@ export function Content() {
     return (
         <div>
             <h1>InfiniteRecipes!</h1>
+            <br/>
+            <input id="recipe_input" placeholder="Search for recipes here by ingredient, meal-type, cuisine, difficulty"></input>
+            <button>SEARCH</button>
         </div>
     );
 }
