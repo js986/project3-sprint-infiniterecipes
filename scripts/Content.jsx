@@ -21,12 +21,7 @@ export function Content() {
 
     return (
         <div>
-            <h1>USPS Addresses!</h1>
-                <ol>
-                    {addresses.map((address, index) =>
-                        <li key={index}>{address}</li>)}
-                </ol>
-            <Button />
+            <h1>InfiniteRecipes!</h1>
         </div>
     );
 }

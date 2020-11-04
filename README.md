@@ -1,12 +1,13 @@
 # Set up React  
-0. `cd ~/environment && git clone https://github.com/Sresht/lect11/ && cd lect11`    
-1. Install your stuff!    
+0. `cd ~/environment && git clone https://github.com/js986/CS490-Project3.git && cd CS490-Project3`    
+1. Install npm dependencies!    
   a) `npm install`    
-  b) `pip install flask-socketio`    
-  c) `pip install eventlet`    
-  d) `npm install -g webpack`    
-  e) `npm install --save-dev webpack`    
-  f) `npm install socket.io-client --save`    
+  b) `npm install -g webpack`    
+  c) `npm install --save-dev webpack`    
+  d) `npm install socket.io-client --save`
+2. Install Python dependencies!
+  a) Upgrade the pip: `pip install --upgrade pip`
+  b) `pip install -r requirements.txt`
 If you see any error messages, make sure you use `sudo pip` or `sudo npm`. If it says "pip cannot be found", run `which pip` and use `sudo [path to pip from which pip] install`  
   
 # Getting PSQL to work with Python  
@@ -36,7 +37,7 @@ If you see any error messages, make sure you use `sudo pip` or `sudo npm`. If it
     b) I recommend 4-5 characters - it doesn't have to be very secure. Remember this password!  
         `create user [some_username_here] superuser password '[some_unique_new_password_here]';`    
     c) `\q` to quit out of sql    
-8. `cd` into `lect11` and make a new file called `sql.env` and add `SQL_USER=` and `SQL_PASSWORD=` in it  
+8. `cd` into `CS490-Project3` and make a new file called `sql.env` and add `SQL_USER=` and `SQL_PASSWORD=` in it  
 9. Fill in those values with the values you put in 7. b)  
   
   
