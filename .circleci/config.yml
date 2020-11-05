@@ -5,9 +5,7 @@ orbs:
 
 jobs:
   build-and-test:
-    executor: 
-      name: python
-      tag: "3.6.12"
+    executor: python/default
     steps:
       - checkout
       - python/load-cache
