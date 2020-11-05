@@ -5,7 +5,9 @@ orbs:
 
 jobs:
   build-and-test:
-    executor: python/default
+    executor: 
+      name: python
+      tag: "3.6.12"
     steps:
       - checkout
       - python/load-cache
@@ -13,7 +15,10 @@ jobs:
       - python/save-cache
       - run:
           command: python ./tests/unmocked_unit_tests.py 
-          name: Unmocked Test
+          name: Unmocked Tests
+      - run:
+          command: python ./tests/mocked_unit_tests.py
+          name: Mocked Tests
 
 workflows:
   main:
