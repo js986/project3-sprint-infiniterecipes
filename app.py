@@ -33,27 +33,27 @@ def emit_all_addresses(channel):
     all_searches = [ \
         db_address.address for db_address \
         in db.session.query(models.Usps).all()]
-    # all_users = [ \
-    #     user.name for user \
-    #     in db.session.query(models.AuthUser).all()]
-    # print("logged in: " + str(all_users))
+    all_users = [ \
+        user.name for user \
+        in db.session.query(models.AuthUser).all()]
+    print("logged in: " + str(all_users))
         
     socketio.emit(channel, {
         'allSearches': all_searches,
-        # 'allUsers': all_users
+        'allUsers': all_users
     })
     
-# def push_new_user_to_db(name, profile, auth_type):
-#     if name != "John Doe":
-#         db.session.add(models.AuthUser(name, profile, auth_type));
-#         db.session.commit();
+def push_new_user_to_db(name, profile, auth_type):
+    if name != "John Doe":
+        db.session.add(models.AuthUser(name, profile, auth_type));
+        db.session.commit();
     
-# emit_all_addresses(SEARCHES_RECEIVED_CHANNEL)
+    emit_all_addresses(SEARCHES_RECEIVED_CHANNEL)
     
-# @socketio.on('new google user')
-# def on_new_google_user(data):
-#     print("Got an event for new google user input with data:", data)
-#     push_new_user_to_db(data['name'], data['profile'], models.AuthUserType.GOOGLE)
+@socketio.on('new google user')
+def on_new_google_user(data):
+    print("Got an event for new google user input with data:", data)
+    push_new_user_to_db(data['name'], data['profile'], models.AuthUserType.GOOGLE)
 
 
 @socketio.on('connect')

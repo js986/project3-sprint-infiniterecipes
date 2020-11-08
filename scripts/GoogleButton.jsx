@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import GoogleLogin from 'react-google-login';
 import { Content } from './Content';
 import FontAwesome from "react-fontawesome";
-// import { GoogleLogout } from 'react-google-login';
+import { GoogleLogout } from 'react-google-login';
 
 function handleSubmit(response) {
     console.log(response)
