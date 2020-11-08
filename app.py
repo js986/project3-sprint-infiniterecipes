@@ -6,6 +6,9 @@ import flask
 import flask_sqlalchemy
 import flask_socketio
 import models 
+import requests
+import json
+import random
 
 SEARCHES_RECEIVED_CHANNEL = 'searches received'
 
@@ -18,6 +21,7 @@ dotenv_path = join(dirname(__file__), 'sql.env')
 load_dotenv(dotenv_path)
 
 database_uri = os.environ['DATABASE_URL']
+spoonacular_key = os.getenv('spoonacular_key')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 
@@ -28,6 +32,11 @@ db.app = app
 
 db.create_all()
 db.session.commit()
+
+global recipeImage
+recipeImage = ""
+global recipeTitle
+recipeTitle = ""
 
 def emit_all_addresses(channel):
     all_searches = [ \
@@ -40,7 +49,9 @@ def emit_all_addresses(channel):
         
     socketio.emit(channel, {
         'allSearches': all_searches,
-        'allUsers': all_users
+        'allUsers': all_users,
+        'recipeImage': recipeImage,
+        'recipeTitle': recipeTitle
     })
     
 def push_new_user_to_db(name, profile, auth_type):
@@ -62,6 +73,22 @@ def on_connect():
     socketio.emit('connected', {
         'test': 'Connected'
     })
+    global recipeImage
+    global recipeTitle
+    
+    spUrl = "https://api.spoonacular.com/recipes/complexSearch?apiKey={}&number=5".format(spoonacular_key)
+    response = requests.get(spUrl)
+    # print(response)
+    json_body = response.json()
+    print(json_body)
+    randNum = random.randrange(0,5)
+    contents = json_body['results']
+    print("CONTENTS: " + str(contents))
+    for i in range(0,5):
+        recipeImage = json_body['results'][i]['image']
+        print("image " + str(i) + " " + str(recipeImage))
+        recipeTitle = json_body['results'][i]['title']
+        print("title " + str(i) + " " + str(recipeTitle))
     
     emit_all_addresses(SEARCHES_RECEIVED_CHANNEL)
     
