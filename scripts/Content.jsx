@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Button } from './Button';
 import { Socket } from './Socket';
 import { KrogerLogin } from './KrogerLogin';
+import { Login } from './Login';
 
 export function Content() {
     const [addresses, setAddresses] = React.useState([]);
@@ -32,6 +33,7 @@ export function Content() {
     return (
         <div>
             <h1>InfiniteRecipes!</h1>
+            <Login/>
             <br/>
             <center><Button/></center>
             <br/>

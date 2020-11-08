@@ -7,7 +7,6 @@ export function Login() {
     
     return (
         <div>
-        <h1>sign in</h1>
             <GoogleButton />
         </div>
     );
