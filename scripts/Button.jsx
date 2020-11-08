@@ -2,13 +2,13 @@ import * as React from 'react';
 import { Socket } from './Socket';
 
 function handleSubmit(event) {
-    let newAddress = document.getElementById("address_input");
-    Socket.emit('new address input', {
-        'address': newAddress.value,
+    let newSearch = document.getElementById("search_input");
+    Socket.emit('new search input', {
+        'search': newSearch.value,
     });
     
-    console.log('Sent the address ' + newAddress.value + ' to server!');
-    newAddress.value = ''
+    console.log('Sent the search ' + newSearch.value + ' to server!');
+    newSearch.value = ''
     
     event.preventDefault();
 }
@@ -16,8 +16,8 @@ function handleSubmit(event) {
 export function Button() {
     return (
         <form onSubmit={handleSubmit}>
-            <input id="address_input" placeholder="Enter a USPS address"></input>
-            <button>Add to DB!</button>
+            <input id="search_input" placeholder="Search for recipes here by ingredient, meal-type, cuisine, difficulty"></input>
+            <button>SEARCH</button>
         </form>
     );
 }
