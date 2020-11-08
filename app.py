@@ -7,7 +7,7 @@ import flask_sqlalchemy
 import flask_socketio
 import models 
 
-ADDRESSES_RECEIVED_CHANNEL = 'addresses received'
+SEARCHES_RECEIVED_CHANNEL = 'searches received'
 
 app = flask.Flask(__name__)
 
@@ -30,13 +30,30 @@ db.create_all()
 db.session.commit()
 
 def emit_all_addresses(channel):
-    all_addresses = [ \
+    all_searches = [ \
         db_address.address for db_address \
         in db.session.query(models.Usps).all()]
+    # all_users = [ \
+    #     user.name for user \
+    #     in db.session.query(models.AuthUser).all()]
+    # print("logged in: " + str(all_users))
         
     socketio.emit(channel, {
-        'allAddresses': all_addresses
+        'allSearches': all_searches,
+        # 'allUsers': all_users
     })
+    
+# def push_new_user_to_db(name, profile, auth_type):
+#     if name != "John Doe":
+#         db.session.add(models.AuthUser(name, profile, auth_type));
+#         db.session.commit();
+    
+# emit_all_addresses(SEARCHES_RECEIVED_CHANNEL)
+    
+# @socketio.on('new google user')
+# def on_new_google_user(data):
+#     print("Got an event for new google user input with data:", data)
+#     push_new_user_to_db(data['name'], data['profile'], models.AuthUserType.GOOGLE)
 
 
 @socketio.on('connect')
@@ -46,25 +63,25 @@ def on_connect():
         'test': 'Connected'
     })
     
-    emit_all_addresses(ADDRESSES_RECEIVED_CHANNEL)
+    emit_all_addresses(SEARCHES_RECEIVED_CHANNEL)
     
 
 @socketio.on('disconnect')
 def on_disconnect():
     print ('Someone disconnected!')
 
-@socketio.on('new address input')
+@socketio.on('new search input')
 def on_new_address(data):
-    print("Got an event for new address input with data:", data)
+    print("Got an event for new search input with data:", data)
     
-    db.session.add(models.Usps(data["address"]));
+    db.session.add(models.Usps(data["search"]));
     db.session.commit();
     
-    emit_all_addresses(ADDRESSES_RECEIVED_CHANNEL)
+    emit_all_addresses(SEARCHES_RECEIVED_CHANNEL)
 
 @app.route('/')
 def index():
-    emit_all_addresses(ADDRESSES_RECEIVED_CHANNEL)
+    emit_all_addresses(SEARCHES_RECEIVED_CHANNEL)
 
     return flask.render_template("index.html")
 
