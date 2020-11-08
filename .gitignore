@@ -3,3 +3,4 @@ package-lock.json
 sql.env
 kroger.env
 __pycache__
+static/script.js

@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import { Button } from './Button';
 import { Socket } from './Socket';
+import { KrogerLogin } from './KrogerLogin';
 
 export function Content() {
     const [addresses, setAddresses] = React.useState([]);
