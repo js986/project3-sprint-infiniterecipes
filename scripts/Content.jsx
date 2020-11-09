@@ -5,13 +5,13 @@ import { List } from 'semantic-ui-react';
 import { Button } from './Button';
 import { Socket } from './Socket';
 import { KrogerLogin } from './KrogerLogin';
-import { Login } from './Login';
-
+import { GoogleButton } from './GoogleButton';
 
 export function Content() {
     const [addresses, setAddresses] = React.useState([]);
     const [recImage, setRecImage] = React.useState([]);
     const [recTitle, setRecTitle] = React.useState([]);
+    const [user, setUser] = React.useState([]);
     var recipeImages;
     
     function getNewAddresses() {
@@ -21,22 +21,16 @@ export function Content() {
                 setAddresses(data['allSearches']);
                 setRecImage(data['recipeImage']);
                 setRecTitle(data['recipeTitle']);
-                //  console.log("image---: " + data['recipeImage']);
-                // setRecImage(data['recipeImage']);
-                // setRecImage(recipeImages);
-                // console.log("image---: " + recipeImages);
+                setUser(data['username']);
             })
         });
     }
     
     function updateAddresses(data) {
-        console.log("image and title here");
-        setRecTitle(data['recipeTitle']);
-        console.log("image and title again here");
-        
-        var recipeImages = data['recipeImage'].map((im, index) => (
-        <List.Item>{im}</List.Item>));
-        console.log("image---: " + recipeImages);
+        // setRecTitle(data['recipeTitle']);
+        // var recipeImages = data['recipeImage'].map((im, index) => (
+        // <List.Item>{im}</List.Item>));
+        setUser(data['username']);
     }
     
     getNewAddresses();
@@ -48,7 +42,8 @@ export function Content() {
     return (
         <div>
             <h1>InfiniteRecipes!</h1>
-            <Login/>
+            <GoogleButton/>
+            <h3>{user}</h3>
             <br/>
             <center><Button/></center>
             <br/>

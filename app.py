@@ -37,6 +37,8 @@ global recipeImage
 recipeImage = []
 global recipeTitle
 recipeTitle = []
+global username
+username = ""
 
 def emit_all_addresses(channel):
     all_searches = [ \
@@ -51,7 +53,8 @@ def emit_all_addresses(channel):
         'allSearches': all_searches,
         'allUsers': all_users,
         'recipeImage': recipeImage,
-        'recipeTitle': recipeTitle
+        'recipeTitle': recipeTitle,
+        'username': username
     })
     
 def push_new_user_to_db(name, profile, auth_type):
@@ -65,7 +68,9 @@ def push_new_user_to_db(name, profile, auth_type):
 def on_new_google_user(data):
     print("Got an event for new google user input with data:", data)
     push_new_user_to_db(data['name'], data['profile'], models.AuthUserType.GOOGLE)
-
+    global username 
+    username = data['name']
+    print("THIS IS " + username)
 
 @socketio.on('connect')
 def on_connect():
