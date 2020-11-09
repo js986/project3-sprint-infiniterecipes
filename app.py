@@ -34,9 +34,9 @@ db.create_all()
 db.session.commit()
 
 global recipeImage
-recipeImage = ""
+recipeImage = []
 global recipeTitle
-recipeTitle = ""
+recipeTitle = []
 
 def emit_all_addresses(channel):
     all_searches = [ \
@@ -85,11 +85,10 @@ def on_connect():
     contents = json_body['results']
     print("CONTENTS: " + str(contents))
     for i in range(0,5):
-        recipeImage = json_body['results'][i]['image']
+        recipeImage.append(json_body['results'][i]['image'])
         print("image " + str(i) + " " + str(recipeImage))
-        recipeTitle = json_body['results'][i]['title']
+        recipeTitle.append(json_body['results'][i]['title'])
         print("title " + str(i) + " " + str(recipeTitle))
-    
     emit_all_addresses(SEARCHES_RECEIVED_CHANNEL)
     
 
