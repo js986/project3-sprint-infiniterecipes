@@ -107,3 +107,14 @@ def add_saved_recipe(recipe_id, user_id):
     saved_recipe_list.append(recipe_id)
     user.saved_recipes = saved_recipe_list
     db.session.commit()
+    
+
+def search_with_name(recipe_title):
+    recipes = models.Recipe.query.filter(models.Recipe.title.contains(recipe_title))
+    return [get_recipe(r.id) for r in recipes]
+
+def search_by_tag(tag_name):
+    recipes = models.Tag.query.filter_by(name=tag_name)
+    return [get_recipe(r.id) for r in recipes]
+
+
