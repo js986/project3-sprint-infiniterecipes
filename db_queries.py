@@ -85,7 +85,7 @@ def get_recipe(id):
         "user":db_recipe.user_id,
         "images":db_recipe.images,
         "title":db_recipe.title,
-        "readyInMinutes":db_recipe.readyInMinutes,
+        "readyInMinutes":db_recipe.ready_in_minutes,
         "difficulty":db_recipe.difficulty,
         "servings":db_recipe.servings,
         "description":db_recipe.description,
@@ -114,7 +114,11 @@ def search_with_name(recipe_title):
     return [get_recipe(r.id) for r in recipes]
 
 def search_by_tag(tag_name):
-    recipes = models.Tag.query.filter_by(name=tag_name)
+    recipes = models.Tag.query.filter_by(name=tag_name).first()
+    return [get_recipe(r.id) for r in recipes.recipes]
+
+
+#Here for testing not a good way to get recipes
+def get_n_recipes(n):
+    recipes = models.Recipe.query.limit(n).all()
     return [get_recipe(r.id) for r in recipes]
-
-
