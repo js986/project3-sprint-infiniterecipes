@@ -64,3 +64,33 @@ def generate_random_recipe_id():
 
 def get_user_id(user_email):
     return models.Users.query.filter_by(email=user_email).first().id
+    
+
+def get_user(id):
+    db_user = models.Users.query.get(id)
+    return {
+        "id":db_user.id,
+        "email":db_user.email,
+        "name":db_user.id,
+        "profile_pic":db_user.profile_pic,
+        "saved_recipes":db_user.saved_recipes,
+        "shared_recipes":db_user.shared_recipes,
+        "owned_recipes":[recipe.id for recipe in db_user.owned_recipes]
+    }
+    
+def get_recipe(id):
+    db_recipe = models.Recipe.query.get(id)
+    return {
+        "id":db_recipe.id,
+        "user":db_recipe.user_id,
+        "images":db_recipe.images,
+        "title":db_recipe.title,
+        "readyInMinutes":db_recipe.readyInMinutes,
+        "difficulty":db_recipe.difficulty,
+        "servings":db_recipe.servings,
+        "description":db_recipe.description,
+        "tags":[tag.name for tag in db_recipe.tags],
+        "ingredients":db_recipe.ingredients,
+        "instructions":db_recipe.instructions
+    }
+
