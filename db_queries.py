@@ -94,3 +94,16 @@ def get_recipe(id):
         "instructions":db_recipe.instructions
     }
 
+def add_shared_recipe(recipe_id, user_id):
+    user = models.Users.query.filter_by(id=user_id).first()
+    shared_recipe_list = user.shared_recipes.copy()
+    shared_recipe_list.append(recipe_id)
+    user.shared_recipes = shared_recipe_list
+    db.session.commit()
+    
+def add_saved_recipe(recipe_id, user_id):
+    user = models.Users.query.filter_by(id=user_id).first()
+    saved_recipe_list = user.saved_recipes.copy()
+    saved_recipe_list.append(recipe_id)
+    user.saved_recipes = saved_recipe_list
+    db.session.commit()
