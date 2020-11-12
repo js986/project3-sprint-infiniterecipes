@@ -11,9 +11,11 @@ import requests
 import json
 import random
 from db_utils import db
+import db_queries
 import db_utils
 
-SEARCHES_RECEIVED_CHANNEL = 'searches received'
+SEARCHES_RECEIVED_CHANNEL = 'search results received'
+SEND_RECIPES_CHANNEL = 'recipes received'
 
 app = flask.Flask(__name__)
 
@@ -22,36 +24,21 @@ socketio.init_app(app, cors_allowed_origins="*")
 spoonacular_key = os.getenv('spoonacular_key')
 
 
-global recipeImage
-recipeImage = []
-global recipeTitle
-recipeTitle = []
 global username
 username = ""
 
-def emit_all_addresses(channel):
-    all_searches = [ \
-        db_address.address for db_address \
-        in db.session.query(models.Usps).all()]
-    all_users = [ \
-        user.name for user \
-        in db.session.query(models.AuthUser).all()]
-    print("logged in: " + str(all_users))
-        
+def emit_all_recipes(channel):
+    all_searches = db_queries.get_n_recipes(10)
+    print(all_searches)    
     socketio.emit(channel, {
-        'allSearches': all_searches,
-        'allUsers': all_users,
-        'recipeImage': recipeImage,
-        'recipeTitle': recipeTitle,
-        'username': username
+        'all_display': all_searches,
     })
     
 def push_new_user_to_db(name, profile, auth_type):
-    if name != "John Doe":
-        db.session.add(models.AuthUser(name, profile, auth_type));
-        db.session.commit();
+    db.session.add(models.AuthUser(name, profile, auth_type));
+    db.session.commit();
     
-    emit_all_addresses(SEARCHES_RECEIVED_CHANNEL)
+
     
 @socketio.on('new google user')
 def on_new_google_user(data):
@@ -67,23 +54,7 @@ def on_connect():
     socketio.emit('connected', {
         'test': 'Connected'
     })
-    global recipeImage
-    global recipeTitle
     
-    spUrl = "https://api.spoonacular.com/recipes/complexSearch?apiKey={}&number=5".format(spoonacular_key)
-    response = requests.get(spUrl)
-    # print(response)
-    json_body = response.json()
-    print(json_body)
-    randNum = random.randrange(0,5)
-    contents = json_body['results']
-    print("CONTENTS: " + str(contents))
-    for i in range(0,5):
-        recipeImage.append(json_body['results'][i]['image'])
-        print("image " + str(i) + " " + str(recipeImage))
-        recipeTitle.append(json_body['results'][i]['title'])
-        print("title " + str(i) + " " + str(recipeTitle))
-    emit_all_addresses(SEARCHES_RECEIVED_CHANNEL)
     
 
 @socketio.on('disconnect')
@@ -91,18 +62,19 @@ def on_disconnect():
     print ('Someone disconnected!')
 
 @socketio.on('new search input')
-def on_new_address(data):
+def on_new_search(data):
     print("Got an event for new search input with data:", data)
+    search_query = db_queries.search_with_name(data['search']);
     
-    db.session.add(models.Usps(data["search"]));
-    db.session.commit();
+    socketio.emit(SEARCHES_RECEIVED_CHANNEL, {
+        'search_output' : search_query
+    })
     
-    emit_all_addresses(SEARCHES_RECEIVED_CHANNEL)
 
 @app.route('/')
 def index():
-    emit_all_addresses(SEARCHES_RECEIVED_CHANNEL)
-
+    emit_all_recipes(SEND_RECIPES_CHANNEL)
+    models.db.create_all()
     return flask.render_template("index.html")
 
 if __name__ == '__main__': 
