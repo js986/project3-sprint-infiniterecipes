@@ -71,7 +71,7 @@ def get_user(id):
     return {
         "id":db_user.id,
         "email":db_user.email,
-        "name":db_user.id,
+        "name":db_user.name,
         "profile_pic":db_user.profile_pic,
         "saved_recipes":db_user.saved_recipes,
         "shared_recipes":db_user.shared_recipes,
