@@ -63,7 +63,7 @@ export function Content() {
             <div>
                 <h1>InfiniteRecipes!</h1>
                 <GoogleButton/>
-                <h3>{guser}</h3>
+                <Button>{guser}</Button>
                 <br/>
                 <center><SearchButton/></center>
                 <br/>
