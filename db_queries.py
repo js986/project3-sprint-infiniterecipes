@@ -10,7 +10,7 @@ def add_recipe(recipe_dict):
     
     new_recipe = models.Recipe(
         id = gen_id,
-        user_id = get_user_id(recipe_dict['user']),
+        user_id = recipe_dict['user'],
         title = recipe_dict['title'],
         description = recipe_dict['description'],
         difficulty = recipe_dict['difficulty'],
@@ -21,12 +21,12 @@ def add_recipe(recipe_dict):
         ingredients = recipe_dict['ingredients']
         )
         
-    for tag in recipe_dict['tags']:
-        tag = db.session.query(models.Tag).filter_by(name=tag).first()
+    for tag_text in recipe_dict['tags']:
+        tag = db.session.query(models.Tag).filter_by(name=tag_text).first()
         if(tag):
             new_recipe.tags.append(tag)
         else:
-            new_tag = models.Tag(name=tag)
+            new_tag = models.Tag(name=tag_text)
             new_recipe.tags.append(new_tag)
             db.session.add(new_tag)
     

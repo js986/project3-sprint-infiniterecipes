@@ -23,7 +23,7 @@ class Levels(db.Model):
 class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False)
-    description = db.Column(db.String(), nullable=False)
+    description = db.Column(db.String())
     images = db.Column(db.PickleType, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     difficulty = db.Column(db.String(50), db.ForeignKey('levels.difficulty'), nullable=False)
