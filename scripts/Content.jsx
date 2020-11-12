@@ -9,7 +9,7 @@ import { Recipe } from './Recipe';
 
 export function Content() {
     const [recipes, setRecipes] = React.useState([]);
-    const [user, setUser] = React.useState([]);
+    const [guser, setGUser] = React.useState([]);
     var recipeImages;
     
     function getNewRecipes() {
@@ -17,6 +17,7 @@ export function Content() {
             Socket.on('recipes received', (data) => {
                 console.log("Received recipes from server: " + data['all_display']);
                 setRecipes(data['all_display']);
+                setGUser(data['username']);
             })
         });
     }
@@ -28,18 +29,18 @@ export function Content() {
         })
     }
     
-    function handleSubmit(event){
-        event.preventDefault();
-        console.log("Handling submit")
-        ReactDOM.render(<Recipe />, document.getElementById('content'));
-    }
+    // function handleSubmit(event){
+    //     event.preventDefault();
+    //     console.log("Handling submit")
+    //     ReactDOM.render(<Recipe />, document.getElementById('content'));
+    // }
     
     getNewRecipes();
     
     const recipeList = recipes.map((recipe, index) => (
         <List.Item>
             <Card>
-                <Button onClick={handleSubmit}><Image src={recipe["images"][0]} wrapped ui={false} /></Button>
+                <Button><Image src={recipe["images"][0]} wrapped ui={false} /></Button>
                 <Card.Content>
                   <Card.Header>{recipe["title"]}</Card.Header>
                   <Card.Meta>
@@ -57,7 +58,7 @@ export function Content() {
         <div>
             <h1>InfiniteRecipes!</h1>
             <GoogleButton/>
-            <h3>{user}</h3>
+            <h3>{guser}</h3>
             <br/>
             <center><SearchButton/></center>
             <br/>
