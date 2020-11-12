@@ -28,7 +28,11 @@ global username
 username = ""
 
 def emit_all_recipes(channel):
-    all_searches = db_queries.get_n_recipes(10)
+    recipes = db_queries.get_n_recipes(10)
+    for recipe in recipes:
+        username = db_queries.get_user(recipe["user"])['email']
+        recipe['name'] = username
+    all_searches =  recipes
     client_id = flask.request.sid
     print(all_searches)    
     socketio.emit(channel, {
@@ -67,8 +71,8 @@ def on_disconnect():
 def on_new_search(data):
     print("Got an event for new search input with data:", data)
     client_id = flask.request.sid
-    search_query = db_queries.search_with_name(data['search']);
-    
+    search_query = db_queries.search_with_name(data['search'])
+    #search_query.extend(db_queries.search_by_tag(data['search']))
     socketio.emit(SEARCHES_RECEIVED_CHANNEL, {
         'search_output' : search_query
     },
