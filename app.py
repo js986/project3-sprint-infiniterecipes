@@ -29,10 +29,11 @@ username = ""
 
 def emit_all_recipes(channel):
     all_searches = db_queries.get_n_recipes(10)
+    client_id = flask.request.sid
     print(all_searches)    
     socketio.emit(channel, {
         'all_display': all_searches,
-    })
+    },room=client_id)
     
 def push_new_user_to_db(name, profile, auth_type):
     db.session.add(models.AuthUser(name, profile, auth_type));
@@ -50,6 +51,7 @@ def on_new_google_user(data):
 
 @socketio.on('connect')
 def on_connect():
+    emit_all_recipes(SEND_RECIPES_CHANNEL)
     print('Someone connected!')
     socketio.emit('connected', {
         'test': 'Connected'
@@ -64,16 +66,17 @@ def on_disconnect():
 @socketio.on('new search input')
 def on_new_search(data):
     print("Got an event for new search input with data:", data)
+    client_id = flask.request.sid
     search_query = db_queries.search_with_name(data['search']);
     
     socketio.emit(SEARCHES_RECEIVED_CHANNEL, {
         'search_output' : search_query
-    })
+    },
+    room=client_id)
     
 
 @app.route('/')
 def index():
-    emit_all_recipes(SEND_RECIPES_CHANNEL)
     models.db.create_all()
     return flask.render_template("index.html")
 
