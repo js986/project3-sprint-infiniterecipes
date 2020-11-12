@@ -1,43 +1,57 @@
     
 import * as React from 'react';
-
-import { List } from 'semantic-ui-react';
-import { Button } from './Button';
+import ReactDOM from 'react-dom';
+import { List, Card, Button, Image } from 'semantic-ui-react';
+import { SearchButton } from './SearchButton';
 import { Socket } from './Socket';
-import { KrogerLogin } from './KrogerLogin';
 import { GoogleButton } from './GoogleButton';
+import { Recipe } from './Recipe';
 
 export function Content() {
-    const [addresses, setAddresses] = React.useState([]);
-    const [recImage, setRecImage] = React.useState([]);
-    const [recTitle, setRecTitle] = React.useState([]);
+    const [recipes, setRecipes] = React.useState([]);
     const [user, setUser] = React.useState([]);
     var recipeImages;
     
-    function getNewAddresses() {
+    function getNewRecipes() {
         React.useEffect(() => {
-            Socket.on('searches received', (data) => {
-                console.log("Received searches from server: " + data['allSearches']);
-                setAddresses(data['allSearches']);
-                setRecImage(data['recipeImage']);
-                setRecTitle(data['recipeTitle']);
-                setUser(data['username']);
+            Socket.on('recipes received', (data) => {
+                console.log("Received recipes from server: " + data['all_display']);
+                setRecipes(data['all_display']);
             })
         });
     }
     
-    function updateAddresses(data) {
-        // setRecTitle(data['recipeTitle']);
-        // var recipeImages = data['recipeImage'].map((im, index) => (
-        // <List.Item>{im}</List.Item>));
-        setUser(data['username']);
+    function updateRecipes() {
+        Socket.on('search results received', (data) => {
+            console.log("Received search results from server: " + data['search_output']);
+            setRecipes(data['search_output'])
+        })
     }
     
-    getNewAddresses();
+    function handleSubmit(event){
+        event.preventDefault();
+        console.log("Handling submit")
+        ReactDOM.render(<Recipe />, document.getElementById('content'));
+    }
     
-    // const recipeImages = data['recipeImage'].map((im, index) => (
-    //     <List.Item>{im}</List.Item>
-    // ));
+    getNewRecipes();
+    
+    const recipeList = recipes.map((recipe, index) => (
+        <List.Item>
+            <Card>
+                <Button onClick={handleSubmit}><Image src={recipe["images"][0]} wrapped ui={false} /></Button>
+                <Card.Content>
+                  <Card.Header>{recipe["title"]}</Card.Header>
+                  <Card.Meta>
+                    <span className='difficulty'>{recipe["difficulty"]}</span>
+                  </Card.Meta>
+                  <Card.Description>
+                    {recipe["description"]}
+                  </Card.Description>
+                </Card.Content>
+            </Card>
+        </List.Item>
+    ));
 
     return (
         <div>
@@ -45,16 +59,11 @@ export function Content() {
             <GoogleButton/>
             <h3>{user}</h3>
             <br/>
-            <center><Button/></center>
+            <center><SearchButton/></center>
             <br/>
-            <ol>
-                {
-                    recImage.map((im, index) =><img src={im}/>,
-                        recTitle.map((t, ind) =><p>{t}</p>)
-                    )
-                }
-            </ol>
-            <h2>{recTitle}</h2>
+            <List>
+                {recipeList}
+            </List>
             <br/>
         </div>
     );

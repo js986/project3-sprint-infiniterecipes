@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Container, Header, Divider, Rating, Button, Icon, Image, List, Label } from 'semantic-ui-react';
-import { CommentList } from './CommentList'
 
 
 export default function Recipe({ username, picture, title, id, ingredients, instructions, tags, readyInMinutes, servings, sourceUrl, description, comments, rating}) {
