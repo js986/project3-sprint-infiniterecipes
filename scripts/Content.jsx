@@ -1,7 +1,7 @@
     
 import * as React from 'react';
 import ReactDOM from 'react-dom';
-import { List, Card, Button, Image } from 'semantic-ui-react';
+import { List, Card, Button, Image, Container } from 'semantic-ui-react';
 import { SearchButton } from './SearchButton';
 import { Socket } from './Socket';
 import { GoogleButton } from './GoogleButton';
@@ -23,10 +23,12 @@ export function Content() {
     }
     
     function updateRecipes() {
-        Socket.on('search results received', (data) => {
-            console.log("Received search results from server: " + data['search_output']);
-            setRecipes(data['search_output'])
-        })
+        React.useEffect(() => {
+            Socket.on('search results received', (data) => {
+                console.log("Received search results from server: " + data['search_output']);
+                setRecipes(data['search_output'])
+            })
+        });
     }
     
     // function handleSubmit(event){
@@ -36,36 +38,40 @@ export function Content() {
     // }
     
     getNewRecipes();
+    updateRecipes();
     
     const recipeList = recipes.map((recipe, index) => (
-        <List.Item>
             <Card>
-                <Button><Image src={recipe["images"][0]} wrapped ui={false} /></Button>
+                <Image src={recipe["images"][0]} wrapped ui={false} />
                 <Card.Content>
                   <Card.Header>{recipe["title"]}</Card.Header>
                   <Card.Meta>
-                    <span className='difficulty'>{recipe["difficulty"]}</span>
+                    <span className='username'>By: {recipe["name"]}</span>
                   </Card.Meta>
                   <Card.Description>
-                    {recipe["description"]}
+                    <span className="description">{recipe["description"]}</span>
                   </Card.Description>
                 </Card.Content>
+                <Card.Content extra>
+                    <span className='difficulty'>{recipe["difficulty"]}</span>
+                </Card.Content>
             </Card>
-        </List.Item>
     ));
 
     return (
-        <div>
-            <h1>InfiniteRecipes!</h1>
-            <GoogleButton/>
-            <h3>{guser}</h3>
-            <br/>
-            <center><SearchButton/></center>
-            <br/>
-            <List>
-                {recipeList}
-            </List>
-            <br/>
-        </div>
+        <Container>
+            <div>
+                <h1>InfiniteRecipes!</h1>
+                <GoogleButton/>
+                <h3>{guser}</h3>
+                <br/>
+                <center><SearchButton/></center>
+                <br/>
+                <Card.Group itemsPerRow={5}>
+                    {recipeList}
+                </Card.Group>
+                <br/>
+            </div>
+        </Container>
     );
 }

@@ -71,6 +71,8 @@ def get_user_id(user_email):
 
 def get_user(id):
     db_user = models.Users.query.get(id)
+    if not db_user:
+        return 'ID not in db'
     return {
         "id":db_user.id,
         "email":db_user.email,
@@ -83,6 +85,8 @@ def get_user(id):
     
 def get_recipe(id):
     db_recipe = models.Recipe.query.get(id)
+    if not db_recipe:
+        return 'ID not in db'
     return {
         "id":db_recipe.id,
         "user":db_recipe.user_id,
@@ -113,11 +117,15 @@ def add_saved_recipe(recipe_id, user_id):
     
 
 def search_with_name(recipe_title):
-    recipes = models.Recipe.query.filter(models.Recipe.title.contains(recipe_title))
+    recipes = models.Recipe.query.filter(models.Recipe.title.ilike('%{}%'.format(recipe_title)))
+    if not recipes:
+        return[]
     return [get_recipe(r.id) for r in recipes]
 
 def search_by_tag(tag_name):
-    recipes = models.Tag.query.filter_by(name=tag_name).first()
+    recipes = models.Tag.query.filter(models.Tag.name.ilike('%{}%'.format(tag_name))).first()
+    if not recipes:
+        return[]
     return [get_recipe(r.id) for r in recipes.recipes]
 
 
