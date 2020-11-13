@@ -8,14 +8,13 @@ import { GoogleLogout } from 'react-google-login';
 
 function handleSubmit(response) {
     console.log(response)
-    let name = response.profileObj.name;
-    let email = response.profileObj.email;
-    let profile = response.profileObj.imageUrl;
     Socket.emit('new google user', {
-        'name': name, 'email':email, 'profile':profile
+        'name': response.profileObj.name,
+        'email' : response.profileObj.email,
+        'imageURL': response.profileObj.imageUrl
     });
     
-    console.log('Sent the name ' + name + ' to server!');
+    console.log('Sent the name '+ response.profileObj.name + ' to server!');
     ReactDOM.render(<Content />, document.getElementById('content'));
 }
 

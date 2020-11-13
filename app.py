@@ -25,8 +25,8 @@ socketio.init_app(app, cors_allowed_origins="*")
 spoonacular_key = os.getenv('spoonacular_key')
 
 
-global username
-username = ""
+# global username
+# username = ""
 
 def emit_all_recipes(channel):
     recipes = db_queries.get_n_recipes(10)
@@ -38,7 +38,7 @@ def emit_all_recipes(channel):
     # print(all_searches)    
     socketio.emit(channel, {
         'all_display': all_searches,
-        'username': username
+        
     },room=client_id)
     
 def emit_recipe(channel,recipe):
@@ -56,13 +56,16 @@ def emit_recipe(channel,recipe):
 @socketio.on('new google user')
 def on_new_google_user(data):
     print("Got an event for new google user input with data:", data)
-    global username
+    # global username
     user = db_queries.add_user(data)
+    print("USER IS: " + str(user))
     username = db_queries.get_user(user)['name']
-    print("THIS IS " + username)
+    print("THIS IS " + str(username))
     # push_new_user_to_db(data['name'], data['profile'], models.AuthUserType.GOOGLE)
-    username = data['name']
-    print("THIS IS " + username)
+    # username = data['name']
+    socketio.emit('logged in',
+        {'username': username}
+    )
 
 @socketio.on('connect')
 def on_connect():
