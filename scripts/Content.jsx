@@ -6,6 +6,7 @@ import { SearchButton } from './SearchButton';
 import { Socket } from './Socket';
 import { GoogleButton } from './GoogleButton';
 import { Recipe } from './Recipe';
+import { Cart } from './Cart';
 
 export function Content() {
     const [recipes, setRecipes] = React.useState([]);
@@ -39,6 +40,13 @@ export function Content() {
     
     }
     
+    function goToCart() {
+        Socket.emit('cart page', {
+            'cart': 'cart'
+        });
+        ReactDOM.render(<Cart />, document.getElementById('content'));
+    }
+    
     getNewRecipes();
     updateRecipes();
     
@@ -65,6 +73,7 @@ export function Content() {
             <div>
                 <p> <a href="about">About Us</a></p>
                 <h1>InfiniteRecipes!</h1>
+                <Button icon="cart" onClick={goToCart}/>
                 <GoogleButton/>
                 <Button>{guser}</Button>
                 <br/>

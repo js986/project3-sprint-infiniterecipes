@@ -1,6 +1,8 @@
 import * as React from 'react';
+import ReactDOM from 'react-dom';
 import { Container, Header, Divider, Rating, Button, Icon, Image, List, Label } from 'semantic-ui-react';
 import { Socket } from './Socket';
+import { Content } from './Content';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 
 export function Recipe({ id }) {
@@ -10,11 +12,11 @@ export function Recipe({ id }) {
     const [tags,setTags] = React.useState([]);
     
     const ingredientList = ingredients.map((ingredient, index) => (
-        <List.Item key={index} >{ingredient["name"]}</List.Item>
+        <List.Item key={index} >{ingredient["amount"] + " " + ingredient["unit"] + " " + ingredient["name"]}</List.Item>
     ));
     
     const instructionsList = instructions.map((instruction, index) => (
-        <List.Item key={index} >{instruction["step"]}</List.Item>
+        <List.Item key={index}>{instruction["step"]}</List.Item>
     ));
     
     const tagList = tags.map((tag, index) => (
@@ -33,9 +35,28 @@ export function Recipe({ id }) {
         });
     }
     
+    function addToCart(recipes) {
+        Socket.emit('add to cart', {
+            'cartItems': recipes
+        });
+    }
+    
+    function goToHomePage(){
+        Socket.emit('content page', {
+            'content page' : 'content page'
+        });
+        ReactDOM.render(<Content />, document.getElementById('content'));
+    }
+    
+    
     getRecipeData()
     return (
         <Container>
+            <Button icon labelPosition="left" onClick={goToHomePage}>
+                <Icon name="left arrow" />
+                Back to Homepage
+            </Button>
+            <Divider/>
             <Header as="h1">{recipe["title"]}</Header>
             <Header size="medium">By : {recipe["name"]}</Header>
             <Image src={recipe["images"]} size="large" bordered/>
@@ -44,15 +65,17 @@ export function Recipe({ id }) {
             <Icon name="bookmark" />
             <Divider/>
             <Header sub>Difficulty: {recipe["difficulty"]}</Header>
+            <Header sub>Servings: {recipe["servings"]}</Header>
+            <Header sub>Time: {recipe["readyInMinutes"]} Min</Header>
             <Header as="h3">Description</Header>
-            <Header as="h3">Servings: {recipe["servings"]}</Header>
             <p>
             {ReactHtmlParser(recipe["description"])}
             </p>
             <Header as="h3">Ingredients</Header>
-            <List>
+            <List celled>
                 {ingredientList}
             </List>
+            <Button onClick={() => addToCart(recipe["ingredients"])}>Add Ingredients to Cart</Button>
             <Header as="h3">Instructions</Header>
             <List ordered>
                 {instructionsList}

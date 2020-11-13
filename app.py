@@ -27,15 +27,17 @@ spoonacular_key = os.getenv('spoonacular_key')
 
 global username
 username = ""
+cart_collection = {}
+
 
 def emit_all_recipes(channel):
     recipes = db_queries.get_n_recipes(10)
     for recipe in recipes:
-        username = db_queries.get_user(recipe["user"])['email']
+        username = db_queries.get_user(recipe["user"])['name']
         recipe['name'] = username
     all_searches =  recipes
     client_id = flask.request.sid
-    # print(all_searches)    
+    #print(all_searches)    
     socketio.emit(channel, {
         'all_display': all_searches,
         'username': username
@@ -68,6 +70,7 @@ def on_new_google_user(data):
 def on_connect():
     emit_all_recipes(SEND_RECIPES_CHANNEL)
     print('Someone connected!')
+    cart_collection[flask.request.sid] = []
     socketio.emit('connected', {
         'test': 'Connected'
     })
@@ -97,6 +100,26 @@ def on_new_search(data):
         'search_output' : search_query
     },
     room=client_id)
+    
+@socketio.on('add to cart')
+def add_to_cart(data):
+    ingredients = data['cartItems']
+    for item in ingredients:
+        if item not in cart_collection[flask.request.sid]:
+            cart_collection[flask.request.sid].append(item)
+    print("There are " + str(len(cart_collection[flask.request.sid])) + " in the cart!")
+    
+@socketio.on('cart page')
+def cart_page(data):
+    if flask.request.sid in cart_collection.keys():
+        print("client has items in cart!")
+        socketio.emit('cart items received', {
+            "cartItems": cart_collection[flask.request.sid],
+        },room=flask.request.sid)
+        
+@socketio.on('content page')
+def content_page(data):
+    emit_all_recipes(SEND_RECIPES_CHANNEL)
     
 
 @app.route('/')
