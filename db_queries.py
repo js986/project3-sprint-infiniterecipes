@@ -35,9 +35,11 @@ def add_recipe(recipe_dict):
     return gen_id   
 
 def add_user(user_dict):
+    
     user = models.Users.query.filter_by(email=user_dict['email']).first()
     if(user):
         return user.id
+
     gen_id = generate_random_user_id()
     new_user = models.Users(
         id = gen_id,

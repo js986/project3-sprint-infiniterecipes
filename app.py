@@ -16,6 +16,7 @@ import db_utils
 
 SEARCHES_RECEIVED_CHANNEL = 'search results received'
 SEND_RECIPES_CHANNEL = 'recipes received'
+SEND_ONE_RECIPE_CHANNEL = 'recipe page load'
 
 app = flask.Flask(__name__)
 
@@ -40,6 +41,14 @@ def emit_all_recipes(channel):
         'username': username
     },room=client_id)
     
+def emit_recipe(channel,recipe):
+    client_id = flask.request.sid
+    socketio.emit(channel, {
+        'recipe': recipe
+    },
+    room=client_id)
+    
+    
 # def push_new_user_to_db(name, profile, auth_type):
 #     db.session.add(models.AuthUser(name, profile, auth_type));
 #     db.session.commit();
@@ -62,12 +71,21 @@ def on_connect():
     socketio.emit('connected', {
         'test': 'Connected'
     })
-    
-    
 
 @socketio.on('disconnect')
 def on_disconnect():
     print ('Someone disconnected!')
+    
+@socketio.on('recipe page')
+def on_recipe_page(data):
+    print('received data from client ' + str(data['id']))
+    recipe=db_queries.get_recipe(data['id'])
+    client_id = flask.request.sid
+    username = db_queries.get_user(recipe["user"])["email"]
+    namespace="/recipe/" + str(id)
+    recipe['name'] = username
+    emit_recipe(SEND_ONE_RECIPE_CHANNEL,recipe)
+
 
 @socketio.on('new search input')
 def on_new_search(data):
