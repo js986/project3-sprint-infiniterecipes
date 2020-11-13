@@ -71,7 +71,6 @@ def generate_random_recipe_id():
 def get_user_id(user_email):
     return models.Users.query.filter_by(email=user_email).first().id
     
-
 def get_user(id):
     db_user = models.Users.query.get(id)
     if not db_user:
@@ -83,7 +82,8 @@ def get_user(id):
         "profile_pic":db_user.profile_pic,
         "saved_recipes":db_user.saved_recipes,
         "shared_recipes":db_user.shared_recipes,
-        "owned_recipes":[recipe.id for recipe in db_user.owned_recipes]
+        "owned_recipes":[recipe.id for recipe in db_user.owned_recipes],
+        "shopping_list":db_user.shopping_list
     }
     
 def get_recipe(id):
@@ -120,9 +120,9 @@ def add_to_shopping_list(ingredient_list, user_id):
 def remove_from_shopping_list(ingredient, user_id):
     user = models.Users.query.filter_by(id=user_id).first()
     shopping_list = user.shopping_list.copy()
-    for i in range(len(shopping_list)):
-        if(shopping_list[i].lower() == ingredient.lower()):
-            shopping_list.pop(i)
+    for item in shopping_list:
+        if(item.lower() == ingredient.lower()):
+            shopping_list.remove(item)
     user.shopping_list = shopping_list 
     db.session.commit()
     
