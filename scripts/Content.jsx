@@ -86,7 +86,9 @@ export function Content() {
                 <h1>InfiniteRecipes!</h1>
                 <Button icon="cart" onClick={goToCart}/>
                 <GoogleButton/>
-                <h3>{guser}</h3>
+                <br/>
+                <Button>{guser}</Button>
+                <Button>{ isloggedin == true ? 'POST' : '' }</Button>
                 <br/>
                 <center><SearchButton/></center>
                 <br/>
