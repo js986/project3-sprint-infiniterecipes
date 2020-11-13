@@ -41,7 +41,7 @@ def emit_all_recipes(channel):
     #print(all_searches)    
     socketio.emit(channel, {
         'all_display': all_searches,
-        'username': username,
+        
     },room=client_id)
     
 def emit_recipe(channel,recipe):
@@ -66,7 +66,15 @@ def on_new_google_user(data):
     socketio.emit('logged in',
         {'username': username}
     )
-
+    
+@socketio.on('old google user')
+def on_old_google_user(data):
+    print("Got an event for old google user input with data:", data)
+    logout = "logout"
+    socketio.emit('logged out',
+        {'logout': logout}
+    )
+    
 @socketio.on('connect')
 def on_connect():
     emit_all_recipes(SEND_RECIPES_CHANNEL)
@@ -101,16 +109,6 @@ def on_new_search(data):
         'search_output' : search_query
     },
     room=client_id)
-
-@socketio.on('user page')
-def on_new_user_page(data):
-    print('received data from client ' + str(data['user_id']))
-    user= db_queries.get_user(data['user_id'])
-    print(user['email'])
-    socketio.emit('user page load', {
-        'user': user
-    })
-    
     
 @socketio.on('add to cart')
 def add_to_cart(data):
@@ -128,12 +126,6 @@ def cart_page(data):
             "cartItems": cart_collection[flask.request.sid],
         },room=flask.request.sid)
         
-@socketio.on('new zipcode query')
-def on_new_zip(data):
-    zipcode = data['zip']
-    if zipcode.isdigit() and len(zipcode) == 5: 
-        socketio.emit('new zip', zipcode)
-        
 @socketio.on('content page')
 def content_page(data):
     emit_all_recipes(SEND_RECIPES_CHANNEL)
@@ -141,8 +133,7 @@ def content_page(data):
 
 @app.route('/')
 def index():
-    with app.app_context():
-        models.db.create_all()
+    models.db.create_all()
     return flask.render_template("index.html")
     
 @app.route('/about')
