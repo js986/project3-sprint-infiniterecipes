@@ -1,17 +1,18 @@
     
 import * as React from 'react';
 import ReactDOM from 'react-dom';
-import { List, Card, Button, Image, Container } from 'semantic-ui-react';
+import { List, Card, Button, Image, Container, Header } from 'semantic-ui-react';
 import { SearchButton } from './SearchButton';
 import { Socket } from './Socket';
 import { GoogleButton } from './GoogleButton';
+import { LogoutButton } from './LogoutButton';
 import { Recipe } from './Recipe';
 import { Cart } from './Cart';
 
 export function Content() {
     const [recipes, setRecipes] = React.useState([]);
     const [guser, setGUser] = React.useState([]);
-    const [isloggedin, setIsLoggedin] = React.useState(false);
+    const [isloggedin, setIsloggedin] = React.useState(false);
     var recipeImages;
     
     function getNewRecipes() {
@@ -28,7 +29,16 @@ export function Content() {
          React.useEffect(() => {
             Socket.on('logged in', (data) => {
                 setGUser(data['username']);
-                setIsLoggedin(true);
+                setIsloggedin(true);
+            })
+         });
+    }
+    
+    function updateLogout() {
+         React.useEffect(() => {
+            Socket.on('logged out', (data) => {
+                // setGUser(data['username']);
+                setIsloggedin(false);
             })
          });
     }
@@ -60,6 +70,7 @@ export function Content() {
     getNewRecipes();
     updateRecipes();
     updateLogin();
+    updateLogout();
     
     const recipeList = recipes.map((recipe, index) => (
             <Card onClick={() => handleSubmit(recipe["id"])}>
@@ -85,10 +96,21 @@ export function Content() {
                 <p> <a href="about">About Us</a></p>
                 <h1>InfiniteRecipes!</h1>
                 <Button icon="cart" onClick={goToCart}/>
-                <GoogleButton/>
+                { isloggedin === true ?
+                    <div className = "loggedin-buttons">
+                        <Button floated="right">POST</Button>
+                        <Button floated="right">{guser}</Button>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <Header as='h2' floated='right'><LogoutButton/></Header>
+                    </div>
+                :
+                    <div className = "google-login-button">
+                        <Header as='h2' floated='right'><GoogleButton/></Header>
+                    </div>
+                }
                 <br/>
-                <Button>{guser}</Button>
-                <Button>{ isloggedin == true ? 'POST' : '' }</Button>
                 <br/>
                 <center><SearchButton/></center>
                 <br/>
