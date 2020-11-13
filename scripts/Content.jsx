@@ -30,17 +30,19 @@ export function Content() {
         });
     }
     
-    function handleSubmit(event){
-        event.preventDefault();
-        console.log("Handling submit")
+    function handleSubmit(id){
+        Socket.emit('recipe page', {
+            'id' : id
+        });
         ReactDOM.render(<Recipe />, document.getElementById('content'));
+    
     }
     
     getNewRecipes();
     updateRecipes();
     
     const recipeList = recipes.map((recipe, index) => (
-            <Card>
+            <Card onClick={() => handleSubmit(recipe["id"])}>
                 <Image src={recipe["images"][0]} wrapped ui={false} />
                 <Card.Content>
                   <Card.Header>{recipe["title"]}</Card.Header>
