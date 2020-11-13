@@ -131,6 +131,12 @@ def cart_page(data):
             "cartItems": cart_collection[flask.request.sid],
         },room=flask.request.sid)
         
+@socketio.on('new zipcode query')
+def on_new_zip(data):
+    zipcode = data['zip']
+    if zipcode.isdigit() and len(zipcode) == 5: 
+        socketio.emit('new zip', zipcode)
+        
 @socketio.on('content page')
 def content_page(data):
     emit_all_recipes(SEND_RECIPES_CHANNEL)
