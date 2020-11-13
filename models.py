@@ -14,6 +14,7 @@ class Users(db.Model):
     owned_recipes = db.relationship('Recipe', backref='user', lazy=True)
     shared_recipes = db.Column(db.PickleType)
     saved_recipes = db.Column(db.PickleType)
+    shopping_list = db.Column(db.PickleType)
     
 class Levels(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -32,7 +33,7 @@ class Recipe(db.Model):
     instructions = db.Column(db.PickleType, nullable=False)
     ready_in_minutes = db.Column(db.Integer, nullable=False)
     servings = db.Column(db.Integer, nullable=False)
-
+    
 
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)

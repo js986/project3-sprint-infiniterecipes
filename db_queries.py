@@ -47,7 +47,8 @@ def add_user(user_dict):
         name = user_dict['name'],
         profile_pic = user_dict['imageURL'],
         shared_recipes = [],
-        saved_recipes = []
+        saved_recipes = [],
+        shopping_list = []
         )
     db.session.add(new_user)
     db.session.commit()
@@ -103,6 +104,28 @@ def get_recipe(id):
         "instructions":db_recipe.instructions
     }
 
+def get_shopping_list(user_id):
+    user = models.Users.query.get(user_id)
+    return user.shopping_list
+    
+def add_to_shopping_list(ingredient_list, user_id):
+    user = models.Users.query.filter_by(id=user_id).first()
+    shopping_list = user.shopping_list.copy()
+    for item in ingredient_list:
+        if(item.lower() not in [s.lower() for s in shopping_list]):
+            shopping_list.append(item.strip())
+    user.shopping_list = shopping_list
+    db.session.commit()
+
+def remove_from_shopping_list(ingredient, user_id):
+    user = models.Users.query.filter_by(id=user_id).first()
+    shopping_list = user.shopping_list.copy()
+    for i in range(len(shopping_list)):
+        if(shopping_list[i].lower() == ingredient.lower()):
+            shopping_list.pop(i)
+    user.shopping_list = shopping_list 
+    db.session.commit()
+    
 def add_shared_recipe(recipe_id, user_id):
     user = models.Users.query.filter_by(id=user_id).first()
     shared_recipe_list = user.shared_recipes.copy()
@@ -116,7 +139,7 @@ def add_saved_recipe(recipe_id, user_id):
     saved_recipe_list.append(recipe_id)
     user.saved_recipes = saved_recipe_list
     db.session.commit()
-    
+
 
 def search_with_name(recipe_title):
     recipes = models.Recipe.query.filter(models.Recipe.title.ilike('%{}%'.format(recipe_title)))
@@ -130,6 +153,12 @@ def search_by_tag(tag_name):
         return[]
     return [get_recipe(r.id) for r in recipes.recipes]
 
+
+def search_by_difficulty(difficulty):
+    recipes = models.Levels.query.filter(models.Levels.name.ilike('%{}%'.format(difficulty))).first()
+    if not recipes:
+        return[]
+    return [get_recipe(r.id) for r in recipes.recipes]
 
 #Here for testing not a good way to get recipes
 def get_n_recipes(n):
