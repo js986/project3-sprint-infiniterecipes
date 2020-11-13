@@ -1,7 +1,9 @@
 import * as React from 'react';
+import ReactDOM from 'react-dom';
 import { Container, Header, Divider, Rating, Button, Icon, Image, List, Label } from 'semantic-ui-react';
 import { Socket } from './Socket';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
+import { User } from './User';
 
 export function Recipe({ id }) {
     const [recipe,setRecipe] = React.useState({});
@@ -21,6 +23,7 @@ export function Recipe({ id }) {
         <Label key={index} >{tag}</Label>
     ));
     
+    
     function getRecipeData() {
         React.useEffect(() => {
             Socket.on('recipe page load', (data) => {
@@ -32,12 +35,20 @@ export function Recipe({ id }) {
             })
         });
     }
+
+    function handleSubmit(user){
+        Socket.emit('user page', {
+            'user_id' : user
+        });
+        ReactDOM.render(<User />, document.getElementById('content'));
+    
+    }
     
     getRecipeData()
     return (
         <Container>
             <Header as="h1">{recipe["title"]}</Header>
-            <Header size="medium">By : {recipe["name"]}</Header>
+            <Header size="medium">By : <Button onClick={() => handleSubmit(recipe["user"])}>{recipe["name"]}</Button></Header>
             <Image src={recipe["images"]} size="large" bordered/>
             <Rating maxRating={5} clearable />
             <Icon name="share" />
