@@ -4,6 +4,7 @@ import { Socket } from './Socket';
 import { Container, Header, Divider, Rating, Button, Icon, Image, List, Label } from 'semantic-ui-react';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import { Recipe } from './Recipe';
+import { Content } from './Content';
 
 export function User() {
     const [users, setUsers] = React.useState({});
@@ -28,6 +29,13 @@ export function User() {
         });
     }
     
+    function goToHomePage(){
+        Socket.emit('content page', {
+            'content page' : 'content page'
+        });
+        ReactDOM.render(<Content />, document.getElementById('content'));
+    }
+    
    // function handleClick()
     //{
     //    const inner = document.getElementById("back_to_recipe").innerHTML
@@ -40,20 +48,24 @@ export function User() {
     
     getUserData();
     return ( 
-       <Container>  
+       <Container>
+            <Button icon labelPosition="left" onClick={goToHomePage}>
+            <Icon name="left arrow" />
+            Back to Homepage
+            </Button> <br /> <br />
             <Image src={users["profile_pic"]} />
             <h3> {users["name"]} </h3>
             <h3>{users["email"]} </h3>
-            <div className="tags">
+            <div className="tags">  
                 <h2> Your Recipes </h2>
-                <ol>
+                <ul style={{listStyleType:"none"}}>
                 {
                     owned_recipes.map((solo, index) => (
                     <li><button > {solo} </button></li>
                     ),
                     )
                 }
-                </ol>
+                </ul>
             </div>
             <div>
                 <h2> Shared Recipes </h2>
