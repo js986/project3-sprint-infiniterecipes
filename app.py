@@ -110,6 +110,15 @@ def on_new_search(data):
     },
     room=client_id)
     
+@socketio.on('user page')
+def on_new_user_page(data):
+    print('received data from client ' + str(data['user_id']))
+    user= db_queries.get_user(data['user_id'])
+    print(user['email'])
+    socketio.emit('user page load', {
+        'user': user
+    })
+    
 @socketio.on('add to cart')
 def add_to_cart(data):
     ingredients = data['cartItems']
@@ -117,6 +126,14 @@ def add_to_cart(data):
         if item not in cart_collection[flask.request.sid]:
             cart_collection[flask.request.sid].append(item)
     print("There are " + str(len(cart_collection[flask.request.sid])) + " in the cart!")
+    
+@socketio.on('new zipcode query')
+def on_new_zip(data):
+    zipcode = data['zip']
+    if zipcode.isdigit() and len(zipcode) == 5: 
+        socketio.emit('new zip', zipcode)
+
+
     
 @socketio.on('cart page')
 def cart_page(data):
