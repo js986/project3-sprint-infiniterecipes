@@ -61,6 +61,7 @@ export function Content() {
     return (
         <Container>
             <div>
+                <p> <a href="about">About Us</a></p>
                 <h1>InfiniteRecipes!</h1>
                 <GoogleButton/>
                 <Button>{guser}</Button>

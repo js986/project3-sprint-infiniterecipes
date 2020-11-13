@@ -85,6 +85,10 @@ def on_new_search(data):
 def index():
     models.db.create_all()
     return flask.render_template("index.html")
+    
+@app.route('/about')
+def UserPage():
+    return flask.render_template('about.html')
 
 if __name__ == '__main__': 
     db_utils.init_db(app)
