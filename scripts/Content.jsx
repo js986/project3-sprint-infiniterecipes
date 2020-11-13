@@ -9,7 +9,7 @@ import { Recipe } from './Recipe';
 
 export function Content() {
     const [recipes, setRecipes] = React.useState([]);
-    const [user, setUser] = React.useState([]);
+    const [guser, setGUser] = React.useState([]);
     var recipeImages;
     
     function getNewRecipes() {
@@ -17,6 +17,7 @@ export function Content() {
             Socket.on('recipes received', (data) => {
                 console.log("Received recipes from server: " + data['all_display']);
                 setRecipes(data['all_display']);
+                setGUser(data['username']);
             })
         });
     }
@@ -62,9 +63,10 @@ export function Content() {
     return (
         <Container>
             <div>
+                <p> <a href="about">About Us</a></p>
                 <h1>InfiniteRecipes!</h1>
                 <GoogleButton/>
-                <h3>{user}</h3>
+                <Button>{guser}</Button>
                 <br/>
                 <center><SearchButton/></center>
                 <br/>

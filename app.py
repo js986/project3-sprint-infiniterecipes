@@ -35,9 +35,10 @@ def emit_all_recipes(channel):
         recipe['name'] = username
     all_searches =  recipes
     client_id = flask.request.sid
-    print(all_searches)    
+    # print(all_searches)    
     socketio.emit(channel, {
         'all_display': all_searches,
+        'username': username
     },room=client_id)
     
 def emit_recipe(channel,recipe):
@@ -48,16 +49,18 @@ def emit_recipe(channel,recipe):
     room=client_id)
     
     
-def push_new_user_to_db(name, profile, auth_type):
-    db.session.add(models.AuthUser(name, profile, auth_type));
-    db.session.commit();
-    
+# def push_new_user_to_db(name, profile, auth_type):
+#     db.session.add(models.AuthUser(name, profile, auth_type));
+#     db.session.commit();
     
 @socketio.on('new google user')
 def on_new_google_user(data):
     print("Got an event for new google user input with data:", data)
-    push_new_user_to_db(data['name'], data['profile'], models.AuthUserType.GOOGLE)
-    global username 
+    global username
+    user = db_queries.add_user(data)
+    username = db_queries.get_user(user)['name']
+    print("THIS IS " + username)
+    # push_new_user_to_db(data['name'], data['profile'], models.AuthUserType.GOOGLE)
     username = data['name']
     print("THIS IS " + username)
 
@@ -100,6 +103,10 @@ def on_new_search(data):
 def index():
     models.db.create_all()
     return flask.render_template("index.html")
+    
+@app.route('/about')
+def UserPage():
+    return flask.render_template('about.html')
 
 if __name__ == '__main__': 
     db_utils.init_db(app)
