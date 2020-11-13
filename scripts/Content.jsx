@@ -6,10 +6,12 @@ import { SearchButton } from './SearchButton';
 import { Socket } from './Socket';
 import { GoogleButton } from './GoogleButton';
 import { Recipe } from './Recipe';
+import { Cart } from './Cart';
 
 export function Content() {
     const [recipes, setRecipes] = React.useState([]);
     const [guser, setGUser] = React.useState([]);
+    const [isloggedin, setIsLoggedin] = React.useState(false);
     var recipeImages;
     
     function getNewRecipes() {
@@ -17,9 +19,18 @@ export function Content() {
             Socket.on('recipes received', (data) => {
                 console.log("Received recipes from server: " + data['all_display']);
                 setRecipes(data['all_display']);
-                setGUser(data['username']);
+                
             })
         });
+    }
+    
+    function updateLogin() {
+         React.useEffect(() => {
+            Socket.on('logged in', (data) => {
+                setGUser(data['username']);
+                setIsLoggedin(true);
+            })
+         });
     }
     
     function updateRecipes() {
@@ -39,8 +50,16 @@ export function Content() {
     
     }
     
+    function goToCart() {
+        Socket.emit('cart page', {
+            'cart': 'cart'
+        });
+        ReactDOM.render(<Cart />, document.getElementById('content'));
+    }
+    
     getNewRecipes();
     updateRecipes();
+    updateLogin();
     
     const recipeList = recipes.map((recipe, index) => (
             <Card onClick={() => handleSubmit(recipe["id"])}>
@@ -65,8 +84,9 @@ export function Content() {
             <div>
                 <p> <a href="about">About Us</a></p>
                 <h1>InfiniteRecipes!</h1>
+                <Button icon="cart" onClick={goToCart}/>
                 <GoogleButton/>
-                <Button>{guser}</Button>
+                <h3>{guser}</h3>
                 <br/>
                 <center><SearchButton/></center>
                 <br/>

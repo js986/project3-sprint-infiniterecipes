@@ -25,17 +25,20 @@ socketio.init_app(app, cors_allowed_origins="*")
 spoonacular_key = os.getenv('spoonacular_key')
 
 
+
 global username
 username = ""
+cart_collection = {}
+
 
 def emit_all_recipes(channel):
     recipes = db_queries.get_n_recipes(10)
     for recipe in recipes:
-        username = db_queries.get_user(recipe["user"])['email']
+        username = db_queries.get_user(recipe["user"])['name']
         recipe['name'] = username
     all_searches =  recipes
     client_id = flask.request.sid
-    # print(all_searches)    
+    #print(all_searches)    
     socketio.emit(channel, {
         'all_display': all_searches,
         'username': username,
@@ -56,18 +59,22 @@ def emit_recipe(channel,recipe):
 @socketio.on('new google user')
 def on_new_google_user(data):
     print("Got an event for new google user input with data:", data)
-    global username
+    # global username
     user = db_queries.add_user(data)
+    print("USER IS: " + str(user))
     username = db_queries.get_user(user)['name']
-    print("THIS IS " + username)
+    print("THIS IS " + str(username))
     # push_new_user_to_db(data['name'], data['profile'], models.AuthUserType.GOOGLE)
-    username = data['name']
-    print("THIS IS " + username)
+    # username = data['name']
+    socketio.emit('logged in',
+        {'username': username}
+    )
 
 @socketio.on('connect')
 def on_connect():
     emit_all_recipes(SEND_RECIPES_CHANNEL)
     print('Someone connected!')
+    cart_collection[flask.request.sid] = []
     socketio.emit('connected', {
         'test': 'Connected'
     })
@@ -107,6 +114,26 @@ def on_new_user_page(data):
         'user': user
     })
     
+    
+@socketio.on('add to cart')
+def add_to_cart(data):
+    ingredients = data['cartItems']
+    for item in ingredients:
+        if item not in cart_collection[flask.request.sid]:
+            cart_collection[flask.request.sid].append(item)
+    print("There are " + str(len(cart_collection[flask.request.sid])) + " in the cart!")
+    
+@socketio.on('cart page')
+def cart_page(data):
+    if flask.request.sid in cart_collection.keys():
+        print("client has items in cart!")
+        socketio.emit('cart items received', {
+            "cartItems": cart_collection[flask.request.sid],
+        },room=flask.request.sid)
+        
+@socketio.on('content page')
+def content_page(data):
+    emit_all_recipes(SEND_RECIPES_CHANNEL)
     
 
 @app.route('/')
