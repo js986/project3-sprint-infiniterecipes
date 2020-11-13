@@ -59,13 +59,10 @@ def emit_recipe(channel,recipe):
 @socketio.on('new google user')
 def on_new_google_user(data):
     print("Got an event for new google user input with data:", data)
-    # global username
     user = db_queries.add_user(data)
     print("USER IS: " + str(user))
     username = db_queries.get_user(user)['name']
     print("THIS IS " + str(username))
-    # push_new_user_to_db(data['name'], data['profile'], models.AuthUserType.GOOGLE)
-    # username = data['name']
     socketio.emit('logged in',
         {'username': username}
     )
@@ -144,7 +141,8 @@ def content_page(data):
 
 @app.route('/')
 def index():
-    models.db.create_all()
+    with app.app_context():
+        models.db.create_all()
     return flask.render_template("index.html")
     
 @app.route('/about')
