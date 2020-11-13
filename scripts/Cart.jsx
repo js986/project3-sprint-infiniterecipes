@@ -5,8 +5,8 @@ import { Socket } from './Socket';
 import { Content } from './Content';
 
 export function Cart() {
-    const [items,setItems] = React.useState([])
-    const [empty, setEmpty] = React.useState(true)
+    const [items,setItems] = React.useState([]);
+    const [empty, setEmpty] = React.useState(true);
     
     const itemList = items.map((item,index) => (
         <List.Item key={index}>{item["name"]}</List.Item>
@@ -39,9 +39,8 @@ export function Cart() {
             </Button>
             <Header as="h1">Your Items:</Header>
             <Divider/>
-            <List divided verticalAlign='middle'>
-            {itemList}
-            </List>
+            { empty ? <Header as="h2">Your cart is empty</Header> : <List divided verticalAlign='middle'>{itemList}</List>
+            }
         </Container>
         
     )
