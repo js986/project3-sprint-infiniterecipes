@@ -28,7 +28,6 @@ spoonacular_key = os.getenv('spoonacular_key')
 
 global username
 username = ""
-cart_collection = {}
 
 
 def emit_all_recipes(channel):
@@ -84,7 +83,6 @@ def on_old_google_user(data):
 def on_connect():
     emit_all_recipes(SEND_RECIPES_CHANNEL)
     print('Someone connected!')
-    cart_collection[flask.request.sid] = []
     socketio.emit('connected', {
         'test': 'Connected'
     })
@@ -127,10 +125,17 @@ def on_new_user_page(data):
 @socketio.on('add to cart')
 def add_to_cart(data):
     ingredients = data['cartItems']
+    email = data['user_email']
+    user = db_queries.get_user_id(email)
+    shopping_list = db_queries.get_shopping_list(user)
+    ingredient_list = []
     for item in ingredients:
-        if item not in cart_collection[flask.request.sid]:
-            cart_collection[flask.request.sid].append(item)
-    print("There are " + str(len(cart_collection[flask.request.sid])) + " in the cart!")
+        if item['name'] not in shopping_list:
+            ingredient_list.append(item["name"])
+    if len(ingredient_list) > 0:
+        db_queries.add_to_shopping_list(ingredient_list,user)
+    shopping_list = db_queries.get_shopping_list(user)
+    print("There are " + str(len(shopping_list)) + " in the cart!")
     
 @socketio.on('new zipcode query')
 def on_new_zip(data):
@@ -142,10 +147,12 @@ def on_new_zip(data):
     
 @socketio.on('cart page')
 def cart_page(data):
-    if flask.request.sid in cart_collection.keys():
-        print("client has items in cart!")
+    email = data["user_email"]
+    user_id = db_queries.get_user_id(email)
+    if user_id is not None:
+        shopping_list = db_queries.get_shopping_list(user_id)
         socketio.emit('cart items received', {
-            "cartItems": cart_collection[flask.request.sid],
+            "cartItems": shopping_list,
         },room=flask.request.sid)
         
 @socketio.on('content page')

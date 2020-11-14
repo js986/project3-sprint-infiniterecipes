@@ -46,8 +46,13 @@ export function Recipe({ id }) {
     }
     
     function addToCart(recipes) {
+        let email = ''
+        if (localStorage.getItem('user_email') !== null){
+            email = localStorage.getItem('user_email');
+        }
         Socket.emit('add to cart', {
-            'cartItems': recipes
+            'cartItems': recipes,
+            'user_email': email,
         });
     }
     
