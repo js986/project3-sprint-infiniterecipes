@@ -3,14 +3,8 @@ import { Socket } from './Socket';
 
 function handleSubmit(event) {
     let newSearch = document.getElementById("search_input");
-    let filter = document.getElementById("filtered_search");
-    if (newSearch.value === "" || newSearch.value === null || newSearch.value === undefined){
-        return;
-    }
-    console.log(filter.value)
     Socket.emit('new search input', {
         'search': newSearch.value,
-        'filter': filter.value,
     });
     
     console.log('Sent the search ' + newSearch.value + ' to server!');
@@ -20,7 +14,7 @@ function handleSubmit(event) {
 }
 
 var inputbox = {
-    width: '67%',
+    width: '50%',
     padding: '10px 20px',
     margin: '8px',
     display: 'inline-block',
@@ -45,11 +39,6 @@ export function SearchButton() {
     return (
         <form onSubmit={handleSubmit}>
             <input id="search_input" placeholder="Search for recipes here by ingredient, meal-type, cuisine, difficulty" style={inputbox}></input>
-            <select name="filtered_search" id="filtered_search">
-                <option value="name">Name</option>
-                <option value="tag">Tag</option>
-                <option value="difficulty">Difficulty</option>
-            </select>
             <button style={submitbox}>SEARCH</button>
         </form>
     );
