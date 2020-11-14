@@ -159,7 +159,7 @@ def search_by_tag(tag_name):
 
 
 def search_by_difficulty(difficulty):
-    recipes = models.Levels.query.filter(models.Levels.name.ilike('%{}%'.format(difficulty))).first()
+    recipes = models.Levels.query.filter(models.Levels.difficulty.ilike('%{}%'.format(difficulty))).first()
     if not recipes:
         return[]
     return [get_recipe(r.id) for r in recipes.recipes]
