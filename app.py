@@ -61,10 +61,15 @@ def on_new_google_user(data):
     print("Got an event for new google user input with data:", data)
     user = db_queries.add_user(data)
     print("USER IS: " + str(user))
-    username = db_queries.get_user(user)['name']
+    user_obj = db_queries.get_user(user)
+    username = user_obj['name']
+    user_email = user_obj['email']
     print("THIS IS " + str(username))
     socketio.emit('logged in',
-        {'username': username}
+        {
+            'username': username,
+            'email' : user_email,
+        }
     )
 
 @socketio.on('connect')
@@ -138,6 +143,36 @@ def on_new_zip(data):
 def content_page(data):
     emit_all_recipes(SEND_RECIPES_CHANNEL)
     
+@socketio.on('new recipe')
+def new_recipe(data):
+    print('Received new recipe' +  str(data))
+    email = data['user']
+    name = data['name']
+    servings = data['servings']
+    readyInMinutes = data["readyInMinutes"]
+    images = data['image']
+    difficulty = data['difficulty']
+    description = data['description']
+    ingredients = data['ingredients']
+    instructions = data["instructions"]
+    tags = []
+    for tag in data["tags"]:
+        tags.append(tag['tag'])
+    user = db_queries.get_user_id(email)
+    recipe_dict = {
+        'user': user,
+        'title': name,
+        'description': description,
+        'difficulty': difficulty,
+        'instructions': instructions,
+        'readyInMinutes': readyInMinutes,
+        'servings': servings,
+        'images': images,
+        'ingredients': ingredients,
+        'tags': tags
+    }
+    
+    db_queries.add_recipe(recipe_dict)
 
 @app.route('/')
 def index():

@@ -18,8 +18,10 @@ export function Cart() {
         React.useEffect(() => {
             Socket.on('cart items received',(data) => {
                 console.log("Received items from server: " + data["cartItems"]);
-                setItems(data['cartItems']);
-                setEmpty(false);
+                if (data['cartItems'].length > 0){
+                    setItems(data['cartItems']);
+                    setEmpty(false);
+                }
             })
         })
     }
@@ -55,7 +57,7 @@ export function Cart() {
             </Button>
             <Header as="h1">Your Items:</Header>
             <Divider/>
-            { empty ? <Header as="h2">Your cart is empty</Header> : <List divided verticalAlign='middle'>{itemList}</List>
+            { empty === true ? <Header as="h2">Your cart is empty</Header> : <List divided verticalAlign='middle'>{itemList}</List>
             }
             <br />
             <br />

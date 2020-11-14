@@ -1,12 +1,13 @@
     
 import * as React from 'react';
 import ReactDOM from 'react-dom';
-import { List, Card, Button, Image, Container } from 'semantic-ui-react';
+import { List, Card, Button, Image, Container, Modal } from 'semantic-ui-react';
 import { SearchButton } from './SearchButton';
 import { Socket } from './Socket';
 import { GoogleButton } from './GoogleButton';
 import { Recipe } from './Recipe';
 import { Cart } from './Cart';
+import { RecipeForm } from './RecipeForm';
 
 export function Content() {
     const [recipes, setRecipes] = React.useState([]);
@@ -27,6 +28,7 @@ export function Content() {
     function updateLogin() {
          React.useEffect(() => {
             Socket.on('logged in', (data) => {
+               { localStorage.setItem('user_email', data['email']); }
                 setGUser(data['username']);
                 setIsLoggedin(true);
             })
@@ -57,12 +59,16 @@ export function Content() {
         ReactDOM.render(<Cart />, document.getElementById('content'));
     }
     
+    function goToForm() {
+        ReactDOM.render(<RecipeForm />, document.getElementById('content'));
+    }
+    
     getNewRecipes();
     updateRecipes();
     updateLogin();
     
     const recipeList = recipes.map((recipe, index) => (
-            <Card onClick={() => handleSubmit(recipe["id"])}>
+            <Card key={index} onClick={() => handleSubmit(recipe["id"])}>
                 <Image src={recipe["images"][0]} wrapped ui={false} />
                 <Card.Content>
                   <Card.Header>{recipe["title"]}</Card.Header>
@@ -84,13 +90,26 @@ export function Content() {
             <div>
                 <p> <a href="about">About Us</a></p>
                 <h1>InfiniteRecipes!</h1>
-                <Button icon="cart" onClick={goToCart}/>
-                <GoogleButton/>
                 <br/>
-                <Button>{guser}</Button>
-                <Button>{ isloggedin == true ? 'POST' : '' }</Button>
+                <div>
+                <Button icon="cart" floated="left" onClick={goToCart}/>
+                { isloggedin === true ? 
+                    <div className="loggedIn-buttons">
+                        <Button floated="right" onClick={goToForm}>POST</Button>
+                        <Button floated="right">{guser}</Button>
+                    </div>
+                : 
+                    <div className="google-login-button">
+                        <GoogleButton/>
+                    </div> 
+                }
+                </div>
                 <br/>
+                <br/>
+                <br/>
+                <div>
                 <center><SearchButton/></center>
+                </div>
                 <br/>
                 <Card.Group itemsPerRow={5}>
                     {recipeList}
