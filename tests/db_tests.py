@@ -42,7 +42,7 @@ class MyTest(TestCase):
             'profile_pic': 'image',
             'email': 'tester@tester.com',
             'shared_recipes':[],
-            'shopping_list':[],
+            'shopping_list':['potato'],
             'saved_recipes':[],
     }
     TEST_ADD_RECIPE = {
@@ -149,18 +149,64 @@ class MyTest(TestCase):
         db.session.add(models.Users(**self.TEST_ADD_USER))
         db.session.add(models.Recipe(**self.TEST_ADD_RECIPE))
         got_recipe = db_queries.get_recipe(self.TEST_RECIPE_ID)
-        self.assertDictEqual(self.TEST_ADD_RECIPE, got_recipe)
-    # def test_generate_recipe_id(self):
-    # def test_generate_user_id(self):
-    # def test_get_shopping_list(self):
-    # def test_add_to_shopping_list(self):
-    # def test_remove_from_shopping_list(self):
-    # def test_add_shared_recipe(self):
-    # def test_add_saved_recipe(self):
-    # def test_search_with_name(self):
+        self.assertEqual(self.TEST_ADD_RECIPE['title'], got_recipe['title'])
+        
+    def test_generate_recipe_id(self):
+        with mock.patch('random.randint', mocked_random_int):
+            new_id = db_queries.generate_random_recipe_id()
+            self.assertEqual(new_id, 5)
+            
+    def test_generate_user_id(self):
+        with mock.patch('random.randint', mocked_random_int):
+            new_id = db_queries.generate_random_user_id()
+            self.assertEqual(new_id, 5)
+    
+    def test_get_shopping_list(self):
+        db.session.add(models.Users(**self.TEST_ADD_USER))
+        shop_list = db_queries.get_shopping_list(self.TEST_ID)
+        self.assertEqual(shop_list, self.TEST_ADD_USER['shopping_list'])
+        
+    def test_add_to_shopping_list(self):
+        db.session.add(models.Users(**self.TEST_ADD_USER))
+        db_queries.add_to_shopping_list(["test"], self.TEST_ID)
+        db_user = db.session.query(models.Users).get(self.TEST_ID)
+        assert "test" in db_user.shopping_list
+    
+    def test_remove_from_shopping_list(self):
+        db.session.add(models.Users(**self.TEST_ADD_USER))
+        db_queries.remove_from_shopping_list('potato', self.TEST_ID)
+        db_user = db.session.query(models.Users).get(self.TEST_ID)
+        assert "test" not in db_user.shopping_list
+        
+    def test_add_shared_recipe(self):
+        db.session.add(models.Levels(difficulty=self.DIFFICULTY))
+        db.session.add(models.Users(**self.TEST_ADD_USER))
+        db.session.add(models.Recipe(**self.TEST_ADD_RECIPE))
+        db_queries.add_shared_recipe(self.TEST_RECIPE_ID, self.TEST_ID)
+        db_user = db.session.query(models.Users).get(self.TEST_ID)
+        assert self.TEST_RECIPE_ID in db_user.shared_recipes
+        
+    def test_add_saved_recipe(self):
+        db.session.add(models.Levels(difficulty=self.DIFFICULTY))
+        db.session.add(models.Users(**self.TEST_ADD_USER))
+        db.session.add(models.Recipe(**self.TEST_ADD_RECIPE))
+        db_queries.add_saved_recipe(self.TEST_RECIPE_ID, self.TEST_ID)
+        db_user = db.session.query(models.Users).get(self.TEST_ID)
+        assert self.TEST_RECIPE_ID in db_user.saved_recipes
+    
+    def test_search_with_name(self):
+        db.session.add(models.Levels(difficulty=self.DIFFICULTY))
+        db.session.add(models.Users(**self.TEST_ADD_USER))
+        db.session.add(models.Recipe(**self.TEST_ADD_RECIPE))
+        searched_recipes = db_queries.search_with_name('packed')
+        self.assertEqual(searched_recipes[0]['title'], self.TEST_ADD_RECIPE['title'])
+
     # def test_search_by_tag(self):
     # def test_search_by_difficulty(self):
     # def test_get_n_recipes(self):
+
+def mocked_random_int(low, high):
+    return 5;
 if __name__ == "__main__":
     unittest.main()
         
