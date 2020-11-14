@@ -14,7 +14,7 @@ function handleSubmit(event) {
 }
 
 var inputbox = {
-    width: '67%',
+    width: '50%',
     padding: '10px 20px',
     margin: '8px',
     display: 'inline-block',

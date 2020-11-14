@@ -36,20 +36,18 @@ export function User() {
         ReactDOM.render(<Content />, document.getElementById('content'));
     }
     
-   // function handleClick()
-    //{
-    //    const inner = document.getElementById("back_to_recipe").innerHTML
-      //  console.log("Inner" + inner)
-    //    Socket.emit('recipe page', {
-      //      'id' : inner
-    //    });
-      //  ReactDOM.render(<Recipe />, document.getElementById('content'));
-    //}
+   function goToRecipe(solo){
+        Socket.emit('recipe page', {
+            'id' : solo['solo']
+        });
+        ReactDOM.render(<Recipe />, document.getElementById('content'));
+    }
     
     getUserData();
     return ( 
        <Container>
             <Button icon labelPosition="left" onClick={goToHomePage}>
+
             <Icon name="left arrow" />
             Back to Homepage
             </Button> <br /> <br />
@@ -61,7 +59,7 @@ export function User() {
                 <ul style={{listStyleType:"none"}}>
                 {
                     owned_recipes.map((solo, index) => (
-                    <li><button > {solo} </button></li>
+                    <li><button onClick={() => goToRecipe({solo})}> {solo} </button></li>
                     ),
                     )
                 }
