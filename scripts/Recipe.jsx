@@ -36,6 +36,14 @@ export function Recipe({ id }) {
             })
         });
     }
+    
+    function getCartNumItems(){
+        React.useEffect(() => {
+            Socket.on('received cart item num', (data) => {
+               localStorage.setItem('cartNumItems',data['cart_num']); 
+            })
+        });
+    }
 
     function handleSubmit(user){
         Socket.emit('user page', {
@@ -64,7 +72,8 @@ export function Recipe({ id }) {
     }
     
     
-    getRecipeData()
+    getRecipeData();
+    getCartNumItems();
     return (
         <Container>
             <Button icon labelPosition="left" onClick={goToHomePage}>
