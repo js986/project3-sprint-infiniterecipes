@@ -2,29 +2,28 @@ import os
 import sys
 import unittest
 import unittest.mock as mock
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import db_queries
-from os.path import join, dirname
-from dotenv import load_dotenv
-
-import db_queries
-import models
-from db_utils import db
 from flask import Flask
 from flask_testing import TestCase
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import db_queries
+import models
+import db_utils
+from db_utils import db
+
 
 class MyTest(TestCase):
     
     SQLALCHEMY_DATABASE_URI = "sqlite://"
     
     TEST_ID = 738270100
-    
+    TEST_RECIPE_ID = 738270101
+    DIFFICULTY = 'easy'
     TEST_RECIPE = {
             'user': TEST_ID,
             'images': ['https://spoonacular.com/recipeImages/657178-556x370.jpg'],
             'title': 'Protein Packed Carrot Muffins',
             'readyInMinutes': 45,
-            'difficulty': 'intermediate',
+            'difficulty': DIFFICULTY,
             'servings': 6,
             'description': 'A description', 
             'tags': ['gluten free', 'dinner'],
@@ -37,13 +36,34 @@ class MyTest(TestCase):
             'imageURL': 'image',
             'email': 'tester@tester.com'
         }
-        
+    TEST_ADD_USER = {
+            'id' : TEST_ID,
+            'name': 'Mr.Tester',
+            'profile_pic': 'image',
+            'email': 'tester@tester.com',
+            'shared_recipes':[],
+            'shopping_list':[],
+            'saved_recipes':[],
+    }
+    TEST_ADD_RECIPE = {
+            'id' : TEST_RECIPE_ID,
+            'user_id' : TEST_ID,
+            'title' : 'Protein Packed Carrot Muffins',
+            'description' : "A description",
+            'difficulty' : DIFFICULTY,
+            'instructions' : [{'number': 1, 'step': 'Preheat oven to 350 f.'}],
+            'ready_in_minutes' : 45,
+            'servings' : 6,
+            'images' : ['https://spoonacular.com/recipeImages/657178-556x370.jpg'],
+            'ingredients' : [{'name': 'Spice Rub', 'amount': 1.0, 'unit': 'tbsp'}],
+            'tags': []
+        }
+    
     def create_app(self):
         app = Flask(__name__)
         app.config['TESTING'] = True
         app.config['SQLALCHEMY_DATABASE_URI'] = self.SQLALCHEMY_DATABASE_URI
-        db.init_app(app)
-        db.app = app
+        db_utils.init_db(app)
         return app
 
     def setUp(self):
@@ -63,6 +83,7 @@ class MyTest(TestCase):
                         db.session.query(models.Users).get(user_id).profile_pic)
     
     def test_add_recipe(self):
+        db.session.add(models.Levels(difficulty=self.DIFFICULTY))
         db.session.add(models.Users(id=self.TEST_ID, 
         email=self.TEST_USER['email'], 
         name=self.TEST_USER['name'],
@@ -104,7 +125,42 @@ class MyTest(TestCase):
         user_id = db_queries.get_user_id('tester@tester.com')
         self.assertEqual(user_id, self.TEST_ID)
 
+    def test_get_user(self):
+        db.session.add(models.Users(id=self.TEST_ID, 
+        email=self.TEST_USER['email'], 
+        name=self.TEST_USER['name'],
+        shopping_list = [], 
+        shared_recipes=[], 
+        saved_recipes=[], 
+        profile_pic = self.TEST_USER['imageURL']))
         
+        db_user = db_queries.get_user(self.TEST_ID)
+        
+        self.assertEqual(self.TEST_USER['name'], db_user['name'])
+        self.assertEqual(self.TEST_USER['email'], db_user['email'])
+        self.assertEqual(self.TEST_USER['imageURL'], db_user['profile_pic'])
+        self.assertEqual(db_user['shopping_list'],[])
+        self.assertEqual(db_user['saved_recipes'],[])
+        self.assertEqual(db_user['shared_recipes'],[])
+        self.assertEqual(db_user['owned_recipes'],[])
+        
+    def test_get_recipe(self):
+        db.session.add(models.Levels(difficulty=self.DIFFICULTY))
+        db.session.add(models.Users(**self.TEST_ADD_USER))
+        db.session.add(models.Recipe(**self.TEST_ADD_RECIPE))
+        got_recipe = db_queries.get_recipe(self.TEST_RECIPE_ID)
+        self.assertDictEqual(self.TEST_ADD_RECIPE, got_recipe)
+    # def test_generate_recipe_id(self):
+    # def test_generate_user_id(self):
+    # def test_get_shopping_list(self):
+    # def test_add_to_shopping_list(self):
+    # def test_remove_from_shopping_list(self):
+    # def test_add_shared_recipe(self):
+    # def test_add_saved_recipe(self):
+    # def test_search_with_name(self):
+    # def test_search_by_tag(self):
+    # def test_search_by_difficulty(self):
+    # def test_get_n_recipes(self):
 if __name__ == "__main__":
     unittest.main()
         
