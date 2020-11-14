@@ -33,7 +33,8 @@ def emit_all_recipes(channel):
     """
     recipes = db_queries.get_n_recipes(10)
     for recipe in recipes:
-        username = db_queries.get_user(recipe["user"])['name']
+        user = db_queries.get_user(recipe["user"])
+        username = user['name']
         recipe['name'] = username
     all_searches =  recipes
     client_id = flask.request.sid
@@ -60,11 +61,14 @@ def on_new_google_user(data):
     user_obj = db_queries.get_user(user)
     username = user_obj['name']
     user_email = user_obj['email']
+    shopping_list = db_queries.get_shopping_list(user_obj["id"])
+    cart_num_items = len(shopping_list)
     print("THIS IS " + str(username))
     socketio.emit('logged in',
         {
             'username': username,
             'email' : user_email,
+            'cartNumItems': cart_num_items,
         }
     )
 @socketio.on('old google user')
@@ -101,7 +105,7 @@ def on_recipe_page(data):
     print('received data from client ' + str(data['id']))
     recipe=db_queries.get_recipe(data['id'])
     client_id = flask.request.sid
-    username = db_queries.get_user(recipe["user"])["email"]
+    username = db_queries.get_user(recipe["user"])["name"]
     namespace="/recipe/" + str(id)
     recipe['name'] = username
     emit_recipe(SEND_ONE_RECIPE_CHANNEL,recipe)
@@ -119,6 +123,9 @@ def on_new_search(data):
         search_query = db_queries.search_by_tag(data['search'])
     if search_filter == "difficulty":
         search_query = db_queries.search_by_difficulty(data['search'])
+    for recipe in search_query:
+        username = db_queries.get_user(recipe["user"])['name']
+        recipe['name'] = username
     socketio.emit(SEARCHES_RECEIVED_CHANNEL, {
         'search_output' : search_query
     },
@@ -150,6 +157,9 @@ def add_to_cart(data):
     if len(ingredient_list) > 0:
         db_queries.add_to_shopping_list(ingredient_list,user)
     shopping_list = db_queries.get_shopping_list(user)
+    socketio.emit('received cart item num', {
+        'cart_num' : str(len(shopping_list))
+    })
     print("There are " + str(len(shopping_list)) + " in the cart!")
 @socketio.on('new zipcode query')
 def on_new_zip(data):

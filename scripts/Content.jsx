@@ -1,18 +1,23 @@
     
 import * as React from 'react';
 import ReactDOM from 'react-dom';
-import { List, Card, Button, Image, Container, Header } from 'semantic-ui-react';
+
+import { List, Card, Button, Image, Container, Header, Label, Icon } from 'semantic-ui-react';
 import { SearchButton } from './SearchButton';
 import { Socket } from './Socket';
 import { GoogleButton } from './GoogleButton';
 import { LogoutButton } from './LogoutButton';
 import { Recipe } from './Recipe';
 import { Cart } from './Cart';
+import ReactHtmlParser from 'react-html-parser';
+import { RecipeForm } from './RecipeForm';
+
 
 export function Content() {
     const [recipes, setRecipes] = React.useState([]);
     const [guser, setGUser] = React.useState([]);
     const [isloggedin, setIsloggedin] = React.useState(false);
+    const [cartNumItems, setCartNumItems] = React.useState(0);
     var recipeImages;
     
     function getNewRecipes() {
@@ -20,6 +25,9 @@ export function Content() {
             Socket.on('recipes received', (data) => {
                 console.log("Received recipes from server: " + data['all_display']);
                 setRecipes(data['all_display']);
+                if (localStorage.getItem('cartNumItems') !== null){
+                    setCartNumItems(localStorage.getItem('cartNumItems'));
+                }
                 
             })
         });
@@ -28,7 +36,11 @@ export function Content() {
     function updateLogin() {
          React.useEffect(() => {
             Socket.on('logged in', (data) => {
+                localStorage.setItem('user_email', data['email']); 
+                localStorage.setItem('cartNumItems', data['cartNumItems'])
+
                 setGUser(data['username']);
+                setCartNumItems(data['cartNumItems']);
                 setIsloggedin(true);
             })
          });
@@ -81,7 +93,7 @@ export function Content() {
                     <span className='username'>By: {recipe["name"]}</span>
                   </Card.Meta>
                   <Card.Description>
-                    <span className="description">{recipe["description"]}</span>
+                    <span className="description">{ReactHtmlParser(recipe["description"])}</span>
                   </Card.Description>
                 </Card.Content>
                 <Card.Content extra>
@@ -95,10 +107,19 @@ export function Content() {
             <div>
                 <p> <a href="about">About Us</a></p>
                 <h1>InfiniteRecipes!</h1>
-                <Button icon="cart" onClick={goToCart}/>
-                { isloggedin === true ?
-                    <div className = "loggedin-buttons">
-                        <Button floated="right">POST</Button>
+                <br/>
+                <div>
+                <Button as="div" labelPosition="right">
+                    <Button floated="left" onClick={goToCart}>
+                        <Icon name="cart"/>
+                        <Label color="red" pointing="left">
+                            {cartNumItems}
+                        </Label>
+                    </Button>
+                </Button>
+                { isloggedin === true ? 
+                    <div className="loggedIn-buttons">
+                        <Button floated="right" onClick={goToForm}>POST</Button>
                         <Button floated="right">{guser}</Button>
                         <br/>
                         <br/>
