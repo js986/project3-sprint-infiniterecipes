@@ -29,7 +29,7 @@ export function User() {
         });
     }
     
-        function goToHomePage(){
+    function goToHomePage(){
         Socket.emit('content page', {
             'content page' : 'content page'
         });
@@ -50,22 +50,23 @@ export function User() {
     return ( 
        <Container>
             <Button icon labelPosition="left" onClick={goToHomePage}>
-                <Icon name="left arrow" />
-                Back to Homepage
-            </Button>
+
+            <Icon name="left arrow" />
+            Back to Homepage
+            </Button> <br /> <br />
             <Image src={users["profile_pic"]} />
             <h3> {users["name"]} </h3>
             <h3>{users["email"]} </h3>
-            <div className="tags">
+            <div className="tags">  
                 <h2> Your Recipes </h2>
-                <ol>
+                <ul style={{listStyleType:"none"}}>
                 {
                     owned_recipes.map((solo, index) => (
                     <li><button > {solo} </button></li>
                     ),
                     )
                 }
-                </ol>
+                </ul>
             </div>
             <div>
                 <h2> Shared Recipes </h2>

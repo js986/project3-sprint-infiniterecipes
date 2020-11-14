@@ -1,10 +1,12 @@
     
 import * as React from 'react';
 import ReactDOM from 'react-dom';
-import { List, Card, Button, Image, Container, Modal } from 'semantic-ui-react';
+
+import { List, Card, Button, Image, Container, Header } from 'semantic-ui-react';
 import { SearchButton } from './SearchButton';
 import { Socket } from './Socket';
 import { GoogleButton } from './GoogleButton';
+import { LogoutButton } from './LogoutButton';
 import { Recipe } from './Recipe';
 import { Cart } from './Cart';
 import { RecipeForm } from './RecipeForm';
@@ -12,7 +14,7 @@ import { RecipeForm } from './RecipeForm';
 export function Content() {
     const [recipes, setRecipes] = React.useState([]);
     const [guser, setGUser] = React.useState([]);
-    const [isloggedin, setIsLoggedin] = React.useState(false);
+    const [isloggedin, setIsloggedin] = React.useState(false);
     var recipeImages;
     
     function getNewRecipes() {
@@ -30,7 +32,16 @@ export function Content() {
             Socket.on('logged in', (data) => {
                { localStorage.setItem('user_email', data['email']); }
                 setGUser(data['username']);
-                setIsLoggedin(true);
+                setIsloggedin(true);
+            })
+         });
+    }
+    
+    function updateLogout() {
+         React.useEffect(() => {
+            Socket.on('logged out', (data) => {
+                // setGUser(data['username']);
+                setIsloggedin(false);
             })
          });
     }
@@ -66,6 +77,7 @@ export function Content() {
     getNewRecipes();
     updateRecipes();
     updateLogin();
+    updateLogout();
     
     const recipeList = recipes.map((recipe, index) => (
             <Card key={index} onClick={() => handleSubmit(recipe["id"])}>
@@ -90,6 +102,7 @@ export function Content() {
             <div>
                 <p> <a href="about">About Us</a></p>
                 <h1>InfiniteRecipes!</h1>
+
                 <br/>
                 <div>
                 <Button icon="cart" floated="left" onClick={goToCart}/>
