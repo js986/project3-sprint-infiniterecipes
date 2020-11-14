@@ -28,7 +28,7 @@ export function GoogleButton() {
         onSuccess={handleSubmit}
         onFailure={handleSubmit}
         cookiePolicy={'single_host_origin'}
-        isSignedIn={true}
+        // isSignedIn={true}
          >
             <FontAwesome
               name='google'
