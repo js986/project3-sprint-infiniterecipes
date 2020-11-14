@@ -65,7 +65,7 @@ export function Content() {
     
     function goToCart() {
         Socket.emit('cart page', {
-            'cart': 'cart'
+            'user_email': localStorage.getItem('user_email'),
         });
         ReactDOM.render(<Cart />, document.getElementById('content'));
     }

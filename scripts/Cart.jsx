@@ -11,7 +11,7 @@ export function Cart() {
     const [zip, setZip] = React.useState('07101');
     
     const itemList = items.map((item,index) => (
-        <List.Item key={index}>{item["name"]}</List.Item>
+        <List.Item key={index}>{item}</List.Item>
     ));
     
     function updateCart(){
