@@ -56,9 +56,11 @@ class MyTest(TestCase):
             'servings' : 6,
             'images' : ['https://spoonacular.com/recipeImages/657178-556x370.jpg'],
             'ingredients' : [{'name': 'Spice Rub', 'amount': 1.0, 'unit': 'tbsp'}],
-            'tags': []
         }
     
+    TEST_ADD_TAG = {
+        "name" : "tag"
+    }
     def create_app(self):
         app = Flask(__name__)
         app.config['TESTING'] = True
@@ -201,10 +203,30 @@ class MyTest(TestCase):
         searched_recipes = db_queries.search_with_name('packed')
         self.assertEqual(searched_recipes[0]['title'], self.TEST_ADD_RECIPE['title'])
 
-    # def test_search_by_tag(self):
-    # def test_search_by_difficulty(self):
-    # def test_get_n_recipes(self):
-
+    def test_search_by_tag(self):
+        recipe = models.Recipe(**self.TEST_ADD_RECIPE)
+        tag = models.Tag(**self.TEST_ADD_TAG)
+        recipe.tags.append(tag)
+        db.session.add(models.Levels(difficulty=self.DIFFICULTY))
+        db.session.add(models.Users(**self.TEST_ADD_USER))
+        db.session.add(recipe)
+        searched_recipes = db_queries.search_by_tag(self.TEST_ADD_TAG['name'])
+        self.assertEqual(searched_recipes[0]['title'], self.TEST_ADD_RECIPE['title'])
+        
+    def test_search_by_difficulty(self):
+        db.session.add(models.Levels(difficulty=self.DIFFICULTY))
+        db.session.add(models.Users(**self.TEST_ADD_USER))
+        db.session.add(models.Recipe(**self.TEST_ADD_RECIPE))
+        searched_recipes = db_queries.search_by_difficulty(self.DIFFICULTY)
+        self.assertEqual(searched_recipes[0]['title'], self.TEST_ADD_RECIPE['title'])
+        
+    def test_get_n_recipes(self):
+        db.session.add(models.Levels(difficulty=self.DIFFICULTY))
+        db.session.add(models.Users(**self.TEST_ADD_USER))
+        db.session.add(models.Recipe(**self.TEST_ADD_RECIPE))
+        searched_recipes = db_queries.get_n_recipes(1)
+        self.assertEqual(searched_recipes[0]['title'], self.TEST_ADD_RECIPE['title'])
+        
 def mocked_random_int(low, high):
     return 5;
 if __name__ == "__main__":
