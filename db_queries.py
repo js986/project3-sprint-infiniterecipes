@@ -110,6 +110,8 @@ def get_shopping_list(user_id):
     
 def add_to_shopping_list(ingredient_list, user_id):
     user = models.Users.query.filter_by(id=user_id).first()
+    if not user.shopping_list:
+        user.shopping_list = []
     shopping_list = user.shopping_list.copy()
     for item in ingredient_list:
         if(item.lower() not in [s.lower() for s in shopping_list]):
@@ -119,6 +121,8 @@ def add_to_shopping_list(ingredient_list, user_id):
 
 def remove_from_shopping_list(ingredient, user_id):
     user = models.Users.query.filter_by(id=user_id).first()
+    if not user.shopping_list:
+        return
     shopping_list = user.shopping_list.copy()
     for item in shopping_list:
         if(item.lower() == ingredient.lower()):

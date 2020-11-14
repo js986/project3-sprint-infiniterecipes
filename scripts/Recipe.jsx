@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Container, Header, Divider, Rating, Button, Icon, Image, List, Label } from 'semantic-ui-react';
 import { Socket } from './Socket';
 import { Content } from './Content';
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
+import ReactHtmlParser from 'react-html-parser';
 import { User } from './User';
 
 export function Recipe({ id }) {
@@ -46,8 +46,13 @@ export function Recipe({ id }) {
     }
     
     function addToCart(recipes) {
+        let email = ''
+        if (localStorage.getItem('user_email') !== null){
+            email = localStorage.getItem('user_email');
+        }
         Socket.emit('add to cart', {
-            'cartItems': recipes
+            'cartItems': recipes,
+            'user_email': email,
         });
     }
     
