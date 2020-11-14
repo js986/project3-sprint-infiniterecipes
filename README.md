@@ -85,3 +85,4 @@ In order to build this app, we planned together and split tasks amongst oursleve
     - Use Google oAuth to create Google Login
     - Use Google oAuth to create Google Logout
     - Create main page where various posts are displayed
+    - Linting files 
