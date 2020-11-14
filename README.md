@@ -1,3 +1,9 @@
+# InfiniteRecipes
+A food recipes browser-based app.
+
+# Heroku link
+https://infiniterecipes.herokuapp.com/
+
 # Set up React  
 0. `cd ~/environment && git clone https://github.com/js986/CS490-Project3.git && cd CS490-Project3`    
 1. Install npm dependencies!    
@@ -52,3 +58,30 @@ If that doesn't work: `sudo vim $(psql -c "show hba_file;" | grep pg_hba.conf)`
   a) `npm run watch`. If prompted to install webpack-cli, type "yes"    
   b) In a new terminal, `python app.py`    
   c) Preview Running Application (might have to clear your cache by doing a hard refresh)    
+
+# Creating food recipes app
+In order to build this app, we planned together and split tasks amongst oursleves:
+
+1. Hasan Dulgeroglu
+    - Plan and create models for the database in models.py
+    - Create necessary functions for adding, removing, getting and searching data in the database in db_queries
+    - Write unittests for database functions
+    - Write unittests for socket functions
+
+2. Jordan Sefah
+    - Create recipes page where information on the recipe such as ingredients and directions are displayed
+    - Create a form to post new recipes
+    - Create cart to add ingredients to the cart
+    - Add filter to search bar
+    - Create main page where various posts are displayed
+
+3. Dominik Nef
+    - Create user profile page where posts of the user are displayed
+    - Create about.html page
+    - Incorporate Google Maps API inside the user's cart page
+
+4. Risha Shah
+    - Create and style search button to search for recipes 
+    - Use Google oAuth to create Google Login
+    - Use Google oAuth to create Google Logout
+    - Create main page where various posts are displayed
