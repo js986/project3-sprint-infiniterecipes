@@ -4,3 +4,8 @@
     text-overflow: ellipsis;
     max-height: 200px;
 }
+
+.google-login-button {
+    float: right;
+}
+

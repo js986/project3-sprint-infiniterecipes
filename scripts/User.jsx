@@ -50,6 +50,7 @@ export function User() {
     return ( 
        <Container>
             <Button icon labelPosition="left" onClick={goToHomePage}>
+
             <Icon name="left arrow" />
             Back to Homepage
             </Button> <br /> <br />

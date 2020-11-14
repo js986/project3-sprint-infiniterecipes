@@ -3,6 +3,9 @@ import { Socket } from './Socket';
 
 function handleSubmit(event) {
     let newSearch = document.getElementById("search_input");
+    if (newSearch === "" || newSearch === null || newSearch === undefined){
+        return;
+    }
     Socket.emit('new search input', {
         'search': newSearch.value,
     });
