@@ -106,8 +106,13 @@ def on_recipe_page(data):
 def on_new_search(data):
     print("Got an event for new search input with data:", data)
     client_id = flask.request.sid
-    search_query = db_queries.search_with_name(data['search'])
-    #search_query.extend(db_queries.search_by_tag(data['search']))
+    search_filter = data['filter']
+    if search_filter == "name":
+        search_query = db_queries.search_with_name(data['search'])
+    if search_filter == "tag":
+        search_query = db_queries.search_by_tag(data['search'])
+    if search_filter == "difficulty":
+        search_query = db_queries.search_by_difficulty(data['search'])
     socketio.emit(SEARCHES_RECEIVED_CHANNEL, {
         'search_output' : search_query
     },
