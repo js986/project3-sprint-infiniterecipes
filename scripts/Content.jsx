@@ -12,6 +12,7 @@ import { Cart } from './Cart';
 import ReactHtmlParser from 'react-html-parser';
 import { RecipeForm } from './RecipeForm';
 
+
 export function Content() {
     const [recipes, setRecipes] = React.useState([]);
     const [guser, setGUser] = React.useState([]);
@@ -37,6 +38,7 @@ export function Content() {
             Socket.on('logged in', (data) => {
                 localStorage.setItem('user_email', data['email']); 
                 localStorage.setItem('cartNumItems', data['cartNumItems'])
+
                 setGUser(data['username']);
                 setCartNumItems(data['cartNumItems']);
                 setIsloggedin(true);
@@ -72,13 +74,9 @@ export function Content() {
     
     function goToCart() {
         Socket.emit('cart page', {
-            'user_email': localStorage.getItem('user_email'),
+            'cart': 'cart'
         });
         ReactDOM.render(<Cart />, document.getElementById('content'));
-    }
-    
-    function goToForm() {
-        ReactDOM.render(<RecipeForm />, document.getElementById('content'));
     }
     
     getNewRecipes();
@@ -87,7 +85,7 @@ export function Content() {
     updateLogout();
     
     const recipeList = recipes.map((recipe, index) => (
-            <Card key={index} onClick={() => handleSubmit(recipe["id"])}>
+            <Card onClick={() => handleSubmit(recipe["id"])}>
                 <Image src={recipe["images"][0]} wrapped ui={false} />
                 <Card.Content>
                   <Card.Header>{recipe["title"]}</Card.Header>
@@ -109,7 +107,6 @@ export function Content() {
             <div>
                 <p> <a href="about">About Us</a></p>
                 <h1>InfiniteRecipes!</h1>
-
                 <br/>
                 <div>
                 <Button as="div" labelPosition="right">
@@ -124,19 +121,19 @@ export function Content() {
                     <div className="loggedIn-buttons">
                         <Button floated="right" onClick={goToForm}>POST</Button>
                         <Button floated="right">{guser}</Button>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <Header as='h2' floated='right'><LogoutButton/></Header>
                     </div>
-                : 
-                    <div className="google-login-button">
-                        <GoogleButton/>
-                    </div> 
+                :
+                    <div className = "google-login-button">
+                        <Header as='h2' floated='right'><GoogleButton/></Header>
+                    </div>
                 }
-                </div>
                 <br/>
                 <br/>
-                <br/>
-                <div>
                 <center><SearchButton/></center>
-                </div>
                 <br/>
                 <Card.Group itemsPerRow={5}>
                     {recipeList}
