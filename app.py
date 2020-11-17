@@ -61,6 +61,7 @@ def on_new_google_user(data):
     user_obj = db_queries.get_user(user)
     username = user_obj['name']
     user_email = user_obj['email']
+    client_id = flask.request.sid
     shopping_list = db_queries.get_shopping_list(user_obj["id"])
     cart_num_items = len(shopping_list)
     print("THIS IS " + str(username))
@@ -69,7 +70,8 @@ def on_new_google_user(data):
             'username': username,
             'email' : user_email,
             'cartNumItems': cart_num_items,
-        }
+        },
+        room=client_id
     )
 @socketio.on('old google user')
 def on_old_google_user(data):
@@ -78,9 +80,10 @@ def on_old_google_user(data):
     """
     print("Got an event for old google user input with data:", data)
     logout = "logout"
+    client_id = flask.request.sid
     socketio.emit('logged out',
-        {'logout': logout}
-    )
+        {'logout': logout},
+    room=client_id)
 @socketio.on('connect')
 def on_connect():
     """
@@ -90,7 +93,7 @@ def on_connect():
     print('Someone connected!')
     socketio.emit('connected', {
         'test': 'Connected'
-    })
+    },room=flask.request.sid)
 @socketio.on('disconnect')
 def on_disconnect():
     """
@@ -140,7 +143,7 @@ def on_new_user_page(data):
     print(user['email'])
     socketio.emit('user page load', {
         'user': user
-    })
+    },room=flask.request.sid)
 @socketio.on('add to cart')
 def add_to_cart(data):
     """
@@ -159,7 +162,7 @@ def add_to_cart(data):
     shopping_list = db_queries.get_shopping_list(user)
     socketio.emit('received cart item num', {
         'cart_num' : str(len(shopping_list))
-    })
+    }, room=flask.request.sid)
     print("There are " + str(len(shopping_list)) + " in the cart!")
 @socketio.on('new zipcode query')
 def on_new_zip(data):
@@ -168,7 +171,7 @@ def on_new_zip(data):
     """
     zipcode = data['zip']
     if zipcode.isdigit() and len(zipcode) == 5: 
-        socketio.emit('new zip', zipcode)
+        socketio.emit('new zip', zipcode,room=flask.request.sid)
 @socketio.on('cart page')
 def cart_page(data):
     """
