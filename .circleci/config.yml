@@ -15,8 +15,8 @@ jobs:
           command: python ./tests/db_tests.py 
           name: Database Tests
       - run:
-          command: python ./tests/mocked_unit_tests.py
-          name: Mocked Tests
+          command: python ./tests/socket_tests.py
+          name: Mocked Socket Tests
 
 workflows:
   main:
