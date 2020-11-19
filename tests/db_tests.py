@@ -37,9 +37,9 @@ class MyTest(TestCase):
         "name": "Mr.Tester",
         "profile_pic": "image",
         "email": "tester@tester.com",
-        "shared_recipes": [],
+        "shared_recipes": [TEST_RECIPE_ID],
         "shopping_list": ["potato"],
-        "saved_recipes": [],
+        "saved_recipes": [TEST_RECIPE_ID],
     }
     TEST_ADD_RECIPE = {
         "id": TEST_RECIPE_ID,
@@ -214,23 +214,23 @@ class MyTest(TestCase):
         db.session.add(models.Users(**self.TEST_ADD_USER))
         db_queries.remove_from_shopping_list("potato", self.TEST_ID)
         db_user = db.session.query(models.Users).get(self.TEST_ID)
-        assert "test" not in db_user.shopping_list
+        assert "potato" not in db_user.shopping_list
 
     def test_add_shared_recipe(self):
         db.session.add(models.Levels(difficulty=self.DIFFICULTY))
         db.session.add(models.Users(**self.TEST_ADD_USER))
         db.session.add(models.Recipe(**self.TEST_ADD_RECIPE))
-        db_queries.add_shared_recipe(self.TEST_RECIPE_ID, self.TEST_ID)
+        db_queries.add_shared_recipe(12345, self.TEST_ID)
         db_user = db.session.query(models.Users).get(self.TEST_ID)
-        assert self.TEST_RECIPE_ID in db_user.shared_recipes
+        assert 12345 in db_user.shared_recipes
 
     def test_add_saved_recipe(self):
         db.session.add(models.Levels(difficulty=self.DIFFICULTY))
         db.session.add(models.Users(**self.TEST_ADD_USER))
         db.session.add(models.Recipe(**self.TEST_ADD_RECIPE))
-        db_queries.add_saved_recipe(self.TEST_RECIPE_ID, self.TEST_ID)
+        db_queries.add_saved_recipe(12345, self.TEST_ID)
         db_user = db.session.query(models.Users).get(self.TEST_ID)
-        assert self.TEST_RECIPE_ID in db_user.saved_recipes
+        assert 12345 in db_user.saved_recipes
 
     def test_search_with_name(self):
         db.session.add(models.Levels(difficulty=self.DIFFICULTY))
@@ -263,7 +263,20 @@ class MyTest(TestCase):
         searched_recipes = db_queries.get_n_recipes(1)
         self.assertEqual(searched_recipes[0]["title"], self.TEST_ADD_RECIPE["title"])
 
+    def test_remove_from_shared_recipe_list(self):
+        db.session.add(models.Users(**self.TEST_ADD_USER))
+        db_queries.remove_shared_recipe(self.TEST_RECIPE_ID, self.TEST_ID)
+        db_user = db.session.query(models.Users).get(self.TEST_ID)
+        assert self.TEST_RECIPE_ID not in db_user.shared_recipes
+        
+    def test_remove_from_saved_recipe_list(self):
+        db.session.add(models.Users(**self.TEST_ADD_USER))
+        db_queries.remove_saved_recipe(self.TEST_RECIPE_ID, self.TEST_ID)
+        db_user = db.session.query(models.Users).get(self.TEST_ID)
+        assert self.TEST_RECIPE_ID not in db_user.saved_recipes
 
+        
+        
 def mocked_generate_user_id():
     return 738270100
 
