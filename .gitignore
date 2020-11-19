@@ -3,3 +3,4 @@ package-lock.json
 sql.env
 kroger.env
 __pycache__
+tests/__pycache__

@@ -8,7 +8,6 @@ from flask_testing import TestCase
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import db_queries
 import models
-import db_utils
 from db_utils import db
 
 
@@ -61,7 +60,8 @@ class MyTest(TestCase):
         app = Flask(__name__)
         app.config["TESTING"] = True
         app.config["SQLALCHEMY_DATABASE_URI"] = self.SQLALCHEMY_DATABASE_URI
-        db_utils.init_db(app)
+        db.init_app(app)
+        db.app = app
         return app
 
     def setUp(self):
