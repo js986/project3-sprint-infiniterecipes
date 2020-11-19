@@ -144,18 +144,44 @@ def remove_from_shopping_list(ingredient, user_id):
 def add_shared_recipe(recipe_id, user_id):
     user = models.Users.query.filter_by(id=user_id).first()
     shared_recipe_list = user.shared_recipes.copy()
-    shared_recipe_list.append(recipe_id)
-    user.shared_recipes = shared_recipe_list
-    db.session.commit()
+    try:
+        shared_recipe_list.index(recipe_id)
+    except ValueError:
+        shared_recipe_list.append(recipe_id)
+        user.shared_recipes = shared_recipe_list
+        db.session.commit()
 
+def remove_shared_recipe(recipe_id,user_id):
+    user = models.Users.query.filter_by(id=user_id).first()
+    shared_recipe_list = user.shared_recipes.copy()
+    try:
+        remove_index = shared_recipe_list.index(recipe_id)
+        shared_recipe_list.pop(remove_index)
+        user.shared_recipes = shared_recipe_list
+        db.session.commit()
+    except ValueError:
+        return -1
 
 def add_saved_recipe(recipe_id, user_id):
     user = models.Users.query.filter_by(id=user_id).first()
     saved_recipe_list = user.saved_recipes.copy()
-    saved_recipe_list.append(recipe_id)
-    user.saved_recipes = saved_recipe_list
-    db.session.commit()
-
+    try:
+        saved_recipe_list.index(recipe_id)
+    except ValueError:
+        saved_recipe_list.append(recipe_id)
+        user.saved_recipes = saved_recipe_list
+        db.session.commit()
+        
+def remove_saved_recipe(recipe_id,user_id):
+    user = models.Users.query.filter_by(id=user_id).first()
+    saved_recipe_list = user.saved_recipes.copy()
+    try:
+        remove_index = saved_recipe_list.index(recipe_id)
+        saved_recipe_list.pop(remove_index)
+        user.saved_recipes = saved_recipe_list
+        db.session.commit()
+    except ValueError:
+        return -1
 
 def search_with_name(recipe_title):
     recipes = models.Recipe.query.filter(
@@ -164,7 +190,6 @@ def search_with_name(recipe_title):
     if not recipes:
         return []
     return [get_recipe(r.id) for r in recipes]
-
 
 def search_by_tag(tag_name):
     recipes = models.Tag.query.filter(
