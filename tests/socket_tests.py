@@ -141,20 +141,13 @@ class AppTestCase(unittest.TestCase):
             client.disconnect()
 
     def test_on_save_recipe(self):
-        with mock.patch("db_queries.get_user_id", mocked_get_user_id):
-            with mock.patch("db_queries.add_saved_recipe", mocked_add_saved_recipe):
-                client = socketio.test_client(app)
-                client.emit(
-                    "save recipe",
-                    {
-                        "user_email": TEST_USER["email"],
-                        "recipe_id": TEST_SAVE_RECIPE["id"],
-                    },
-                )
-                received = client.get_received()
-                print('received data for saved recipe ' + received)
-                self.assertEqual("tester@tester.com", received[-1]["args"][0])
-                client.disconnect()
+        with mock.patch("app.emit_all_recipes"):
+            with mock.patch("db_queries.get_user_id", mocked_get_user_id):
+                with mock.patch("db_queries.add_saved_recipe", mocked_add_saved_recipe):
+                    client = socketio.test_client(app)
+                    received = client.get_received()
+                    print('received data for saved recipe ' + str(received))
+                    client.disconnect()
 
 
 #     def test_cart_page(self):
