@@ -1,76 +1,128 @@
+/* eslint-disable import/no-cycle, react/no-array-index-key */
 import * as React from 'react';
 import ReactDOM from 'react-dom';
+import {
+  Container, Button, Icon, Image, Card,
+} from 'semantic-ui-react';
+import ReactHtmlParser from 'react-html-parser';
 import { Socket } from './Socket';
-import { Container, Header, Divider, Rating, Button, Icon, Image, List, Label } from 'semantic-ui-react';
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import { Recipe } from './Recipe';
 import { Content } from './Content';
 
 export function User() {
-    const [users, setUsers] = React.useState({});
-    const [owned_recipes,setowned_recipes] = React.useState([]);
-    
-  //  const numbersAgain=numbers.toString(); 
-  // console.log("These are owned recipes again "+ numbersAgain)
-    
- //   const ownedList = owned_recipes.map((solo, index) => (
- //       <Label key={index} > {solo}</Label>
-//    ));
-    
-    
-    function getUserData() {
-        React.useEffect(() => {
-            Socket.on('user page load', (data) => {
-                console.log('Received user from the server: ' + data["user"]);
-                 setUsers(data['user'])
-                 setowned_recipes(data['user']['owned_recipes'])
-                
-            })
-        });
-    }
-    
-    function goToHomePage(){
-        Socket.emit('content page', {
-            'content page' : 'content page'
-        });
-        ReactDOM.render(<Content />, document.getElementById('content'));
-    }
-    
-   function goToRecipe(solo){
-        Socket.emit('recipe page', {
-            'id' : solo['solo']
-        });
-        ReactDOM.render(<Recipe />, document.getElementById('content'));
-    }
-    
-    getUserData();
-    return ( 
-       <Container>
-            <Button icon labelPosition="left" onClick={goToHomePage}>
+  const [users, setUsers] = React.useState({});
+  const [ownedRecipes, setOwnedRecipes] = React.useState([]);
+  const [savedRecipes, setSavedRecipes] = React.useState([]);
 
-            <Icon name="left arrow" />
-            Back to Homepage
-            </Button> <br /> <br />
-            <Image src={users["profile_pic"]} />
-            <h3> {users["name"]} </h3>
-            <h3>{users["email"]} </h3>
-            <div className="tags">  
-                <h2> Your Recipes </h2>
-                <ul style={{listStyleType:"none"}}>
-                {
-                    owned_recipes.map((solo, index) => (
-                    <li><button onClick={() => goToRecipe({solo})}> {solo} </button></li>
-                    ),
-                    )
+  //  const numbersAgain=numbers.toString();
+  // console.log("These are owned recipes again "+ numbersAgain)
+
+  //   const ownedList = owned_recipes.map((solo, index) => (
+  //       <Label key={index} > {solo}</Label>
+  //    ));
+
+  function handleSubmit(event, index) {
+    event.preventDefault();
+    const { id } = savedRecipes[index];
+    Socket.emit('recipe page', {
+      id,
+    });
+    ReactDOM.render(<Recipe />, document.getElementById('content'));
+  }
+
+  const savedList = savedRecipes.map((savedRecipe, index) => (
+    <Card key={index} onClick={(event) => handleSubmit(event, index)}>
+      <Image src={savedRecipe.images[0]} wrapped ui={false} />
+      <Card.Content>
+        <Card.Header>{savedRecipe.title}</Card.Header>
+        <Card.Meta>
+          <span className="username">
+            By:
+            {savedRecipe.name}
+          </span>
+        </Card.Meta>
+        <Card.Description>
+          <span className="description">{ReactHtmlParser(savedRecipe.description)}</span>
+        </Card.Description>
+      </Card.Content>
+      <Card.Content extra>
+        <span className="difficulty">{savedRecipe.difficulty}</span>
+      </Card.Content>
+    </Card>
+
+  ));
+
+  function getUserData() {
+    React.useEffect(() => {
+      Socket.on('user page load', (data) => {
+        setUsers(data.user);
+        setOwnedRecipes(data.user.owned_recipes);
+        setSavedRecipes(data.saved_recipes);
+      });
+    });
+  }
+
+  function goToHomePage() {
+    Socket.emit('content page', {
+      'content page': 'content page',
+    });
+    ReactDOM.render(<Content />, document.getElementById('content'));
+  }
+
+  function goToRecipe(solo) {
+    Socket.emit('recipe page', {
+      id: solo.solo,
+    });
+    ReactDOM.render(<Recipe />, document.getElementById('content'));
+  }
+
+  getUserData();
+  return (
+    <Container>
+      <Button icon labelPosition="left" onClick={goToHomePage}>
+
+        <Icon name="left arrow" />
+        Back to Homepage
+      </Button>
+      {' '}
+      <br />
+      {' '}
+      <br />
+      <Image src={users.profile_pic} />
+      <h3>
+        {' '}
+        {users.name}
+        {' '}
+      </h3>
+      <h3>
+        {users.email}
+        {' '}
+      </h3>
+      <div className="tags">
+        <h2> Your Recipes </h2>
+        <ul style={{ listStyleType: 'none' }}>
+          {
+                    ownedRecipes.map((solo, index) => (
+                      <li key={index}>
+                        <button type="button" onClick={() => goToRecipe({ solo })}>
+                          {' '}
+                          {solo}
+                          {' '}
+                        </button>
+                      </li>
+                    ))
                 }
-                </ul>
-            </div>
-            <div>
-                <h2> Shared Recipes </h2>
-            </div>
-            <div>
-                <h2> Saved Recipes </h2>
-            </div>
-        </Container>
-        );
+        </ul>
+      </div>
+      <div>
+        <h2> Shared Recipes </h2>
+      </div>
+      <div>
+        <h2> Saved Recipes </h2>
+        <Card.Group itemsPerRow={6}>
+          {savedList}
+        </Card.Group>
+      </div>
+    </Container>
+  );
 }
