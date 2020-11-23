@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { List, Button, Container, Form, Icon, Header, Divider} from 'semantic-ui-react';
 import { Content } from './Content';
 import { Socket } from './Socket';
+import ReactPlayer from "react-player"
 
 const diff_options = [
     {key: "easy", text:"Easy", value:"easy"},
@@ -26,6 +27,7 @@ export function RecipeForm() {
     const [description, setDescription] = React.useState("");
     const [servings, setServings] = React.useState("");
     const [image, setImage] = React.useState("");
+    const [video, setVideo] = React.useState("");
     const [difficulty, setDifficulty] = React.useState("");
     const [time, setTime] = React.useState("");
     
@@ -102,6 +104,7 @@ export function RecipeForm() {
             'difficulty' : difficulty,
             'description': description,
             'image': image,
+            'video': video,
             'ingredients' : ingredientsField,
             'instructions': instructionsField,
             'tags': tagsField,
@@ -139,6 +142,10 @@ export function RecipeForm() {
     
     function changeImage(event) {
         setImage(event.target.value);
+    }
+    
+    function changeVideo(event) {
+        setVideo(event.target.value);
     }
         
     function addIngredientField() {
@@ -232,12 +239,21 @@ export function RecipeForm() {
                     onChange={changeServings}
                 />
             </Form.Group>
-            <Form.Input required 
-            label="Image URL" 
-            placeholder="Enter image URL" 
-            value={image}
-            onChange={changeImage}
-            />
+            <Form.Group>
+                <Form.Input 
+                required 
+                label="Image URL" 
+                placeholder="Enter image URL" 
+                value={image}
+                onChange={changeImage}
+                />
+                <Form.Input 
+                label="Youtube Video URL" 
+                placeholder="Enter youtube video URL"
+                value={video} 
+                onChange={changeVideo}
+                />
+            </Form.Group>
             <Form.Field>
                 <Form.TextArea 
                 label='Description' 

@@ -8,12 +8,15 @@ import ReactHtmlParser from 'react-html-parser';
 import { Socket } from './Socket';
 import { Content } from './Content';
 import { User } from './User';
+import ReactPlayer from "react-player"
+
 
 export function Recipe() {
   const [recipe, setRecipe] = React.useState({});
   const [ingredients, setIngredients] = React.useState([]);
   const [instructions, setInstructions] = React.useState([]);
   const [tags, setTags] = React.useState([]);
+  const regexConst = /^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
 
   const ingredientList = ingredients.map((ingredient, index) => (
     <List.Item key={index}>{`${ingredient.amount} ${ingredient.unit} ${ingredient.name}`}</List.Item>
@@ -102,6 +105,7 @@ export function Recipe() {
         <Button icon="share"/>
         <Button className="bookmark-button" icon="bookmark" onClick={saveRecipe} />
       </Button.Group>
+      {regexConst.test(recipe.images) === true ? <ReactPlayer url={recipe.images}/> : null}
       <Divider />
       <Header sub>
         Difficulty:
