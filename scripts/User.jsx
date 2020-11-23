@@ -51,12 +51,34 @@ export function User() {
     </Card>
 
   ));
+  
+  const ownedList = ownedRecipes.map((ownedRecipe, index) => (
+    <Card key={index} onClick={(event) => goToRecipe(event, index)}>
+      <Image src={ownedRecipe.images[0]} wrapped ui={false} />
+      <Card.Content>
+        <Card.Header>{ownedRecipe.title}</Card.Header>
+        <Card.Meta>
+          <span className="username">
+            By:
+            {ownedRecipe.name}
+          </span>
+        </Card.Meta>
+        <Card.Description>
+          <span className="description">{ReactHtmlParser(ownedRecipe.description)}</span>
+        </Card.Description>
+      </Card.Content>
+      <Card.Content extra>
+        <span className="difficulty">{ownedRecipe.difficulty}</span>
+      </Card.Content>
+    </Card>
+
+  ));
 
   function getUserData() {
     React.useEffect(() => {
       Socket.on('user page load', (data) => {
         setUsers(data.user);
-        setOwnedRecipes(data.user.owned_recipes);
+        setOwnedRecipes(data.owned_recipes);
         setSavedRecipes(data.saved_recipes);
       });
     });
@@ -69,9 +91,11 @@ export function User() {
     ReactDOM.render(<Content />, document.getElementById('content'));
   }
 
-  function goToRecipe(solo) {
+  function goToRecipe(event, index) {
+    event.preventDefault();
+    const { id } = ownedRecipes[index];
     Socket.emit('recipe page', {
-      id: solo.solo,
+      id,
     });
     ReactDOM.render(<Recipe />, document.getElementById('content'));
   }
@@ -99,20 +123,10 @@ export function User() {
         {' '}
       </h3>
       <div className="tags">
-        <h2> Your Recipes </h2>
-        <ul style={{ listStyleType: 'none' }}>
-          {
-                    ownedRecipes.map((solo, index) => (
-                      <li key={index}>
-                        <button type="button" onClick={() => goToRecipe({ solo })}>
-                          {' '}
-                          {solo}
-                          {' '}
-                        </button>
-                      </li>
-                    ))
-                }
-        </ul>
+        <h2> {users.name}'s Recipes </h2>
+        <Card.Group itemsPerRow={6}>
+          {ownedList}
+        </Card.Group>
       </div>
       <div>
         <h2> Shared Recipes </h2>
