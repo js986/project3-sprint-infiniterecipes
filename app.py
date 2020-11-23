@@ -160,12 +160,22 @@ def on_new_user_page(data):
         username = db_queries.get_user(recipe["user"])["name"]
         recipe["name"] = username
         saved_recipes.append(recipe)
-
+        
+    owned_recipes = []
+    owned_recipes_id = user["owned_recipes"]
+    for recipeId in owned_recipes_id:
+        recipe = db_queries.get_recipe(recipeId)
+        username = db_queries.get_user(recipe["user"])["name"]
+        recipe["name"] = username
+        owned_recipes.append(recipe)
+    
+    print(owned_recipes)
     print(user["email"])
     socketio.emit(
         "user page load",
         {
             "user": user,
+            "owned_recipes" : owned_recipes,
             "saved_recipes": saved_recipes,
         },
         room=flask.request.sid,
