@@ -93,14 +93,14 @@ export function Recipe() {
       <Divider />
       <Header as="h1">{recipe.title}</Header>
       <Header size="medium">
-        By :
+        By: 
         <Button onClick={() => handleSubmit(recipe.user)}>{recipe.name}</Button>
       </Header>
       <Image src={recipe.images} size="large" bordered />
-      <Rating maxRating={5} clearable />
-      <Button.Group basic size="small">
-        <Button icon="share" />
-        <Button icon="bookmark" onClick={saveRecipe} />
+      <Rating className="rating" maxRating={5} clearable size="huge" />
+      <Button.Group className="action-buttons" size="large" basic>
+        <Button icon="share"/>
+        <Button className="bookmark-button" icon="bookmark" onClick={saveRecipe} />
       </Button.Group>
       <Divider />
       <Header sub>

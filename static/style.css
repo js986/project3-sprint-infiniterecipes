@@ -9,3 +9,14 @@
     float: right;
 }
 
+.rating {
+    padding: 1.5rem 0rem;
+}
+
+.action-buttons {
+    float: right;
+}
+
+.bookmark-button:focus {
+    color: blue;
+}
