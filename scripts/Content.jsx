@@ -14,6 +14,8 @@ import { LogoutButton } from './LogoutButton';
 import { Recipe } from './Recipe';
 import { Cart } from './Cart';
 import { RecipeForm } from './RecipeForm';
+// import { RecipeVideo } from './RecipeVideo';
+import ReactPlayer from "react-player"
 
 export function Content() {
   const [recipes, setRecipes] = React.useState([]);
@@ -150,6 +152,7 @@ export function Content() {
         <br />
         <div>
           <center><SearchButton /></center>
+          <br/>
         </div>
         <br />
         <Card.Group itemsPerRow={5}>
