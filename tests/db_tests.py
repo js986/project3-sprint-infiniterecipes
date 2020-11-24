@@ -38,7 +38,7 @@ class MyTest(TestCase):
         "name": "Mr.Tester",
         "profile_pic": "image",
         "email": "tester@tester.com",
-        "shared_recipes": [TEST_RECIPE_ID],
+        "favorite_recipes": [TEST_RECIPE_ID],
         "shopping_list": ["potato"],
         "saved_recipes": [TEST_RECIPE_ID],
     }
@@ -145,7 +145,7 @@ class MyTest(TestCase):
                 email=self.TEST_USER["email"],
                 name=self.TEST_USER["name"],
                 shopping_list=[],
-                shared_recipes=[],
+                favorite_recipes=[],
                 saved_recipes=[],
                 profile_pic=self.TEST_USER["imageURL"],
             )
@@ -161,7 +161,7 @@ class MyTest(TestCase):
                 email=self.TEST_USER["email"],
                 name=self.TEST_USER["name"],
                 shopping_list=[],
-                shared_recipes=[],
+                favorite_recipes=[],
                 saved_recipes=[],
                 profile_pic=self.TEST_USER["imageURL"],
             )
@@ -174,7 +174,7 @@ class MyTest(TestCase):
         self.assertEqual(self.TEST_USER["imageURL"], db_user["profile_pic"])
         self.assertEqual(db_user["shopping_list"], [])
         self.assertEqual(db_user["saved_recipes"], [])
-        self.assertEqual(db_user["shared_recipes"], [])
+        self.assertEqual(db_user["favorite_recipes"], [])
         self.assertEqual(db_user["owned_recipes"], [])
 
     def test_get_recipe(self):
@@ -211,13 +211,13 @@ class MyTest(TestCase):
         db_user = db.session.query(models.Users).get(self.TEST_ID)
         assert "potato" not in db_user.shopping_list
 
-    def test_add_shared_recipe(self):
+    def test_add_favorite_recipe(self):
         db.session.add(models.Levels(difficulty=self.DIFFICULTY))
         db.session.add(models.Users(**self.TEST_ADD_USER))
         db.session.add(models.Recipe(**self.TEST_ADD_RECIPE))
-        db_queries.add_shared_recipe(12345, self.TEST_ID)
+        db_queries.add_favorite_recipe(12345, self.TEST_ID)
         db_user = db.session.query(models.Users).get(self.TEST_ID)
-        assert 12345 in db_user.shared_recipes
+        assert 12345 in db_user.favorite_recipes
 
     def test_add_saved_recipe(self):
         db.session.add(models.Levels(difficulty=self.DIFFICULTY))
@@ -262,7 +262,7 @@ class MyTest(TestCase):
         db.session.add(models.Users(**self.TEST_ADD_USER))
         db_queries.remove_shared_recipe(self.TEST_RECIPE_ID, self.TEST_ID)
         db_user = db.session.query(models.Users).get(self.TEST_ID)
-        assert self.TEST_RECIPE_ID not in db_user.shared_recipes
+        assert self.TEST_RECIPE_ID not in db_user.favorite_recipes
         
     def test_remove_from_saved_recipe_list(self):
         db.session.add(models.Users(**self.TEST_ADD_USER))

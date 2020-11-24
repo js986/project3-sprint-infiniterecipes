@@ -49,7 +49,7 @@ def add_user(user_dict):
         email=user_dict["email"],
         name=user_dict["name"],
         profile_pic=user_dict["imageURL"],
-        shared_recipes=[],
+        favorite_recipes=[],
         saved_recipes=[],
         shopping_list=[],
     )
@@ -134,7 +134,7 @@ def get_user(user_id):
         "name": db_user.name,
         "profile_pic": db_user.profile_pic,
         "saved_recipes": db_user.saved_recipes,
-        "shared_recipes": db_user.shared_recipes,
+        "favorite_recipes": db_user.favorite_recipes,
         "owned_recipes": [recipe.id for recipe in db_user.owned_recipes],
         "shopping_list": db_user.shopping_list,
     }
@@ -188,23 +188,23 @@ def remove_from_shopping_list(ingredient, user_id):
     db.session.commit()
 
 
-def add_shared_recipe(recipe_id, user_id):
+def add_favorite_recipe(recipe_id, user_id):
     user = models.Users.query.filter_by(id=user_id).first()
-    shared_recipe_list = user.shared_recipes.copy()
+    shared_recipe_list = user.favorite_recipes.copy()
     try:
         shared_recipe_list.index(recipe_id)
     except ValueError:
         shared_recipe_list.append(recipe_id)
-        user.shared_recipes = shared_recipe_list
+        user.favorite_recipes = shared_recipe_list
         db.session.commit()
 
 def remove_shared_recipe(recipe_id,user_id):
     user = models.Users.query.filter_by(id=user_id).first()
-    shared_recipe_list = user.shared_recipes.copy()
+    shared_recipe_list = user.favorite_recipes.copy()
     try:
         remove_index = shared_recipe_list.index(recipe_id)
         shared_recipe_list.pop(remove_index)
-        user.shared_recipes = shared_recipe_list
+        user.favorite_recipes = shared_recipe_list
         db.session.commit()
     except ValueError:
         return -1

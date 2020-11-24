@@ -12,7 +12,7 @@ class Users(db.Model):
     name = db.Column(db.String(50), nullable=False)
     profile_pic = db.Column(db.String(), nullable=False)
     owned_recipes = db.relationship('Recipe', backref='user', lazy=True)
-    shared_recipes = db.Column(db.PickleType)
+    favorite_recipes = db.Column(db.PickleType)
     saved_recipes = db.Column(db.PickleType)
     shopping_list = db.Column(db.PickleType)
     
