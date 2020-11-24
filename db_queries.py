@@ -20,6 +20,7 @@ def add_recipe(recipe_dict):
         servings=recipe_dict["servings"],
         images=recipe_dict["images"],
         ingredients=recipe_dict["ingredients"],
+        videos=recipe_dict["videos"]
     )
 
     for tag_text in recipe_dict["tags"]:
@@ -48,7 +49,7 @@ def add_user(user_dict):
         email=user_dict["email"],
         name=user_dict["name"],
         profile_pic=user_dict["imageURL"],
-        shared_recipes=[],
+        favorite_recipes=[],
         saved_recipes=[],
         shopping_list=[],
     )
@@ -56,14 +57,60 @@ def add_user(user_dict):
     db.session.commit()
     return gen_id
 
-
+def edit_recipe(recipe_id, recipe_dict):
+    recipe = models.Recipe.query.filter_by(id=recipe_id).first()
+    if not recipe:
+        return "No recipe with ID {} in database".format(recipe_id)
+    for key in recipe_dict.keys():
+        if key == "title":
+            recipe.title = recipe_dict["title"]
+            db.session.commit()
+        elif key == "videos":
+            recipe.videos = recipe_dict["videos"]
+            db.session.commit()
+        elif key == "ingredients":
+            recipe.ingredients = recipe_dict["ingredients"]
+            db.session.commit()
+        elif key == "images":
+            recipe.images = recipe_dict["images"]
+            db.session.commit()
+        elif key == "servings":
+            recipe.servings = recipe_dict["servings"]
+            db.session.commit()
+        elif key == "readyInMinutes":
+            recipe.ready_in_minutes = recipe_dict["readyInMinutes"]
+            db.session.commit()
+        elif key == "instructions":
+            recipe.instructions = recipe_dict["instructions"]
+            db.session.commit()
+        elif key == "difficulty":
+            recipe.difficulty = recipe_dict["difficulty"]
+            db.session.commit()
+        elif key == "description":
+            recipe.description = recipe_dict["description"]
+            db.session.commit()
+        elif key == "tags":
+            recipe.tags = []
+            db.session.commit()
+            for tag in recipe_dict["tags"]:
+                db_tag = db.session.query(models.Tag).filter_by(name=tag).first()
+                if db_tag:
+                    recipe.tags.append(db_tag)
+                    db.session.commit()
+                else:
+                    new_tag = models.Tag(name=tag)
+                    recipe.tags.append(new_tag)
+                    db.session.add(new_tag)
+                    db.session.commit()
+                    
+    
 def generate_random_user_id():
     gen_id = random.randint(ID_MIN, ID_MAX)
     user = models.Users.query.get(gen_id)
     while user:
         gen_id = random.randint(ID_MIN, ID_MAX)
     return gen_id
-
+    
 
 def generate_random_recipe_id():
     gen_id = random.randint(ID_MIN, ID_MAX)
@@ -87,7 +134,7 @@ def get_user(user_id):
         "name": db_user.name,
         "profile_pic": db_user.profile_pic,
         "saved_recipes": db_user.saved_recipes,
-        "shared_recipes": db_user.shared_recipes,
+        "favorite_recipes": db_user.favorite_recipes,
         "owned_recipes": [recipe.id for recipe in db_user.owned_recipes],
         "shopping_list": db_user.shopping_list,
     }
@@ -141,23 +188,23 @@ def remove_from_shopping_list(ingredient, user_id):
     db.session.commit()
 
 
-def add_shared_recipe(recipe_id, user_id):
+def add_favorite_recipe(recipe_id, user_id):
     user = models.Users.query.filter_by(id=user_id).first()
-    shared_recipe_list = user.shared_recipes.copy()
+    shared_recipe_list = user.favorite_recipes.copy()
     try:
         shared_recipe_list.index(recipe_id)
     except ValueError:
         shared_recipe_list.append(recipe_id)
-        user.shared_recipes = shared_recipe_list
+        user.favorite_recipes = shared_recipe_list
         db.session.commit()
 
 def remove_shared_recipe(recipe_id,user_id):
     user = models.Users.query.filter_by(id=user_id).first()
-    shared_recipe_list = user.shared_recipes.copy()
+    shared_recipe_list = user.favorite_recipes.copy()
     try:
         remove_index = shared_recipe_list.index(recipe_id)
         shared_recipe_list.pop(remove_index)
-        user.shared_recipes = shared_recipe_list
+        user.favorite_recipes = shared_recipe_list
         db.session.commit()
     except ValueError:
         return -1
@@ -213,3 +260,4 @@ def search_by_difficulty(difficulty):
 def get_n_recipes(number):
     recipes = models.Recipe.query.limit(number).all()
     return [get_recipe(r.id) for r in recipes]
+
