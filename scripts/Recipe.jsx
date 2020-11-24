@@ -66,6 +66,19 @@ export function Recipe() {
       user_email: email,
     });
   }
+  
+  function favoriteRecipe() {
+    let email = '';
+    if (localStorage.getItem('user_email') !== null) {
+      email = localStorage.getItem('user_email');
+    }
+    Socket.emit('favorite recipe', {
+      recipe_id: recipe.id,
+      user_email: email,
+    });
+  }
+  
+  
 
   function addToCart(recipes) {
     let email = '';
@@ -102,7 +115,7 @@ export function Recipe() {
       <Image src={recipe.images} size="large" bordered />
       <Rating className="rating" maxRating={5} clearable size="huge" />
       <Button.Group className="action-buttons" size="large" basic>
-        <Button icon="share"/>
+        <Button className="favorite-button" icon="favorite" onClick={favoriteRecipe}/>
         <Button className="bookmark-button" icon="bookmark" onClick={saveRecipe} />
       </Button.Group>
       {regexConst.test(recipe.images) === true ? <ReactPlayer url={recipe.images}/> : null}

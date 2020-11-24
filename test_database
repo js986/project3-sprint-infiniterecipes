@@ -29,7 +29,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: levels; Type: TABLE; Schema: public; Owner: hbd3; Tablespace: 
+-- Name: levels; Type: TABLE; Schema: public; Owner: bufudyne; Tablespace: 
 --
 
 CREATE TABLE levels (
@@ -38,10 +38,10 @@ CREATE TABLE levels (
 );
 
 
-ALTER TABLE public.levels OWNER TO hbd3;
+ALTER TABLE public.levels OWNER TO bufudyne;
 
 --
--- Name: levels_id_seq; Type: SEQUENCE; Schema: public; Owner: hbd3
+-- Name: levels_id_seq; Type: SEQUENCE; Schema: public; Owner: bufudyne
 --
 
 CREATE SEQUENCE levels_id_seq
@@ -52,17 +52,17 @@ CREATE SEQUENCE levels_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.levels_id_seq OWNER TO hbd3;
+ALTER TABLE public.levels_id_seq OWNER TO bufudyne;
 
 --
--- Name: levels_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: hbd3
+-- Name: levels_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bufudyne
 --
 
 ALTER SEQUENCE levels_id_seq OWNED BY levels.id;
 
 
 --
--- Name: recipe; Type: TABLE; Schema: public; Owner: hbd3; Tablespace: 
+-- Name: recipe; Type: TABLE; Schema: public; Owner: bufudyne; Tablespace: 
 --
 
 CREATE TABLE recipe (
@@ -80,10 +80,10 @@ CREATE TABLE recipe (
 );
 
 
-ALTER TABLE public.recipe OWNER TO hbd3;
+ALTER TABLE public.recipe OWNER TO bufudyne;
 
 --
--- Name: recipe_id_seq; Type: SEQUENCE; Schema: public; Owner: hbd3
+-- Name: recipe_id_seq; Type: SEQUENCE; Schema: public; Owner: bufudyne
 --
 
 CREATE SEQUENCE recipe_id_seq
@@ -94,17 +94,17 @@ CREATE SEQUENCE recipe_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.recipe_id_seq OWNER TO hbd3;
+ALTER TABLE public.recipe_id_seq OWNER TO bufudyne;
 
 --
--- Name: recipe_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: hbd3
+-- Name: recipe_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bufudyne
 --
 
 ALTER SEQUENCE recipe_id_seq OWNED BY recipe.id;
 
 
 --
--- Name: tag; Type: TABLE; Schema: public; Owner: hbd3; Tablespace: 
+-- Name: tag; Type: TABLE; Schema: public; Owner: bufudyne; Tablespace: 
 --
 
 CREATE TABLE tag (
@@ -113,10 +113,10 @@ CREATE TABLE tag (
 );
 
 
-ALTER TABLE public.tag OWNER TO hbd3;
+ALTER TABLE public.tag OWNER TO bufudyne;
 
 --
--- Name: tag_id_seq; Type: SEQUENCE; Schema: public; Owner: hbd3
+-- Name: tag_id_seq; Type: SEQUENCE; Schema: public; Owner: bufudyne
 --
 
 CREATE SEQUENCE tag_id_seq
@@ -127,17 +127,17 @@ CREATE SEQUENCE tag_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.tag_id_seq OWNER TO hbd3;
+ALTER TABLE public.tag_id_seq OWNER TO bufudyne;
 
 --
--- Name: tag_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: hbd3
+-- Name: tag_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bufudyne
 --
 
 ALTER SEQUENCE tag_id_seq OWNED BY tag.id;
 
 
 --
--- Name: tags; Type: TABLE; Schema: public; Owner: hbd3; Tablespace: 
+-- Name: tags; Type: TABLE; Schema: public; Owner: bufudyne; Tablespace: 
 --
 
 CREATE TABLE tags (
@@ -146,10 +146,10 @@ CREATE TABLE tags (
 );
 
 
-ALTER TABLE public.tags OWNER TO hbd3;
+ALTER TABLE public.tags OWNER TO bufudyne;
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: hbd3; Tablespace: 
+-- Name: users; Type: TABLE; Schema: public; Owner: bufudyne; Tablespace: 
 --
 
 CREATE TABLE users (
@@ -163,10 +163,10 @@ CREATE TABLE users (
 );
 
 
-ALTER TABLE public.users OWNER TO hbd3;
+ALTER TABLE public.users OWNER TO bufudyne;
 
 --
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: hbd3
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: bufudyne
 --
 
 CREATE SEQUENCE users_id_seq
@@ -177,45 +177,45 @@ CREATE SEQUENCE users_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.users_id_seq OWNER TO hbd3;
+ALTER TABLE public.users_id_seq OWNER TO bufudyne;
 
 --
--- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: hbd3
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bufudyne
 --
 
 ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: hbd3
+-- Name: id; Type: DEFAULT; Schema: public; Owner: bufudyne
 --
 
 ALTER TABLE ONLY levels ALTER COLUMN id SET DEFAULT nextval('levels_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: hbd3
+-- Name: id; Type: DEFAULT; Schema: public; Owner: bufudyne
 --
 
 ALTER TABLE ONLY recipe ALTER COLUMN id SET DEFAULT nextval('recipe_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: hbd3
+-- Name: id; Type: DEFAULT; Schema: public; Owner: bufudyne
 --
 
 ALTER TABLE ONLY tag ALTER COLUMN id SET DEFAULT nextval('tag_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: hbd3
+-- Name: id; Type: DEFAULT; Schema: public; Owner: bufudyne
 --
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
 
 
 --
--- Data for Name: levels; Type: TABLE DATA; Schema: public; Owner: hbd3
+-- Data for Name: levels; Type: TABLE DATA; Schema: public; Owner: bufudyne
 --
 
 COPY levels (id, difficulty) FROM stdin;
@@ -226,14 +226,14 @@ COPY levels (id, difficulty) FROM stdin;
 
 
 --
--- Name: levels_id_seq; Type: SEQUENCE SET; Schema: public; Owner: hbd3
+-- Name: levels_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bufudyne
 --
 
 SELECT pg_catalog.setval('levels_id_seq', 3, true);
 
 
 --
--- Data for Name: recipe; Type: TABLE DATA; Schema: public; Owner: hbd3
+-- Data for Name: recipe; Type: TABLE DATA; Schema: public; Owner: bufudyne
 --
 
 COPY recipe (id, title, description, images, videos, user_id, difficulty, ingredients, instructions, ready_in_minutes, servings) FROM stdin;
@@ -336,14 +336,14 @@ COPY recipe (id, title, description, images, videos, user_id, difficulty, ingred
 
 
 --
--- Name: recipe_id_seq; Type: SEQUENCE SET; Schema: public; Owner: hbd3
+-- Name: recipe_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bufudyne
 --
 
 SELECT pg_catalog.setval('recipe_id_seq', 1, false);
 
 
 --
--- Data for Name: tag; Type: TABLE DATA; Schema: public; Owner: hbd3
+-- Data for Name: tag; Type: TABLE DATA; Schema: public; Owner: bufudyne
 --
 
 COPY tag (id, name) FROM stdin;
@@ -410,14 +410,14 @@ COPY tag (id, name) FROM stdin;
 
 
 --
--- Name: tag_id_seq; Type: SEQUENCE SET; Schema: public; Owner: hbd3
+-- Name: tag_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bufudyne
 --
 
 SELECT pg_catalog.setval('tag_id_seq', 59, true);
 
 
 --
--- Data for Name: tags; Type: TABLE DATA; Schema: public; Owner: hbd3
+-- Data for Name: tags; Type: TABLE DATA; Schema: public; Owner: bufudyne
 --
 
 COPY tags (tag_id, recipe_id) FROM stdin;
@@ -910,11 +910,11 @@ COPY tags (tag_id, recipe_id) FROM stdin;
 
 
 --
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: hbd3
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: bufudyne
 --
 
 COPY users (id, email, name, profile_pic, favorite_recipes, saved_recipes, shopping_list) FROM stdin;
-936536453	hbd3@njit.edu 	Hasan Dulgeroglu	https://us.v-cdn.net/6029397/uploads/defaultavatar/nD0LWW9MQTB29.jpg	\\x80049503000000000000005d942e	\\x80049503000000000000005d942e	\\x80049503000000000000005d942e
+936536453	bufudyne@njit.edu 	Hasan Dulgeroglu	https://us.v-cdn.net/6029397/uploads/defaultavatar/nD0LWW9MQTB29.jpg	\\x80049503000000000000005d942e	\\x80049503000000000000005d942e	\\x80049503000000000000005d942e
 498847206	rjs83@njit.edu	Risha Shah	https://us.v-cdn.net/6029397/uploads/defaultavatar/nD0LWW9MQTB29.jpg	\\x80049503000000000000005d942e	\\x80049503000000000000005d942e	\\x80049503000000000000005d942e
 741422998	js986@njit.edu	Jordan Sefah	https://us.v-cdn.net/6029397/uploads/defaultavatar/nD0LWW9MQTB29.jpg	\\x80049503000000000000005d942e	\\x80049503000000000000005d942e	\\x80049503000000000000005d942e
 623751688	dn279@njit.edu	Dominik Nef	https://us.v-cdn.net/6029397/uploads/defaultavatar/nD0LWW9MQTB29.jpg	\\x80049503000000000000005d942e	\\x80049503000000000000005d942e	\\x80049503000000000000005d942e
@@ -922,14 +922,14 @@ COPY users (id, email, name, profile_pic, favorite_recipes, saved_recipes, shopp
 
 
 --
--- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: hbd3
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bufudyne
 --
 
 SELECT pg_catalog.setval('users_id_seq', 1, false);
 
 
 --
--- Name: levels_difficulty_key; Type: CONSTRAINT; Schema: public; Owner: hbd3; Tablespace: 
+-- Name: levels_difficulty_key; Type: CONSTRAINT; Schema: public; Owner: bufudyne; Tablespace: 
 --
 
 ALTER TABLE ONLY levels
@@ -937,7 +937,7 @@ ALTER TABLE ONLY levels
 
 
 --
--- Name: levels_pkey; Type: CONSTRAINT; Schema: public; Owner: hbd3; Tablespace: 
+-- Name: levels_pkey; Type: CONSTRAINT; Schema: public; Owner: bufudyne; Tablespace: 
 --
 
 ALTER TABLE ONLY levels
@@ -945,7 +945,7 @@ ALTER TABLE ONLY levels
 
 
 --
--- Name: recipe_pkey; Type: CONSTRAINT; Schema: public; Owner: hbd3; Tablespace: 
+-- Name: recipe_pkey; Type: CONSTRAINT; Schema: public; Owner: bufudyne; Tablespace: 
 --
 
 ALTER TABLE ONLY recipe
@@ -953,7 +953,7 @@ ALTER TABLE ONLY recipe
 
 
 --
--- Name: tag_name_key; Type: CONSTRAINT; Schema: public; Owner: hbd3; Tablespace: 
+-- Name: tag_name_key; Type: CONSTRAINT; Schema: public; Owner: bufudyne; Tablespace: 
 --
 
 ALTER TABLE ONLY tag
@@ -961,7 +961,7 @@ ALTER TABLE ONLY tag
 
 
 --
--- Name: tag_pkey; Type: CONSTRAINT; Schema: public; Owner: hbd3; Tablespace: 
+-- Name: tag_pkey; Type: CONSTRAINT; Schema: public; Owner: bufudyne; Tablespace: 
 --
 
 ALTER TABLE ONLY tag
@@ -969,7 +969,7 @@ ALTER TABLE ONLY tag
 
 
 --
--- Name: tags_pkey; Type: CONSTRAINT; Schema: public; Owner: hbd3; Tablespace: 
+-- Name: tags_pkey; Type: CONSTRAINT; Schema: public; Owner: bufudyne; Tablespace: 
 --
 
 ALTER TABLE ONLY tags
@@ -977,7 +977,7 @@ ALTER TABLE ONLY tags
 
 
 --
--- Name: users_email_key; Type: CONSTRAINT; Schema: public; Owner: hbd3; Tablespace: 
+-- Name: users_email_key; Type: CONSTRAINT; Schema: public; Owner: bufudyne; Tablespace: 
 --
 
 ALTER TABLE ONLY users
@@ -985,7 +985,7 @@ ALTER TABLE ONLY users
 
 
 --
--- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: hbd3; Tablespace: 
+-- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: bufudyne; Tablespace: 
 --
 
 ALTER TABLE ONLY users
@@ -993,7 +993,7 @@ ALTER TABLE ONLY users
 
 
 --
--- Name: recipe_difficulty_fkey; Type: FK CONSTRAINT; Schema: public; Owner: hbd3
+-- Name: recipe_difficulty_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bufudyne
 --
 
 ALTER TABLE ONLY recipe
@@ -1001,7 +1001,7 @@ ALTER TABLE ONLY recipe
 
 
 --
--- Name: recipe_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: hbd3
+-- Name: recipe_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bufudyne
 --
 
 ALTER TABLE ONLY recipe
@@ -1009,7 +1009,7 @@ ALTER TABLE ONLY recipe
 
 
 --
--- Name: tags_recipe_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: hbd3
+-- Name: tags_recipe_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bufudyne
 --
 
 ALTER TABLE ONLY tags
@@ -1017,7 +1017,7 @@ ALTER TABLE ONLY tags
 
 
 --
--- Name: tags_tag_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: hbd3
+-- Name: tags_tag_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bufudyne
 --
 
 ALTER TABLE ONLY tags

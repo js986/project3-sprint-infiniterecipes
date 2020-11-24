@@ -169,6 +169,14 @@ def on_new_user_page(data):
         recipe["name"] = username
         owned_recipes.append(recipe)
     
+    favorite_recipes = []
+    favorite_recipes_id = user["favorite_recipes"]
+    for recipe_id in favorite_recipes_id:
+        recipe = db_queries.get_recipe(recipe_id)
+        username = db_queries.get_user(recipe["user"])["name"]
+        recipe["name"] = username
+        favorite_recipes.append(recipe)
+    
     print(user["email"])
     socketio.emit(
         "user page load",
@@ -176,6 +184,7 @@ def on_new_user_page(data):
             "user": user,
             "owned_recipes": owned_recipes,
             "saved_recipes": saved_recipes,
+            "favorite_recipes": favorite_recipes,
         },
         room=flask.request.sid,
     )
@@ -279,6 +288,11 @@ def new_recipe(data):
 def on_save_recipe(data):
     user_id = db_queries.get_user_id(data["user_email"])
     db_queries.add_saved_recipe(data["recipe_id"], user_id)
+    
+@socketio.on("favorite recipe")
+def on_favorite_recipe(data):
+    user_id = db_queries.get_user_id(data["user_email"])
+    db_queries.add_favorite_recipe(data["recipe_id"], user_id)
 
 
 @app.route("/")
