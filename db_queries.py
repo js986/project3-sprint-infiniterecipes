@@ -20,9 +20,13 @@ def add_recipe(recipe_dict):
         servings=recipe_dict["servings"],
         images=recipe_dict["images"],
         ingredients=recipe_dict["ingredients"],
-        videos=recipe_dict["videos"]
     )
-
+    
+    if 'videos' in recipe_dict.keys():
+        new_recipe.videos = recipe_dict['videos']
+    else:
+        new_recipe.videos = []
+    
     for tag_text in recipe_dict["tags"]:
         tag = db.session.query(models.Tag).filter_by(name=tag_text).first()
         if tag:
