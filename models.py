@@ -26,6 +26,7 @@ class Recipe(db.Model):
     title = db.Column(db.String(150), nullable=False)
     description = db.Column(db.String())
     images = db.Column(db.PickleType, nullable=False)
+    videos = db.Column(db.PickleType)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     difficulty = db.Column(db.String(50), db.ForeignKey('levels.difficulty'), nullable=False)
     ingredients = db.Column(db.PickleType, nullable=False)
