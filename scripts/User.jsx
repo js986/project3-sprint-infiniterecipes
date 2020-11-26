@@ -2,7 +2,7 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  Container, Button, Icon, Image, Card,
+  Container, Button, Icon, Image, Card, Divider,
 } from 'semantic-ui-react';
 import ReactHtmlParser from 'react-html-parser';
 import { Socket } from './Socket';
@@ -13,6 +13,7 @@ export function User() {
   const [users, setUsers] = React.useState({});
   const [ownedRecipes, setOwnedRecipes] = React.useState([]);
   const [savedRecipes, setSavedRecipes] = React.useState([]);
+  const [favoriteRecipes, setFavoriteRecipes] = React.useState([]);
 
   //  const numbersAgain=numbers.toString();
   // console.log("These are owned recipes again "+ numbersAgain)
@@ -52,6 +53,28 @@ export function User() {
 
   ));
   
+    const favoritedList = favoriteRecipes.map((favoriteRecipe, index) => (
+    <Card key={index} onClick={(event) => handleSubmit(event, index)}>
+      <Image src={favoriteRecipe.images[0]} wrapped ui={false} />
+      <Card.Content>
+        <Card.Header>{favoriteRecipe.title}</Card.Header>
+        <Card.Meta>
+          <span className="username">
+            By:
+            {favoriteRecipe.name}
+          </span>
+        </Card.Meta>
+        <Card.Description>
+          <span className="description">{ReactHtmlParser(favoriteRecipe.description)}</span>
+        </Card.Description>
+      </Card.Content>
+      <Card.Content extra>
+        <span className="difficulty">{favoriteRecipe.difficulty}</span>
+      </Card.Content>
+    </Card>
+
+  ));
+  
   const ownedList = ownedRecipes.map((ownedRecipe, index) => (
     <Card key={index} onClick={(event) => goToRecipe(event, index)}>
       <Image src={ownedRecipe.images[0]} wrapped ui={false} />
@@ -80,6 +103,7 @@ export function User() {
         setUsers(data.user);
         setOwnedRecipes(data.owned_recipes);
         setSavedRecipes(data.saved_recipes);
+        setFavoriteRecipes(data.favorite_recipes);
       });
     });
   }
@@ -124,15 +148,21 @@ export function User() {
       </h3>
       <div className="tags">
         <h2> {users.name}'s Recipes </h2>
+        <Divider/>
         <Card.Group itemsPerRow={6}>
           {ownedList}
         </Card.Group>
       </div>
-      <div>
-        <h2> Shared Recipes </h2>
+      <div className="favorite-recipes">
+        <h2> Favorite Recipes </h2>
+        <Divider />
+        <Card.Group itemsPerRow={6}>
+          {favoritedList}
+        </Card.Group>
       </div>
-      <div>
+      <div className="saved-recipes">
         <h2> Saved Recipes </h2>
+        <Divider />
         <Card.Group itemsPerRow={6}>
           {savedList}
         </Card.Group>
