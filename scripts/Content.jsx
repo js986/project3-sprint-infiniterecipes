@@ -14,10 +14,16 @@ import { LogoutButton } from './LogoutButton';
 import { Recipe } from './Recipe';
 import { Cart } from './Cart';
 import { RecipeForm } from './RecipeForm';
+import { User } from './User';
 // import { RecipeVideo } from './RecipeVideo';
-import ReactPlayer from "react-player"
+import ReactPlayer from "react-player";
+import { ForkRecipe } from './ForkRecipe';
 
 export function Content() {
+  const [recipe, setRecipe] = React.useState({});
+  const [ingredients, setIngredients] = React.useState([]);
+  const [instructions, setInstructions] = React.useState([]);
+  const [tags, setTags] = React.useState([]);
   const [recipes, setRecipes] = React.useState([]);
   const [guser, setGUser] = React.useState([]);
   const [isloggedin, setIsloggedin] = React.useState(false);
@@ -63,6 +69,9 @@ export function Content() {
     React.useEffect(() => {
       Socket.on('search results received', (data) => {
         setRecipes(data.search_output);
+        setIngredients(data.recipe.ingredients);
+        setInstructions(data.recipe.instructions);
+        setTags(data.recipe.tags);
       });
     });
   }
@@ -84,11 +93,27 @@ export function Content() {
   function goToForm() {
     ReactDOM.render(<RecipeForm />, document.getElementById('content'));
   }
+  
+  function goToUser(user) {
+    Socket.emit('user page', {
+      user_id: user,
+    });
+    ReactDOM.render(<User />, document.getElementById('content'));
+  }
+  
+  function getRecipeData() {
+    React.useEffect(() => {
+      Socket.on('recipe page load', (data) => {
+        setRecipe(data.recipe);
+      });
+    });
+  }
 
   getNewRecipes();
   updateRecipes();
   updateLogin();
   updateLogout();
+  getRecipeData();
 
   const recipeList = recipes.map((recipe, index) => (
     <Card key={index} onClick={() => handleSubmit(recipe.id)}>
@@ -134,7 +159,7 @@ export function Content() {
             ? (
               <div className="loggedIn-buttons">
                 <Button floated="right" onClick={goToForm}>POST</Button>
-                <Button floated="right">{guser}</Button>
+                <Button floated="right" onClick={() => goToUser(guser)}>{guser}</Button>
                 <br />
                 <br />
                 <br />

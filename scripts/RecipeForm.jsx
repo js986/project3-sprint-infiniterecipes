@@ -4,6 +4,7 @@ import { List, Button, Container, Form, Icon, Header, Divider} from 'semantic-ui
 import { Content } from './Content';
 import { Socket } from './Socket';
 import ReactPlayer from "react-player"
+import { Recipe } from './Recipe';
 
 const diff_options = [
     {key: "easy", text:"Easy", value:"easy"},
@@ -23,6 +24,7 @@ export function RecipeForm() {
         {'tag': ''}
         ]);
         
+    const [recipe, setRecipe] = React.useState({});
     const [title, setTitle] = React.useState("");
     const [description, setDescription] = React.useState("");
     const [servings, setServings] = React.useState("");
@@ -30,8 +32,6 @@ export function RecipeForm() {
     const [video, setVideo] = React.useState("");
     const [difficulty, setDifficulty] = React.useState("");
     const [time, setTime] = React.useState("");
-    
-    
         
     const ingredientsVals = ingredientsField.map((ingredient,index) => (
         <Form.Group key={index}>
@@ -94,6 +94,25 @@ export function RecipeForm() {
             <Button icon="minus" onClick={event => removeTagsField(index, event)}/>
         </Form.Group>
     ));
+    
+    function getForkRecipeData() {
+        React.useEffect(() => {
+          Socket.on('load fork page', (data) => {
+              setRecipe(data.recipe);
+              setTitle(data.recipe.title);
+              setDescription(data.recipe.description);
+              setServings(data.recipe.servings);
+              setImage(data.recipe.images);
+              setDifficulty(data.recipe.difficulty);
+              setTime(data.recipe.readyInMinutes);
+              setIngredientsField(data.recipe.ingredients);
+              setInstructionsField(data.recipe.instructions);
+            //   setTagsField(data.recipe.tags);
+              console.log("recipe title: " + title);
+          });
+        //   console.log("recipe title: " + data);
+        });
+    }
     
     function submitForm(e) {
         e.preventDefault();
@@ -201,7 +220,7 @@ export function RecipeForm() {
         values[index][event.target.name] = event.target.value;
         setTagsField(values);
     }
-    
+    getForkRecipeData();
     return (
         <Container>
         <Header as="h1">Post Recipe</Header>
@@ -219,6 +238,7 @@ export function RecipeForm() {
                     required
                     label="Difficulty"
                     options={diff_options}
+                    value={difficulty}
                     placeholder="Difficulty"
                     onChange={changeDifficulty}
                 />
