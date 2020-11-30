@@ -145,13 +145,16 @@ def get_user(user_id):
 
 
 def get_recipe(recipe_id):
+    print("get recipe start")
     db_recipe = models.Recipe.query.get(recipe_id)
+    print(str(db_recipe.videos) + " videos here")
     if not db_recipe:
         return "ID not in db"
     return {
         "id": db_recipe.id,
         "user": db_recipe.user_id,
         "images": db_recipe.images,
+        "videos": db_recipe.videos,
         "title": db_recipe.title,
         "readyInMinutes": db_recipe.ready_in_minutes,
         "difficulty": db_recipe.difficulty,
@@ -161,7 +164,6 @@ def get_recipe(recipe_id):
         "ingredients": db_recipe.ingredients,
         "instructions": db_recipe.instructions,
     }
-
 
 def get_shopping_list(user_id):
     user = models.Users.query.get(user_id)

@@ -8,7 +8,9 @@ import ReactHtmlParser from 'react-html-parser';
 import { Socket } from './Socket';
 import { Content } from './Content';
 import { User } from './User';
-import ReactPlayer from "react-player"
+import { ForkRecipe } from './ForkRecipe';
+import ReactPlayer from "react-player";
+import { RecipeForm } from './RecipeForm';
 
 
 export function Recipe() {
@@ -34,6 +36,7 @@ export function Recipe() {
     React.useEffect(() => {
       Socket.on('recipe page load', (data) => {
         setRecipe(data.recipe);
+        console.log(data.recipe.video + " VIDEO HERE");
         setIngredients(data.recipe.ingredients);
         setInstructions(data.recipe.instructions);
         setTags(data.recipe.tags);
@@ -97,6 +100,14 @@ export function Recipe() {
     });
     ReactDOM.render(<Content />, document.getElementById('content'));
   }
+  
+  function forkRecipe(id) {
+    Socket.emit('fork page',  {
+      'id': id
+    });
+    console.log("recipe data here: " + recipe.id)
+    ReactDOM.render(<RecipeForm />, document.getElementById('content'));
+  }
 
   getRecipeData();
   getCartNumItems();
@@ -118,7 +129,7 @@ export function Recipe() {
         <Button className="favorite-button" icon="favorite" onClick={favoriteRecipe}/>
         <Button className="bookmark-button" icon="bookmark" onClick={saveRecipe} />
       </Button.Group>
-      {regexConst.test(recipe.images) === true ? <ReactPlayer url={recipe.images}/> : null}
+      <Button icon labelPosition="right" onClick={() => forkRecipe(recipe.id)}>Fork this Recipe</Button>
       <Divider />
       <Header sub>
         Difficulty:
