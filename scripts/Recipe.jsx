@@ -8,7 +8,6 @@ import ReactHtmlParser from 'react-html-parser';
 import { Socket } from './Socket';
 import { Content } from './Content';
 import { User } from './User';
-import { ForkRecipe } from './ForkRecipe';
 import ReactPlayer from "react-player";
 import { RecipeForm } from './RecipeForm';
 

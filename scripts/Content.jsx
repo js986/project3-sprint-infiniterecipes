@@ -17,7 +17,6 @@ import { RecipeForm } from './RecipeForm';
 import { User } from './User';
 // import { RecipeVideo } from './RecipeVideo';
 import ReactPlayer from "react-player";
-import { ForkRecipe } from './ForkRecipe';
 
 export function Content() {
   const [recipe, setRecipe] = React.useState({});
