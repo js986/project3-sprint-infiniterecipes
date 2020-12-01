@@ -120,6 +120,7 @@ def on_recipe_page(data):
     recipe = db_queries.get_recipe(data["id"])
     username = db_queries.get_user(recipe["user"])["name"]
     # namespace = "/recipe/" + str(id)
+    print(recipe["videos"])
     recipe["name"] = username
     emit_recipe(SEND_ONE_RECIPE_CHANNEL, recipe)
 

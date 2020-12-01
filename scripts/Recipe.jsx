@@ -37,6 +37,7 @@ export function Recipe() {
         setIngredients(data.recipe.ingredients);
         setInstructions(data.recipe.instructions);
         setTags(data.recipe.tags);
+        console.log('here it is: '+ data.recipe.videos)
       });
     });
   }
