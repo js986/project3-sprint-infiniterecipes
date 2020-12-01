@@ -13,6 +13,7 @@ DIFFICULTY = "easy"
 TEST_RECIPE = {
     "user": TEST_ID,
     "images": ["https://spoonacular.com/recipeImages/657178-556x370.jpg"],
+    "videos": ["https://youtu.be/9MJhVk4Z1Zc"],
     "title": "Protein Packed Carrot Muffins",
     "readyInMinutes": 45,
     "difficulty": DIFFICULTY,
@@ -29,9 +30,10 @@ TEST_ADD_USER = {
     "name": "Mr.Tester",
     "profile_pic": "image",
     "email": "tester@tester.com",
-    "shared_recipes": [],
     "shopping_list": ["potato"],
     "saved_recipes": [],
+    "owned_recipes": [],
+    "favorite_recipes": [],
 }
 TEST_ADD_RECIPE = {
     "id": TEST_RECIPE_ID,
@@ -49,7 +51,7 @@ TEST_ADD_RECIPE = {
 TEST_ADD_TAG = {"name": "tag"}
 
 TEST_SAVE_RECIPE = {
-    "id": TEST_RECIPE_ID,
+    "recipe_id": TEST_RECIPE_ID,
     "user_id": TEST_ID,
     "title": "Protein Packed Carrot Muffins",
     "description": "A description",
@@ -59,6 +61,7 @@ TEST_SAVE_RECIPE = {
     "servings": 6,
     "images": ["https://spoonacular.com/recipeImages/657178-556x370.jpg"],
     "ingredients": [{"name": "Spice Rub", "amount": 1.0, "unit": "tbsp"}],
+    "user_email" : "batman@gmail.org",
 }
 
 
@@ -105,23 +108,26 @@ class AppTestCase(unittest.TestCase):
 
     def test_on_recipe_page(self):
         with mock.patch("app.emit_all_recipes"):
+            client = socketio.test_client(app)
+            assert client.is_connected()
             with mock.patch("db_queries.get_user", mocked_get_user):
                 with mock.patch("db_queries.get_recipe", mocked_get_recipe):
-                    client = socketio.test_client(app)
                     client.emit("recipe page", {"id": 1})
                     received = client.get_received()
+                    print("On Recipe Page: " + str(received))
                     self.assertEqual(
                         TEST_RECIPE["title"], received[-1]["args"][0]["recipe"]["title"]
                     )
-                    client.disconnect
+                    client.disconnect()
 
     #         pass
     #     def test_on_new_search(self):
     #         pass
     def test_on_new_user_page(self):
         with mock.patch("app.emit_all_recipes"):
+            client = socketio.test_client(app)
+            assert client.is_connected()
             with mock.patch("db_queries.get_user", mocked_get_user):
-                client = socketio.test_client(app)
                 client.emit("user page", {"user_id": TEST_ID})
                 received = client.get_received()
                 self.assertEqual(
@@ -142,11 +148,25 @@ class AppTestCase(unittest.TestCase):
 
     def test_on_save_recipe(self):
         with mock.patch("app.emit_all_recipes"):
+            client = socketio.test_client(app)
+            assert client.is_connected()
             with mock.patch("db_queries.get_user_id", mocked_get_user_id):
                 with mock.patch("db_queries.add_saved_recipe", mocked_add_saved_recipe):
-                    client = socketio.test_client(app)
+                    client.emit("save recipe", TEST_SAVE_RECIPE)
                     received = client.get_received()
+                    #self.assertEqual(TEST_SAVE_RECIPE["recipe_id"], received[-1]["args"][0])
                     print('received data for saved recipe ' + str(received))
+                    client.disconnect()
+    
+    def test_on_favorite_recipe(self):
+        with mock.patch("app.emit_all_recipes"):
+            client = socketio.test_client(app)
+            assert client.is_connected()
+            with mock.patch("db_queries.get_user_id", mocked_get_user_id):
+                with mock.patch("db_queries.add_favorite_recipe", mocked_add_favorite_recipe):
+                    client.emit("favorite recipe", TEST_SAVE_RECIPE)
+                    received = client.get_received()
+                    print(received)
                     client.disconnect()
 
 
@@ -188,6 +208,9 @@ def mocked_get_user_id(user_email):
 
 
 def mocked_add_saved_recipe(recipe_id, user_id):
+    return TEST_SAVE_RECIPE
+
+def mocked_add_favorite_recipe(recipe_id, user_id):
     return TEST_SAVE_RECIPE
 
 
