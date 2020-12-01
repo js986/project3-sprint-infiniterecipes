@@ -123,6 +123,16 @@ def on_recipe_page(data):
     print(recipe["videos"])
     recipe["name"] = username
     emit_recipe(SEND_ONE_RECIPE_CHANNEL, recipe)
+    
+@socketio.on("fork page")
+def on_fork_page(data):
+    print("received data from client " + str(data["id"]))
+    recipe = db_queries.get_recipe(data["id"])
+    print("RECIPE: " + str(recipe))
+    username = db_queries.get_user(recipe["user"])["name"]
+    # namespace = "/recipe/" + str(id)
+    recipe["name"] = username
+    emit_recipe("load fork page", recipe)
 
 
 @socketio.on("new search input")
