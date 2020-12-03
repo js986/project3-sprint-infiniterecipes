@@ -221,11 +221,31 @@ export function RecipeForm() {
         setTagsField(values);
     }
     getForkRecipeData();
+    
+    var paperback = {
+    backgroundImage:"url('https://cdn.hipwallpaper.com/i/92/52/vZp6xG.jpg')",
+    // backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center center',
+    backgroundRepeat: 'no-repeat'
+    }
+    
+    var titlestyle = {
+    fontFamily: 'Comic Sans MS',
+    fontSize: '24px'
+    }
+    
+    var desc = {
+    fontFamily: 'Georgia',
+    fontSize: '17px'
+    }
+    
     return (
+        <div  style={paperback}>
         <Container>
-        <Header as="h1">Post Recipe</Header>
+        <Header as="h1" style={titlestyle}>Post Recipe</Header>
         <Divider/>
-        <Form onSubmit={submitForm}>
+        <Form onSubmit={submitForm} style={desc}>
             <Form.Group>
                 <Form.Input
                     required
@@ -303,5 +323,6 @@ export function RecipeForm() {
             <Button type="submit" positive>Post Recipe</Button>
         </Form>
         </Container>
+        </div>
     );
 }

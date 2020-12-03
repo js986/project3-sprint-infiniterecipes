@@ -111,58 +111,110 @@ export function Recipe() {
 
   getRecipeData();
   getCartNumItems();
+  
+  var paperback = {
+    backgroundImage:"url('https://cdn.hipwallpaper.com/i/92/52/vZp6xG.jpg')",
+    // backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center center',
+    backgroundRepeat: 'no-repeat'
+  }
+  
+  var greenbutton = {
+    backgroundColor: '#BDB76B',
+    border: 'none',
+    color: 'white',
+    fontFamily: 'Georgia',
+    fontSize: '17px'
+  }
+  
+  var redbutton = {
+    backgroundColor: '#E9967A',
+    border: 'none',
+    fontFamily: 'Georgia',
+    fontSize: '17px'
+  }
+  
+  var plainbutton = {
+    fontFamily: 'Georgia',
+    fontSize: '17px'
+  }
+  
+  var stars = {
+    backgroundColor: '#BDB76B',
+    border: 'none'
+  }
+  
+  var title = {
+    fontFamily: 'Comic Sans MS'
+  }
+  
+  var desc = {
+    fontFamily: 'Georgia',
+    fontSize: '16px'
+  }
+  
   return (
+    <div  style={paperback}>
     <Container>
-      <Button icon labelPosition="left" onClick={goToHomePage}>
+      <Button icon labelPosition="left" onClick={goToHomePage} style={plainbutton}>
         <Icon name="left arrow" />
         Back to Homepage
       </Button>
       <Divider />
-      <Header as="h1">{recipe.title}</Header>
+      <Header as="h1" style={title}>{recipe.title}</Header>
       <Header size="medium">
         By: 
-        <Button onClick={() => handleSubmit(recipe.user)}>{recipe.name}</Button>
+        <Button style={redbutton} onClick={() => handleSubmit(recipe.user)}>{recipe.name}</Button>
       </Header>
       <Image src={recipe.images} size="large" bordered />
-      <Rating className="rating" maxRating={5} clearable size="huge" />
-      <Button.Group className="action-buttons" size="large" basic>
+      <Rating className="rating" maxRating={5} clearable size="huge" style={stars} />
+      <Button.Group className="action-buttons" size="large" basic style={greenbutton}>
         <Button className="favorite-button" icon="favorite" onClick={favoriteRecipe}/>
         <Button className="bookmark-button" icon="bookmark" onClick={saveRecipe} />
       </Button.Group>
-      <Button icon labelPosition="right" onClick={() => forkRecipe(recipe.id)}>Fork this Recipe</Button>
+      &emsp; &emsp; &emsp; &emsp; &emsp; 
+      <Button  animated='fade' style={greenbutton}>
+        <Button.Content visible icon labelPosition="right">Fork this Recipe</Button.Content>
+        <Button.Content hidden onClick={() => forkRecipe(recipe.id)}>What's your way</Button.Content>
+      </Button>
       <Divider />
-      <Header sub>
+      <Header sub style={desc}>
         Difficulty:
         {recipe.difficulty}
       </Header>
-      <Header sub>
+      <Header sub style={desc}>
         Servings:
         {recipe.servings}
       </Header>
-      <Header sub>
+      <Header sub style={desc}>
         Time:
         {recipe.readyInMinutes}
         {' '}
         Min
       </Header>
       <Header as="h3">Description</Header>
-      <p>
+      <p style={desc}>
         {ReactHtmlParser(recipe.description)}
       </p>
       <Header as="h3">Ingredients</Header>
-      <List celled>
+      <List celled style={desc}>
         {ingredientList}
       </List>
-      <Button onClick={() => addToCart(recipe.ingredients)}>Add Ingredients to Cart</Button>
+      <Button  animated='fade' style={greenbutton}>
+        <Button.Content visible>Add Ingredients to Cart</Button.Content>
+        <Button.Content hidden onClick={() => addToCart(recipe.ingredients)}><Icon name="in cart" /></Button.Content>
+      </Button>
       <Header as="h3">Instructions</Header>
-      <List ordered>
+      <List ordered style={desc}>
         {instructionsList}
       </List>
       <Header as="h3">Tags</Header>
-      <div className="tags">
+      <div className="tags" style={plainbutton}>
         {tagList}
       </div>
-
+      <br />
     </Container>
+    </div>
   );
 }

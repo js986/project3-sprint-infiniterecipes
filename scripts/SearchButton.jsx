@@ -1,5 +1,8 @@
 import * as React from 'react';
 import { Socket } from './Socket';
+import {
+  Container, Header, Divider, Rating, Button, Icon, Image, List, Label,
+} from 'semantic-ui-react';
 
 function handleSubmit(event) {
     let newSearch = document.getElementById("search_input");
@@ -31,10 +34,21 @@ var inputbox = {
 
 var submitbox = {
   width: '13%',
-  backgroundColor: '#778899',
+  backgroundColor: '#BDB76B',
   color: 'white',
   padding: '10px 20px',
   margin: '8px',
+  border: '1px solid #ccc',
+  borderRadius: '4px',
+  cursor: 'pointer',
+}
+
+var selectbox = {
+  width: '11%',
+  backgroundColor: '#BDB76B',
+  color: 'white',
+  padding: '10px 20px',
+  margin: '9px',
   border: '1px solid #ccc',
   borderRadius: '4px',
   cursor: 'pointer',
@@ -44,12 +58,14 @@ var submitbox = {
 export function SearchButton() {
     return (
         <form onSubmit={handleSubmit}>
-            <input id="search_input" placeholder="Search for recipes here by ingredient, meal-type, cuisine, difficulty" style={inputbox}></input>
-            <select name="filtered_search" id="filtered_search">
-                <option value="name">Name</option>
-                <option value="tag">Tag</option>
-                <option value="difficulty">Difficulty</option>
-            </select>
+            <input id="search_input" placeholder="Search for recipes here by name, tag, difficulty" style={inputbox}></input>
+            
+                <select style={selectbox} name="filtered_search" id="filtered_search">
+                    <option value="name">Name</option>
+                    <option value="tag">Tag</option>
+                    <option value="difficulty">Difficulty</option>
+                </select>
+            
             <button style={submitbox}>SEARCH</button>
         </form>
     );
