@@ -224,10 +224,10 @@ export function RecipeForm() {
     
     var paperback = {
     backgroundImage:"url('https://cdn.hipwallpaper.com/i/92/52/vZp6xG.jpg')",
-    // backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
     backgroundPosition: 'center center',
-    backgroundRepeat: 'no-repeat'
+    backgroundRepeat: 'no-repeat',
+    backgroundAttachment: 'fixed',
     }
     
     var titlestyle = {

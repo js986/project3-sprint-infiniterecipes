@@ -131,6 +131,7 @@ export function User() {
     backgroundSize: 'cover',
     backgroundPosition: 'center center',
     backgroundRepeat: 'no-repeat',
+    backgroundAttachment: 'fixed',
     margin:'0'
   }
   var title = {

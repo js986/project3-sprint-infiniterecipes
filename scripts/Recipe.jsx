@@ -117,7 +117,9 @@ export function Recipe() {
     // backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
     backgroundPosition: 'center center',
-    backgroundRepeat: 'no-repeat'
+    backgroundRepeat: 'no-repeat',
+    display: 'flex',
+    backgroundAttachment: 'fixed'
   }
   
   var greenbutton = {

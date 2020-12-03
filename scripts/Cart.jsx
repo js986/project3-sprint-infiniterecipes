@@ -51,9 +51,8 @@ export function Cart() {
     
     var paperback = {
     backgroundImage:"url('https://cdn.hipwallpaper.com/i/92/52/vZp6xG.jpg')",
-    // backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
-    // backgroundPosition: 'center center',
+    backgroundAttachment: 'fixed',
     backgroundRepeat: 'no-repeat'
     }
    
