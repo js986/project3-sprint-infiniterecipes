@@ -113,6 +113,35 @@ export function Content() {
   updateLogin();
   updateLogout();
   getRecipeData();
+  
+  const title = {
+    // outlineStyle: 'solid',
+    // outlineWidth: '1px',
+    // backgroundColor: '#BDB76B',
+    fontFamily: 'Bradley Hand',
+    fontSize: '58px',
+    // fontStyle: 'oblique'
+    fontWeight: 'bold',
+    textShadow: '2px 2px #778899'
+    
+  }
+  const paperback = {
+    backgroundImage:"url('https://cdn.hipwallpaper.com/i/92/52/vZp6xG.jpg')",
+    // backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+  }
+  
+  const buttons = {
+    backgroundColor: '#E9967A',
+    border: 'none'
+  }
+  
+  const cartbutton = {
+    outlineStyle: 'solid',
+    outlineWidth: '1px',
+    // backgroundColor: '#BDB76B',
+    // border: 'solid'
+  }
 
   const recipeList = recipes.map((recipe, index) => (
     <Card key={index} onClick={() => handleSubmit(recipe.id)}>
@@ -136,29 +165,38 @@ export function Content() {
   ));
 
   return (
+    <div  style={paperback}>
     <Container>
       <div>
         <p>
           {' '}
-          <a href="about">About Us</a>
+          <a href="about">ABOUT</a>
         </p>
-        <h1>InfiniteRecipes!</h1>
+        <h1 style={title}>InfiniteRecipes
+          <Icon name="food" />
+        </h1>
 
         <br />
         <div>
-          <Button as="div" labelPosition="right">
-            <Button floated="left" onClick={goToCart}>
+          <Button as="div" labelPosition="right" animated='fade' floated="left" style={cartbutton}>
+            <Button.Content visible>
               <Icon name="cart" />
               <Label color="red" pointing="left">
                 {cartNumItems}
               </Label>
-            </Button>
+            </Button.Content>
+            <Button.Content hidden onClick={goToCart}>Shop</Button.Content>
           </Button>
           { isloggedin === true
             ? (
               <div className="loggedIn-buttons">
-                <Button floated="right" onClick={goToForm}>POST</Button>
-                <Button floated="right" onClick={() => goToUser(guser)}>{guser}</Button>
+                <Button animated floated="right" style={buttons}>
+                <Button.Content visible>POST</Button.Content>
+                <Button.Content hidden onClick={goToForm}>
+                  <Icon name='food' />
+                </Button.Content>
+                </Button>
+                <Button floated="right" onClick={() => goToUser(guser)} style={buttons}>{guser}</Button>
                 <br />
                 <br />
                 <br />
@@ -185,5 +223,6 @@ export function Content() {
         <br />
       </div>
     </Container>
+    </div>
   );
 }

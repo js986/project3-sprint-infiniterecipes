@@ -125,7 +125,19 @@ export function User() {
   }
 
   getUserData();
+  
+  var paperback = {
+    backgroundImage:"url('https://cdn.hipwallpaper.com/i/92/52/vZp6xG.jpg')",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center center',
+    backgroundRepeat: 'no-repeat',
+    margin:'0'
+  }
+  var title = {
+    fontFamily: 'Comic Sans MS'
+  }
   return (
+    <div  style={paperback}>
     <Container>
       <Button icon labelPosition="left" onClick={goToHomePage}>
 
@@ -147,26 +159,27 @@ export function User() {
         {' '}
       </h3>
       <div className="tags">
-        <h2> {users.name}'s Recipes </h2>
+        <h2 style={title}> {users.name}'s Recipes </h2>
         <Divider/>
         <Card.Group itemsPerRow={6}>
           {ownedList}
         </Card.Group>
       </div>
       <div className="favorite-recipes">
-        <h2> Favorite Recipes </h2>
+        <h2 style={title}> Favorite Recipes </h2>
         <Divider />
         <Card.Group itemsPerRow={6}>
           {favoritedList}
         </Card.Group>
       </div>
       <div className="saved-recipes">
-        <h2> Saved Recipes </h2>
+        <h2 style={title}> Saved Recipes </h2>
         <Divider />
         <Card.Group itemsPerRow={6}>
           {savedList}
         </Card.Group>
       </div>
     </Container>
+    </div>
   );
 }
