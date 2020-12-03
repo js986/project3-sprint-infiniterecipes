@@ -74,6 +74,7 @@ def on_new_google_user(data):
     socketio.emit(
         "logged in",
         {
+            "userId" : user,
             "username": username,
             "email": user_email,
             "cartNumItems": cart_num_items,

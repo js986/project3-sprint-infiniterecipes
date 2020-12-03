@@ -25,6 +25,7 @@ export function Content() {
   const [tags, setTags] = React.useState([]);
   const [recipes, setRecipes] = React.useState([]);
   const [guser, setGUser] = React.useState([]);
+  const [guserId, setGUserId] = React.useState([]);
   const [isloggedin, setIsloggedin] = React.useState(false);
   const [cartNumItems, setCartNumItems] = React.useState(0);
   let recipeImages;
@@ -46,6 +47,7 @@ export function Content() {
         localStorage.setItem('user_email', data.email);
         localStorage.setItem('cartNumItems', data.cartNumItems);
         setGUser(data.username);
+        setGUserId(data.userId);
         setCartNumItems(data.cartNumItems);
         setIsloggedin(true);
       });
@@ -94,6 +96,7 @@ export function Content() {
   }
   
   function goToUser(user) {
+    console.log("User id? ", user);
     Socket.emit('user page', {
       user_id: user,
     });
@@ -196,7 +199,7 @@ export function Content() {
                   <Icon name='food' />
                 </Button.Content>
                 </Button>
-                <Button floated="right" onClick={() => goToUser(guser)} style={buttons}>{guser}</Button>
+                <Button floated="right" onClick={() => goToUser(guserId)} style={buttons}>{guser}</Button>
                 <br />
                 <br />
                 <br />
