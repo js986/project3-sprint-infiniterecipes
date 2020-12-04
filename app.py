@@ -122,8 +122,19 @@ def on_recipe_page(data):
     username = db_queries.get_user(recipe["user"])["name"]
     # namespace = "/recipe/" + str(id)
     print(recipe["videos"])
+    startAdding = False
+    videoParsed=""
+    for video in recipe["videos"]:
+        for ch in video:
+            if ch == '=':
+                startAdding = True
+                continue
+            if startAdding is True:
+                videoParsed += ch
     recipe["name"] = username
     emit_recipe(SEND_ONE_RECIPE_CHANNEL, recipe)
+    if startAdding == True: # If there is a youtube video in the recipe
+        socketio.emit("video available", videoParsed)
     
 @socketio.on("fork page")
 def on_fork_page(data):
@@ -277,6 +288,7 @@ def new_recipe(data):
     description = data["description"]
     ingredients = data["ingredients"]
     instructions = data["instructions"]
+    videos = data["video"]
     tags = []
     for tag in data["tags"]:
         tags.append(tag["tag"])
@@ -288,6 +300,7 @@ def new_recipe(data):
         "difficulty": difficulty,
         "instructions": instructions,
         "readyInMinutes": ready_in_minutes,
+        "videos": videos,
         "servings": servings,
         "images": images,
         "ingredients": ingredients,

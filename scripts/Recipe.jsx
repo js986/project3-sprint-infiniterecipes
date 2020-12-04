@@ -8,7 +8,6 @@ import ReactHtmlParser from 'react-html-parser';
 import { Socket } from './Socket';
 import { Content } from './Content';
 import { User } from './User';
-import ReactPlayer from "react-player";
 import { RecipeForm } from './RecipeForm';
 
 
@@ -18,6 +17,8 @@ export function Recipe() {
   const [instructions, setInstructions] = React.useState([]);
   const [tags, setTags] = React.useState([]);
   const regexConst = /^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+  const [video, setVideo] = React.useState([]);
+  const [hasVideo, setHasVideo] = React.useState(false);
 
   const ingredientList = ingredients.map((ingredient, index) => (
     <List.Item key={index}>{`${ingredient.amount} ${ingredient.unit} ${ingredient.name}`}</List.Item>
@@ -35,10 +36,10 @@ export function Recipe() {
     React.useEffect(() => {
       Socket.on('recipe page load', (data) => {
         setRecipe(data.recipe);
-        console.log(data.recipe.video + " VIDEO HERE");
         setIngredients(data.recipe.ingredients);
         setInstructions(data.recipe.instructions);
         setTags(data.recipe.tags);
+     // DOMINIK:  setVideo(data.recipe.videos);
         console.log('here it is: '+ data.recipe.videos)
       });
     });
@@ -49,6 +50,15 @@ export function Recipe() {
       Socket.on('received cart item num', (data) => {
         localStorage.setItem('cartNumItems', data.cart_num);
       });
+    });
+  }
+  
+  function isVideoHere() {
+    React.useEffect(() => {
+      Socket.on('video available', (data) => {
+        setVideo(data);
+        setHasVideo(true);
+        });
     });
   }
 
@@ -108,9 +118,13 @@ export function Recipe() {
     console.log("recipe data here: " + recipe.id)
     ReactDOM.render(<RecipeForm />, document.getElementById('content'));
   }
+  
+
+  const videoSource="https://www.youtube.com/embed/" + video;
 
   getRecipeData();
   getCartNumItems();
+  isVideoHere();
   
   var paperback = {
     backgroundImage:"url('https://cdn.hipwallpaper.com/i/92/52/vZp6xG.jpg')",
@@ -169,7 +183,9 @@ export function Recipe() {
         By: 
         <Button style={redbutton} onClick={() => handleSubmit(recipe.user)}>{recipe.name}</Button>
       </Header>
-      <Image src={recipe.images} size="large" bordered />
+      <div id="recipeImage">
+        <Image src={recipe.images} size="large" bordered />
+      </div>
       <Rating className="rating" maxRating={5} clearable size="huge" style={stars} />
       <Button.Group className="action-buttons" size="large" basic style={greenbutton}>
         <Button className="favorite-button" icon="favorite" onClick={favoriteRecipe}/>
@@ -180,6 +196,18 @@ export function Recipe() {
         <Button.Content visible icon labelPosition="right">Fork this Recipe</Button.Content>
         <Button.Content hidden onClick={() => forkRecipe(recipe.id)}>What's your way</Button.Content>
       </Button>
+      <br />
+      <br />
+      { hasVideo === true
+      ? (
+          <div id ="youtubeVideo">
+          <iframe width="415" height="235" src={videoSource}
+            frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen>
+          </iframe>
+          </div>
+        )
+        : ( <div> </div>
+        )}
       <Divider />
       <Header sub style={desc}>
         Difficulty:

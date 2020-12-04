@@ -147,7 +147,8 @@ def get_user(user_id):
 def get_recipe(recipe_id):
     print("get recipe start")
     db_recipe = models.Recipe.query.get(recipe_id)
-    print(str(db_recipe.videos) + " videos here")
+   # print(str(db_recipe.videos) + " videos here")
+    # print(db_recipe.images)
     if not db_recipe:
         return "ID not in db"
     return {
