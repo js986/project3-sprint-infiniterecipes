@@ -171,11 +171,12 @@ export function Content() {
   return (
     <div  style={paperback}>
     <Container>
+      <br />
       <div>
-        <p>
+        <h3>
           {' '}
           <a href="about">ABOUT</a>
-        </p>
+        </h3>
         <h1 style={title}>InfiniteRecipes
           <Icon name="food" />
         </h1>
