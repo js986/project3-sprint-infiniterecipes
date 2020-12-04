@@ -30,6 +30,15 @@ export function User() {
     });
     ReactDOM.render(<Recipe />, document.getElementById('content'));
   }
+  
+  function handleFavorites(event, index) {
+    event.preventDefault();
+    const { id } = favoriteRecipes[index];
+    Socket.emit('recipe page', {
+      id,
+    });
+    ReactDOM.render(<Recipe />, document.getElementById('content'));
+  }
 
   const savedList = savedRecipes.map((savedRecipe, index) => (
     <Card key={index} onClick={(event) => handleSubmit(event, index)}>
@@ -54,7 +63,7 @@ export function User() {
   ));
   
     const favoritedList = favoriteRecipes.map((favoriteRecipe, index) => (
-    <Card key={index} onClick={(event) => handleSubmit(event, index)}>
+    <Card key={index} onClick={(event) => handleFavorites(event, index)}>
       <Image src={favoriteRecipe.images[0]} wrapped ui={false} />
       <Card.Content>
         <Card.Header>{favoriteRecipe.title}</Card.Header>
