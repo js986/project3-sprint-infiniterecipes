@@ -220,6 +220,21 @@ export function RecipeForm() {
         values[index][event.target.name] = event.target.value;
         setTagsField(values);
     }
+    
+    function goToHomePage() {
+    Socket.emit('content page', {
+      'content page': 'content page',
+    });
+    ReactDOM.render(<Content />, document.getElementById('content'));
+  }
+  
+    function goToRecipe(id) {
+        Socket.emit('recipe page', {
+            id,
+        });
+        ReactDOM.render(<Recipe />, document.getElementById('content'));
+    }
+    
     getForkRecipeData();
     
     var paperback = {
@@ -243,6 +258,15 @@ export function RecipeForm() {
     return (
         <div  style={paperback}>
         <Container>
+        <br />
+        <Button icon labelPosition="left" onClick={goToHomePage}>
+        <Icon name="left arrow" />
+        Back to Homepage
+        </Button>
+        <Button icon labelPosition="left" onClick={() => goToRecipe(recipe.id)}>
+        <Icon name="left arrow" />
+        Back to Recipe
+        </Button>
         <Header as="h1" style={titlestyle}>Post Recipe</Header>
         <Divider/>
         <Form onSubmit={submitForm} style={desc}>
