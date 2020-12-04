@@ -140,6 +140,7 @@ export function User() {
   return (
     <div  style={paperback}>
     <Container>
+      <br />
       <Button icon labelPosition="left" onClick={goToHomePage}>
 
         <Icon name="left arrow" />
