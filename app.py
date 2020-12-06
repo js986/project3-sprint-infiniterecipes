@@ -100,7 +100,6 @@ def on_connect():
     connect to page
     """
     emit_all_recipes(SEND_RECIPES_CHANNEL)
-    print("Someone connected!")
     socketio.emit("connected", {"test": "Connected"}, room=flask.request.sid)
 
 
