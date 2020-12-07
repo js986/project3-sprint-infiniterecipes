@@ -66,10 +66,18 @@ export function Cart() {
     fontSize: '17px'
     }
     
+    var greenbutton = {
+    backgroundColor: '#BDB76B',
+    border: 'none',
+    color: 'white',
+    fontFamily: 'Georgia',
+    fontSize: '17px'
+  }
+    
     return (
         <div  style={paperback}>
         <Container>
-            <Button icon labelPosition="left" onClick={goToHomePage}>
+            <Button icon labelPosition="left" onClick={goToHomePage} style={greenbutton}>
                 <Icon name="left arrow" />
                 Back to Homepage
             </Button>
