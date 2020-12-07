@@ -222,11 +222,11 @@ export function RecipeForm() {
     }
     
     function goToHomePage() {
-    Socket.emit('content page', {
-      'content page': 'content page',
-    });
-    ReactDOM.render(<Content />, document.getElementById('content'));
-  }
+        Socket.emit('content page', {
+          'content page': 'content page',
+        });
+        ReactDOM.render(<Content />, document.getElementById('content'));
+    }
   
     function goToRecipe(id) {
         Socket.emit('recipe page', {
@@ -238,32 +238,40 @@ export function RecipeForm() {
     getForkRecipeData();
     
     var paperback = {
-    backgroundImage:"url('https://cdn.hipwallpaper.com/i/92/52/vZp6xG.jpg')",
-    backgroundSize: 'cover',
-    backgroundPosition: 'center center',
-    backgroundRepeat: 'no-repeat',
-    backgroundAttachment: 'fixed',
+        backgroundImage:"url('https://cdn.hipwallpaper.com/i/92/52/vZp6xG.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
     }
     
     var titlestyle = {
-    fontFamily: 'Comic Sans MS',
-    fontSize: '24px'
+        fontFamily: 'Comic Sans MS',
+        fontSize: '24px'
+    }
+        
+    var desc = {
+        fontFamily: 'Georgia',
+        fontSize: '17px'
     }
     
-    var desc = {
-    fontFamily: 'Georgia',
-    fontSize: '17px'
-    }
+    var greenbutton = {
+        backgroundColor: '#BDB76B',
+        border: 'none',
+        color: 'white',
+        fontFamily: 'Georgia',
+        fontSize: '17px'
+     }
     
     return (
         <div  style={paperback}>
         <Container>
         <br />
-        <Button icon labelPosition="left" onClick={goToHomePage}>
+        <Button icon labelPosition="left" onClick={goToHomePage} style={greenbutton}>
         <Icon name="left arrow" />
         Back to Homepage
         </Button>
-        <Button icon labelPosition="left" onClick={() => goToRecipe(recipe.id)}>
+        <Button icon labelPosition="left" onClick={() => goToRecipe(recipe.id)} style={greenbutton}>
         <Icon name="left arrow" />
         Back to Recipe
         </Button>
