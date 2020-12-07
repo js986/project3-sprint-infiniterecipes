@@ -1,0 +1,27 @@
+body {
+      background-image: url('https://cdn.hipwallpaper.com/i/92/52/vZp6xG.jpg') ;
+      background-size: 100%;
+      background-attachment: fixed
+}
+
+h1,h6 { display: inline; } 
+
+#InfiniteRecipes {
+      font-size: 30;
+}
+
+#cooks{
+      border: 5px outset white;
+      border-radius: 25px;
+}
+.chef {
+      font-size: 20 ;
+}
+#beautiful_people {
+      width: 45%;
+}
+
+#ingridients {
+}
+#why {
+}
