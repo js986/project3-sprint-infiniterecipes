@@ -1,7 +1,163 @@
+<link href= {{ url_for('static',filename='style_about.css') }} style.css" rel="stylesheet" type = "text/css" />
 <html>
     <head>
     </head>
     <body>
-        <p> This is About Page</p>
+        <span id="InfiniteRecipes"> <a href="https://infiniterecipes.herokuapp.com/" > Click here to go to Infinite Recipes  </a> </span>
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <div id="what">
+        <h1> What is Infinite Recipes? </h1>
+        <p> 
+            Infinite Recipes is a web app with a social media approach about food combined with grocery shopping.
+            It allows you to post recipes, comment on and rate recipes, and buy ingredients by getting
+            redirected to a shopping website, as well as locating nearby grocery stores.
+            Infinite Recipes is a school project for CS 490 (Design in Software Engineering).
+        </p>
+        </div>
+        <br />
+        <br />
+        <br />
+        <br />
+        <div id="beautiful_people">
+            <table id="cooks" cellpadding = "15" cellspacing = "1">
+            <tr> 
+            <td Colspan="2" align="middle"><span> <h1 > Meet the Cooks </h1> <span> <h6>(Meet the Team)</h6> </span></td>
+            </tr>
+                <tr>
+                   <td align='middle'>
+                       <img src = "https://media-exp1.licdn.com/dms/image/C4E03AQEsphDBwKEQnQ/profile-displayphoto-shrink_200_200/0/1606927761359?e=1613001600&v=beta&t=6R9WuIqsczK6_dhC4JDD9lKJ5WTzq9vamswXJ-MUdaE"
+                            alt = "Dominik"
+                        	height = "200"
+                        	width = "200"/>
+                   </td>
+                   <td> 
+                        <span class="chef">
+                        Dominik Nef 
+                        </span>
+                        <br />
+                        - Front-End Developer
+                        <br />
+                        <br />
+                        Dominik loves board games, video games, hiking, football, and a nice, cold lager.
+                        He is expected to graduate from NJIT in May of 2021 with a CS Bechelor degree.
+                        
+                        <br /> <br />
+                        Favorite Food: Lasagna, Burek, & Pasta
+                   </td>
+                </tr>
+                <tr> 
+                    <td align='middle'>
+                       <img src = "https://media-exp1.licdn.com/dms/image/C5603AQEJ_8lN7CNyoA/profile-displayphoto-shrink_800_800/0/1606769868157?e=1613001600&v=beta&t=rl2G5vVsZVa2k93KMfj_pwmvYUv3MrA0RYNipgUorB4"
+                            alt = "Risha"
+                        	height = "200"
+                        	width = "200"/>
+                    </td>
+                    <td align='left'>
+                        <span class="chef">
+                        Risha Shah </span>
+                        <br />
+                        - Front-End Developer
+                        <br /> <br />
+                        About me goes here
+                        <br /> <br />
+                        Favorite Food: Lasagna
+                    </td> 
+                </tr>
+                <tr>
+                   <td align='middle'>
+                       <img src = "https://media-exp1.licdn.com/dms/image/C4D03AQHIYT2WJtq67g/profile-displayphoto-shrink_800_800/0/1579744781871?e=1613001600&v=beta&t=XxqZrt2MGGHvtZoYyU39LbeAYje3QwSMhcX54AsgHQs"
+                            alt = "Jordan"
+                        	height = "200"
+                        	width = "200"/>
+                   </td>
+                   <td> 
+                        <span class="chef">
+                        Jordan Sefah </span>
+                        <br />
+                        - Front-End Developer
+                        <br /> <br />
+                        About me goes here
+                        <br /> <br />
+                        Favorite Food: Lasagna
+                   </td>
+                </tr>
+                 <tr>
+                   <td align='middle'>
+                       <img src = "https://tmssl.akamaized.net/images/portrait/originals/288899-1463172267.jpg"
+                            alt = "Hasan"
+                        	height = "200"
+                        	width = "200"/>
+                   </td>
+                   <td> 
+                        <span class="chef">
+                        Hasan Dulgeroglu </span>
+                        <br />
+                        - Back-End Developer
+                        <br /> <br />
+                        About me goes here
+                        <br /> <br />
+                        Favorite Food: Lasagna
+                   </td>
+                </tr>
+                </table>
+        </div>
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <div id="ingridients"> <h1> Instructions and Ingridients  <br /><h6> (How and with what technologies) </h6> </h1>
+            <p>  
+                Ingridients:
+                <ul>
+                      <li>Python</li>
+                      <li>Flask</li>
+                      <li>SocketIO</li>
+                      <li>PostgreSQL</li>
+                      <li>React</li>
+                      <li>HTML</li>
+                      <li>CSS </li>
+                      <li>Heroku</li>
+                </ul>
+            </p>
+            <p>
+                Instructions:
+                <ul>
+                      <li>Add Python as back-end language for databases and server-to-client communication</li>
+                      <li>Add Flask (within Python) to help render the webapp</li>
+                      <li>Add SocketIO (within Python) to allow server-client communication</li>
+                      <li>Use PostgreSQL to create tables and database to store webapp information</li>
+                      <li>Add (a lot of) React to build interactive user interfaces</li>
+                          <ul>
+                              <li> Test</li>
+                          </ul>
+                      <li>HTML</li>
+                      <li>CSS </li>
+                      <li>Use heroku to deploy the webapp</li>
+                </ul>
+                Python was used as a back-end language for databases and server-to-client communication.
+                Flask was used as a framwork within Python to render our webpages.
+            </p>
+        </div>
+        <div id="why"> <h1> Why infinite recipes?</h1>
+        <p> 1) Because we love food </p>
+        <p> 2) Because we wanted to create a mini-social media website </p>
+        <p> 3) Because we wanted to explore APIs from Google for Google Maps and Youtube </p>
+        </div>
     </body>
 </html>
