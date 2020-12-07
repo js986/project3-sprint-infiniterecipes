@@ -40,9 +40,13 @@ img {
 #ingridients {
       float:right;
       width:50%;
-      height:200%;
-      border: 5px outset white;
+      height:110%;
 }
 #why {
-      float:none;
+      float:left;
+      margin: auto;
+      width: 50%;
+      padding: 10px;
+      text-align: center;
+      display:block;
 }
