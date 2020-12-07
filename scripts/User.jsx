@@ -146,11 +146,20 @@ export function User() {
   var title = {
     fontFamily: 'Comic Sans MS'
   }
+  
+  var greenbutton = {
+    backgroundColor: '#BDB76B',
+    border: 'none',
+    color: 'white',
+    fontFamily: 'Georgia',
+    fontSize: '17px'
+  }
+  
   return (
     <div  style={paperback}>
     <Container>
       <br />
-      <Button icon labelPosition="left" onClick={goToHomePage}>
+      <Button icon labelPosition="left" onClick={goToHomePage} style={greenbutton}>
 
         <Icon name="left arrow" />
         Back to Homepage
