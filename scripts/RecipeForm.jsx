@@ -313,9 +313,10 @@ export function RecipeForm() {
                 />
                 <Form.Input 
                 label="Youtube Video URL" 
-                placeholder="Enter youtube video URL"
+                placeholder="Format : https://www.youtube.com/watch?v=xxxxxxxx"
                 value={video} 
                 onChange={changeVideo}
+                style={{ width:"520px" }}
                 />
             </Form.Group>
             <Form.Field>
