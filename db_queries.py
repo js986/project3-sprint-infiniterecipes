@@ -29,14 +29,6 @@ def add_recipe(recipe_dict):
     else:
         new_recipe.videos = []
 
-    if "forked_from_recipe" in recipe_dict.keys():
-        new_recipe.forked_from_recipe = recipe_dict["forked_from_recipe"]
-        forked_recipe = models.Recipe.query.filter_by(
-            id=recipe_dict["forked_from_recipe"]
-        ).first()
-        num = forked_recipe.number_of_forks
-        forked_recipe.number_of_forks = num + 1
-
     for tag_text in recipe_dict["tags"]:
         tag = db.session.query(models.Tag).filter_by(name=tag_text).first()
         if tag:
@@ -169,6 +161,8 @@ def get_user(user_id):
 
 def get_recipe(recipe_id):
     db_recipe = models.Recipe.query.get(recipe_id)
+    # print(str(db_recipe.videos) + " videos here")
+    # print(db_recipe.images)
     if not db_recipe:
         return "ID not in db"
     rating = get_rating(db_recipe.id)
@@ -258,8 +252,7 @@ def add_favorite_recipe(recipe_id, user_id):
         user.favorite_recipes = shared_recipe_list
         db.session.commit()
 
-
-def remove_favorite_recipe(recipe_id, user_id):
+def remove_shared_recipe(recipe_id, user_id):
     user = models.Users.query.filter_by(id=user_id).first()
     shared_recipe_list = user.favorite_recipes.copy()
     try:
@@ -322,6 +315,7 @@ def search_by_difficulty(difficulty):
 
 
 # Here for testing not a good way to get recipes
+# here for testing
 def get_n_recipes(number):
     recipes = models.Recipe.query.limit(number).all()
     return [get_recipe(r.id) for r in recipes]
