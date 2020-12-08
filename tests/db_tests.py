@@ -297,9 +297,9 @@ class MyTest(TestCase):
         searched_recipes = db_queries.get_n_recipes(1)
         self.assertEqual(searched_recipes[0]["title"], self.TEST_ADD_RECIPE["title"])
 
-    def test_remove_from_shared_recipe_list(self):
+    def test_remove_from_favorite_recipe_list(self):
         db.session.add(models.Users(**self.TEST_ADD_USER))
-        db_queries.remove_shared_recipe(self.TEST_RECIPE_ID, self.TEST_ID)
+        db_queries.remove_favorite_recipe(self.TEST_RECIPE_ID, self.TEST_ID)
         db_user = db.session.query(models.Users).get(self.TEST_ID)
         assert self.TEST_RECIPE_ID not in db_user.favorite_recipes
 
