@@ -271,6 +271,8 @@ def search_by_difficulty(difficulty):
 
 
 # Here for testing not a good way to get recipes
+# here for testing
 def get_n_recipes(number):
     recipes = models.Recipe.query.limit(number).all()
     return [get_recipe(r.id) for r in recipes]
+
