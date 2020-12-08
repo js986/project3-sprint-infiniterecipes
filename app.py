@@ -2,15 +2,9 @@
 app.py
 """
 import os
-from os.path import join, dirname
-from dotenv import load_dotenv
-import os
 import flask
-import flask_sqlalchemy
 import flask_socketio
 import models
-import db_queries
-from db_utils import db
 import db_queries
 import db_utils
 
@@ -22,11 +16,6 @@ app = flask.Flask(__name__)
 
 socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
-spoonacular_key = os.getenv("spoonacular_key")
-
-global username
-username = ""
-
 
 def emit_all_recipes(channel):
     """
@@ -74,7 +63,7 @@ def on_new_google_user(data):
     socketio.emit(
         "logged in",
         {
-            "userId" : user,
+            "userId": user,
             "username": username,
             "email": user_email,
             "cartNumItems": cart_num_items,
@@ -122,19 +111,20 @@ def on_recipe_page(data):
     # namespace = "/recipe/" + str(id)
     print(recipe["videos"])
     startAdding = False
-    videoParsed=""
+    videoParsed = ""
     for video in recipe["videos"]:
         for ch in video:
-            if ch == '=':
+            if ch == "=":
                 startAdding = True
                 continue
             if startAdding is True:
                 videoParsed += ch
     recipe["name"] = username
     emit_recipe(SEND_ONE_RECIPE_CHANNEL, recipe)
-    if startAdding == True: # If there is a youtube video in the recipe
+    if startAdding == True:  # If there is a youtube video in the recipe
         socketio.emit("video available", videoParsed)
-    
+
+
 @socketio.on("fork page")
 def on_fork_page(data):
     print("received data from client " + str(data["id"]))
@@ -182,7 +172,6 @@ def on_new_user_page(data):
         username = db_queries.get_user(recipe["user"])["name"]
         recipe["name"] = username
         saved_recipes.append(recipe)
-        
     owned_recipes = []
     owned_recipes_id = user["owned_recipes"]
     for recipe_id in owned_recipes_id:
@@ -190,7 +179,6 @@ def on_new_user_page(data):
         username = db_queries.get_user(recipe["user"])["name"]
         recipe["name"] = username
         owned_recipes.append(recipe)
-    
     favorite_recipes = []
     favorite_recipes_id = user["favorite_recipes"]
     for recipe_id in favorite_recipes_id:
@@ -198,7 +186,6 @@ def on_new_user_page(data):
         username = db_queries.get_user(recipe["user"])["name"]
         recipe["name"] = username
         favorite_recipes.append(recipe)
-    
     print(user["email"])
     socketio.emit(
         "user page load",
@@ -310,11 +297,18 @@ def new_recipe(data):
 
 @socketio.on("save recipe")
 def on_save_recipe(data):
+    """
+    save recipe
+    """
     user_id = db_queries.get_user_id(data["user_email"])
     db_queries.add_saved_recipe(data["recipe_id"], user_id)
-    
+
+
 @socketio.on("favorite recipe")
 def on_favorite_recipe(data):
+    """
+    favorite recipe
+    """
     user_id = db_queries.get_user_id(data["user_email"])
     db_queries.add_favorite_recipe(data["recipe_id"], user_id)
 

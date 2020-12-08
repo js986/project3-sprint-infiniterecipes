@@ -1,5 +1,6 @@
 /* eslint-disable import/no-cycle */
 /* eslint-disable no-unused-vars */
+/* eslint-disable import/prefer-default-export */
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -7,6 +8,7 @@ import {
   Card, Button, Image, Container, Header, Label, Icon,
 } from 'semantic-ui-react';
 import ReactHtmlParser from 'react-html-parser';
+import ReactPlayer from 'react-player';
 import { SearchButton } from './SearchButton';
 import { Socket } from './Socket';
 import { GoogleButton } from './GoogleButton';
@@ -16,7 +18,6 @@ import { Cart } from './Cart';
 import { RecipeForm } from './RecipeForm';
 import { User } from './User';
 // import { RecipeVideo } from './RecipeVideo';
-import ReactPlayer from "react-player";
 
 export function Content() {
   const [recipe, setRecipe] = React.useState({});
@@ -94,15 +95,14 @@ export function Content() {
   function goToForm() {
     ReactDOM.render(<RecipeForm />, document.getElementById('content'));
   }
-  
+
   function goToUser(user) {
-    console.log("User id? ", user);
     Socket.emit('user page', {
       user_id: user,
     });
     ReactDOM.render(<User />, document.getElementById('content'));
   }
-  
+
   function getRecipeData() {
     React.useEffect(() => {
       Socket.on('recipe page load', (data) => {
@@ -116,7 +116,7 @@ export function Content() {
   updateLogin();
   updateLogout();
   getRecipeData();
-  
+
   const title = {
     // outlineStyle: 'solid',
     // outlineWidth: '1px',
@@ -125,27 +125,27 @@ export function Content() {
     fontSize: '58px',
     // fontStyle: 'oblique'
     fontWeight: 'bold',
-    textShadow: '2px 2px #778899'
-    
-  }
+    textShadow: '2px 2px #778899',
+
+  };
   const paperback = {
-    backgroundImage:"url('https://cdn.hipwallpaper.com/i/92/52/vZp6xG.jpg')",
+    backgroundImage: "url('https://cdn.hipwallpaper.com/i/92/52/vZp6xG.jpg')",
     // backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
     backgroundAttachment: 'fixed',
-  }
-  
+  };
+
   const buttons = {
     backgroundColor: '#E9967A',
-    border: 'none'
-  }
-  
+    border: 'none',
+  };
+
   const cartbutton = {
     outlineStyle: 'solid',
     outlineWidth: '1px',
     // backgroundColor: '#BDB76B',
     // border: 'solid'
-  }
+  };
 
   const recipeList = recipes.map((recipe, index) => (
     <Card key={index} onClick={() => handleSubmit(recipe.id)}>
@@ -169,65 +169,66 @@ export function Content() {
   ));
 
   return (
-    <div  style={paperback}>
-    <Container>
-      <br />
-      <div>
-        <h3>
-          {' '}
-          <a href="about">ABOUT</a>
-        </h3>
-        <h1 style={title}>InfiniteRecipes
-          <Icon name="food" />
-        </h1>
+    <div style={paperback}>
+      <Container>
+        <br />
+        <div>
+          <h3>
+            {' '}
+            <a href="about">ABOUT</a>
+          </h3>
+          <h1 style={title}>
+            InfiniteRecipes
+            <Icon name="food" />
+          </h1>
 
-        <br />
-        <div>
-          <Button as="div" labelPosition="right" animated='fade' floated="left" style={cartbutton}>
-            <Button.Content visible>
-              <Icon name="cart" />
-              <Label color="red" pointing="left">
-                {cartNumItems}
-              </Label>
-            </Button.Content>
-            <Button.Content hidden onClick={goToCart}>Shop</Button.Content>
-          </Button>
-          { isloggedin === true
-            ? (
-              <div className="loggedIn-buttons">
-                <Button animated floated="right" style={buttons}>
-                <Button.Content visible>POST</Button.Content>
-                <Button.Content hidden onClick={goToForm}>
-                  <Icon name='food' />
-                </Button.Content>
-                </Button>
-                <Button floated="right" onClick={() => goToUser(guserId)} style={buttons}>{guser}</Button>
-                <br />
-                <br />
-                <br />
-                <Header as="h2" floated="right"><LogoutButton /></Header>
-              </div>
-            )
-            : (
-              <div className="google-login-button">
-                <GoogleButton />
-              </div>
-            )}
+          <br />
+          <div>
+            <Button as="div" labelPosition="right" animated="fade" floated="left" style={cartbutton}>
+              <Button.Content visible>
+                <Icon name="cart" />
+                <Label color="red" pointing="left">
+                  {cartNumItems}
+                </Label>
+              </Button.Content>
+              <Button.Content hidden onClick={goToCart}>Shop</Button.Content>
+            </Button>
+            { isloggedin === true
+              ? (
+                <div className="loggedIn-buttons">
+                  <Button animated floated="right" style={buttons}>
+                    <Button.Content visible>POST</Button.Content>
+                    <Button.Content hidden onClick={goToForm}>
+                      <Icon name="food" />
+                    </Button.Content>
+                  </Button>
+                  <Button floated="right" onClick={() => goToUser(guserId)} style={buttons}>{guser}</Button>
+                  <br />
+                  <br />
+                  <br />
+                  <Header as="h2" floated="right"><LogoutButton /></Header>
+                </div>
+              )
+              : (
+                <div className="google-login-button">
+                  <GoogleButton />
+                </div>
+              )}
+          </div>
+          <br />
+          <br />
+          <br />
+          <div>
+            <center><SearchButton /></center>
+            <br />
+          </div>
+          <br />
+          <Card.Group itemsPerRow={5}>
+            {recipeList}
+          </Card.Group>
+          <br />
         </div>
-        <br />
-        <br />
-        <br />
-        <div>
-          <center><SearchButton /></center>
-          <br/>
-        </div>
-        <br />
-        <Card.Group itemsPerRow={5}>
-          {recipeList}
-        </Card.Group>
-        <br />
-      </div>
-    </Container>
+      </Container>
     </div>
   );
 }
