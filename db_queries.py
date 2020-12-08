@@ -20,21 +20,23 @@ def add_recipe(recipe_dict):
         servings=recipe_dict["servings"],
         images=recipe_dict["images"],
         ingredients=recipe_dict["ingredients"],
-        user_submitted_images = [],
-        number_of_forks = 0
+        user_submitted_images=[],
+        number_of_forks=0,
     )
-    
-    if 'videos' in recipe_dict.keys():
-        new_recipe.videos = recipe_dict['videos']
+
+    if "videos" in recipe_dict.keys():
+        new_recipe.videos = recipe_dict["videos"]
     else:
         new_recipe.videos = []
-    
-    if 'forked_from_recipe' in recipe_dict.keys():
-        new_recipe.forked_from_recipe = recipe_dict['forked_from_recipe']
-        forked_recipe = models.Recipe.query.filter_by(id=recipe_dict['forked_from_recipe']).first()
+
+    if "forked_from_recipe" in recipe_dict.keys():
+        new_recipe.forked_from_recipe = recipe_dict["forked_from_recipe"]
+        forked_recipe = models.Recipe.query.filter_by(
+            id=recipe_dict["forked_from_recipe"]
+        ).first()
         num = forked_recipe.number_of_forks
         forked_recipe.number_of_forks = num + 1
-    
+
     for tag_text in recipe_dict["tags"]:
         tag = db.session.query(models.Tag).filter_by(name=tag_text).first()
         if tag:
@@ -68,6 +70,7 @@ def add_user(user_dict):
     db.session.add(new_user)
     db.session.commit()
     return gen_id
+
 
 def edit_recipe(recipe_id, recipe_dict):
     recipe = models.Recipe.query.filter_by(id=recipe_id).first()
@@ -114,21 +117,23 @@ def edit_recipe(recipe_id, recipe_dict):
                     recipe.tags.append(new_tag)
                     db.session.add(new_tag)
                     db.session.commit()
-                    
-    
+
+
 def generate_random_user_id():
     gen_id = random.randint(ID_MIN, ID_MAX)
     user = models.Users.query.get(gen_id)
     while user:
         gen_id = random.randint(ID_MIN, ID_MAX)
     return gen_id
-    
+
+
 def generate_random_recipe_id():
     gen_id = random.randint(ID_MIN, ID_MAX)
     recipe = models.Recipe.query.get(gen_id)
     while recipe:
         gen_id = random.randint(ID_MIN, ID_MAX)
     return gen_id
+
 
 def add_user_submitted_image(recipe_id, image_url_list):
     recipe = models.Recipe.query.filter_by(id=recipe_id).first()
@@ -140,9 +145,11 @@ def add_user_submitted_image(recipe_id, image_url_list):
             submitted_images.append(image)
     recipe.user_submitted_images = submitted_images
     db.session.commit()
-    
+
+
 def get_user_id(user_email):
     return models.Users.query.filter_by(email=user_email).first().id
+
 
 def get_user(user_id):
     db_user = models.Users.query.get(user_id)
@@ -158,6 +165,7 @@ def get_user(user_id):
         "owned_recipes": [recipe.id for recipe in db_user.owned_recipes],
         "shopping_list": db_user.shopping_list,
     }
+
 
 def get_recipe(recipe_id):
     db_recipe = models.Recipe.query.get(recipe_id)
@@ -180,22 +188,27 @@ def get_recipe(recipe_id):
         "instructions": db_recipe.instructions,
         "number_of_forks": db_recipe.number_of_forks,
         "forked_from_recipe": db_recipe.forked_from_recipe,
-        "rating": rating
+        "rating": rating,
     }
+
 
 def get_shopping_list(user_id):
     user = models.Users.query.get(user_id)
     return user.shopping_list
 
+
 def add_rating(user_id, recipe_id, rating):
-    existing_rating = models.Rating.query.filter_by(user_id=user_id, recipe_id=recipe_id).first()
+    existing_rating = models.Rating.query.filter_by(
+        user_id=user_id, recipe_id=recipe_id
+    ).first()
     if existing_rating:
         existing_rating.rate = rating
         db.session.commit()
     else:
-        new_rating = models.Rating(user_id=user_id, recipe_id=recipe_id, rate = rating)
+        new_rating = models.Rating(user_id=user_id, recipe_id=recipe_id, rate=rating)
         db.session.add(new_rating)
         db.session.commit()
+
 
 def get_rating(recipe_id):
     recipe = models.Recipe.query.get(recipe_id)
@@ -204,12 +217,13 @@ def get_rating(recipe_id):
     for rating in recipe.ratings:
         total += rating.rate
         count += 1
-    
+
     if count != 0:
-        return float(total)/float(count)
+        return float(total) / float(count)
     else:
         return 0.0
-        
+
+
 def add_to_shopping_list(ingredient_list, user_id):
     user = models.Users.query.filter_by(id=user_id).first()
     if not user.shopping_list:
@@ -244,7 +258,8 @@ def add_favorite_recipe(recipe_id, user_id):
         user.favorite_recipes = shared_recipe_list
         db.session.commit()
 
-def remove_favorite_recipe(recipe_id,user_id):
+
+def remove_favorite_recipe(recipe_id, user_id):
     user = models.Users.query.filter_by(id=user_id).first()
     shared_recipe_list = user.favorite_recipes.copy()
     try:
@@ -255,6 +270,7 @@ def remove_favorite_recipe(recipe_id,user_id):
     except ValueError:
         return -1
 
+
 def add_saved_recipe(recipe_id, user_id):
     user = models.Users.query.filter_by(id=user_id).first()
     saved_recipe_list = user.saved_recipes.copy()
@@ -264,8 +280,9 @@ def add_saved_recipe(recipe_id, user_id):
         saved_recipe_list.append(recipe_id)
         user.saved_recipes = saved_recipe_list
         db.session.commit()
-        
-def remove_saved_recipe(recipe_id,user_id):
+
+
+def remove_saved_recipe(recipe_id, user_id):
     user = models.Users.query.filter_by(id=user_id).first()
     saved_recipe_list = user.saved_recipes.copy()
     try:
@@ -276,6 +293,7 @@ def remove_saved_recipe(recipe_id,user_id):
     except ValueError:
         return -1
 
+
 def search_with_name(recipe_title):
     recipes = models.Recipe.query.filter(
         models.Recipe.title.ilike("%{}%".format(recipe_title))
@@ -283,6 +301,7 @@ def search_with_name(recipe_title):
     if not recipes:
         return []
     return [get_recipe(r.id) for r in recipes]
+
 
 def search_by_tag(tag_name):
     recipes = models.Tag.query.filter(
@@ -306,4 +325,3 @@ def search_by_difficulty(difficulty):
 def get_n_recipes(number):
     recipes = models.Recipe.query.limit(number).all()
     return [get_recipe(r.id) for r in recipes]
-
