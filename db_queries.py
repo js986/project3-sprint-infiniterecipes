@@ -20,12 +20,20 @@ def add_recipe(recipe_dict):
         servings=recipe_dict["servings"],
         images=recipe_dict["images"],
         ingredients=recipe_dict["ingredients"],
+        user_submitted_images = [],
+        number_of_forks = 0
     )
     
     if 'videos' in recipe_dict.keys():
         new_recipe.videos = recipe_dict['videos']
     else:
         new_recipe.videos = []
+    
+    if 'forked_from_recipe' in recipe_dict.keys():
+        new_recipe.forked_from_recipe = recipe_dict['forked_from_recipe']
+        forked_recipe = models.Recipe.query.filter_by(id=recipe_dict['forked_from_recipe']).first()
+        num = forked_recipe.number_of_forks
+        forked_recipe.number_of_forks = num + 1
     
     for tag_text in recipe_dict["tags"]:
         tag = db.session.query(models.Tag).filter_by(name=tag_text).first()
@@ -115,7 +123,6 @@ def generate_random_user_id():
         gen_id = random.randint(ID_MIN, ID_MAX)
     return gen_id
     
-
 def generate_random_recipe_id():
     gen_id = random.randint(ID_MIN, ID_MAX)
     recipe = models.Recipe.query.get(gen_id)
@@ -123,10 +130,19 @@ def generate_random_recipe_id():
         gen_id = random.randint(ID_MIN, ID_MAX)
     return gen_id
 
-
+def add_user_submitted_image(recipe_id, image_url_list):
+    recipe = models.Recipe.query.filter_by(id=recipe_id).first()
+    if not recipe.user_submitted_images:
+        recipe.user_submitted_images = []
+    submitted_images = recipe.user_submitted_images.copy()
+    for image in image_url_list:
+        if image.lower() not in [s.lower() for s in submitted_images]:
+            submitted_images.append(image)
+    recipe.user_submitted_images = submitted_images
+    db.session.commit()
+    
 def get_user_id(user_email):
     return models.Users.query.filter_by(email=user_email).first().id
-
 
 def get_user(user_id):
     db_user = models.Users.query.get(user_id)
@@ -143,14 +159,11 @@ def get_user(user_id):
         "shopping_list": db_user.shopping_list,
     }
 
-
 def get_recipe(recipe_id):
-    print("get recipe start")
     db_recipe = models.Recipe.query.get(recipe_id)
-   # print(str(db_recipe.videos) + " videos here")
-    # print(db_recipe.images)
     if not db_recipe:
         return "ID not in db"
+    rating = get_rating(db_recipe.id)
     return {
         "id": db_recipe.id,
         "user": db_recipe.user_id,
@@ -158,19 +171,45 @@ def get_recipe(recipe_id):
         "videos": db_recipe.videos,
         "title": db_recipe.title,
         "readyInMinutes": db_recipe.ready_in_minutes,
+        "user_submitted_images": db_recipe.user_submitted_images,
         "difficulty": db_recipe.difficulty,
         "servings": db_recipe.servings,
         "description": db_recipe.description,
         "tags": [tag.name for tag in db_recipe.tags],
         "ingredients": db_recipe.ingredients,
         "instructions": db_recipe.instructions,
+        "number_of_forks": db_recipe.number_of_forks,
+        "forked_from_recipe": db_recipe.forked_from_recipe,
+        "rating": rating
     }
 
 def get_shopping_list(user_id):
     user = models.Users.query.get(user_id)
     return user.shopping_list
 
+def add_rating(user_id, recipe_id, rating):
+    existing_rating = models.Rating.query.filter_by(user_id=user_id, recipe_id=recipe_id).first()
+    if existing_rating:
+        existing_rating.rate = rating
+        db.session.commit()
+    else:
+        new_rating = models.Rating(user_id=user_id, recipe_id=recipe_id, rate = rating)
+        db.session.add(new_rating)
+        db.session.commit()
 
+def get_rating(recipe_id):
+    recipe = models.Recipe.query.get(recipe_id)
+    total = 0.0
+    count = 0
+    for rating in recipe.ratings:
+        total += rating.rate
+        count += 1
+    
+    if count != 0:
+        return float(total)/float(count)
+    else:
+        return 0.0
+        
 def add_to_shopping_list(ingredient_list, user_id):
     user = models.Users.query.filter_by(id=user_id).first()
     if not user.shopping_list:
@@ -205,7 +244,7 @@ def add_favorite_recipe(recipe_id, user_id):
         user.favorite_recipes = shared_recipe_list
         db.session.commit()
 
-def remove_shared_recipe(recipe_id,user_id):
+def remove_favorite_recipe(recipe_id,user_id):
     user = models.Users.query.filter_by(id=user_id).first()
     shared_recipe_list = user.favorite_recipes.copy()
     try:
