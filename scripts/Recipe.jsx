@@ -173,7 +173,7 @@ export function Recipe() {
   return (
     <div  style={paperback}>
     <Container>
-      <Button icon labelPosition="left" onClick={goToHomePage} style={plainbutton}>
+      <Button icon labelPosition="left" onClick={goToHomePage} style={greenbutton}>
         <Icon name="left arrow" />
         Back to Homepage
       </Button>
