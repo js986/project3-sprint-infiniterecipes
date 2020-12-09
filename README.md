@@ -70,6 +70,7 @@ To continue building this app, we planned together and split tasks amongst oursl
     - Favorite button to be able to favorite recipes on home page 
     - Implement save functionality for recipes
     - Extend database and socket tests
+    - Implement posting user's finished dish functionality
 
 3. Dominik Nef
     - Implement forking recipes where users can copy edit an existing recipe and re-post
