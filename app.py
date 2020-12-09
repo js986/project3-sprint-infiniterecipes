@@ -24,7 +24,7 @@ def emit_all_recipes(channel):
     """
     emit all recipes
     """
-    recipes = db_queries.get_n_recipes(10)
+    recipes = db_queries.get_n_recipes(50)
     for recipe in recipes:
         user = db_queries.get_user(recipe["user"])
         username = user["name"]
