@@ -1,11 +1,12 @@
-/* eslint-disable import/no-cycle */
+/* eslint-disable import/no-cycle, react/no-array-index-key */
+/* eslint-disable import/prefer-default-export, jsx-a11y/iframe-has-title */
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  Container, Header, Divider, Rating, Button, Icon, Image, List, Label, Segment, Modal
+  Container, Header, Divider, Rating, Button, Icon, Image, List, Label, Modal,
 } from 'semantic-ui-react';
 import ReactHtmlParser from 'react-html-parser';
-import "react-responsive-carousel/lib/styles/carousel.min.css";
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Carousel } from 'react-responsive-carousel';
 import { nanoid } from 'nanoid';
 import { Socket } from './Socket';
@@ -19,12 +20,11 @@ export function Recipe() {
   const [ingredients, setIngredients] = React.useState([]);
   const [instructions, setInstructions] = React.useState([]);
   const [tags, setTags] = React.useState([]);
-  const regexConst = /^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
   const [video, setVideo] = React.useState([]);
   const [hasVideo, setHasVideo] = React.useState(false);
-  const [slides,setSlides] = React.useState([]);
+  const [slides, setSlides] = React.useState([]);
   const [modalOpen, setModalOpen] = React.useState(false);
-  const [modalImage, setModalImage] = React.useState("");
+  const [modalImage, setModalImage] = React.useState('');
   function getRecipeData() {
     React.useEffect(() => {
       Socket.on('recipe page load', (data) => {
@@ -33,9 +33,7 @@ export function Recipe() {
         setInstructions(data.recipe.instructions);
         setTags(data.recipe.tags);
         setSlides(data.recipe.slides);
-        console.log("slides" + JSON.stringify(data.recipe.slides));
         // DOMINIK:  setVideo(data.recipe.videos);
-        console.log(`here it is: ${data.recipe.videos}`);
       });
     });
   }
@@ -108,29 +106,27 @@ export function Recipe() {
     Socket.emit('fork page', {
       id,
     });
-    console.log(`recipe data here: ${recipe.id}`);
     ReactDOM.render(<RecipeForm />, document.getElementById('content'));
   }
-  
+
   function onChangeModalImage(event) {
     setModalImage(event.target.value);
   }
-  
+
   function onModalImageSubmit(event) {
     event.preventDefault();
     let email = '';
     if (localStorage.getItem('user_email') !== null) {
       email = localStorage.getItem('user_email');
       Socket.emit('new recipe user image', {
-        "image": modalImage,
-        "recipe_id": recipe.id,
-        "user_email": email,
+        image: modalImage,
+        recipe_id: recipe.id,
+        user_email: email,
       });
     }
-    setModalImage("");
+    setModalImage('');
     setModalOpen(false);
   }
-
   const videoSource = `https://www.youtube.com/embed/${video}`;
 
   getRecipeData();
@@ -180,7 +176,7 @@ export function Recipe() {
     fontFamily: 'Georgia',
     fontSize: '16px',
   };
-  
+
   const ingredientList = ingredients.map((ingredient) => (
     <List.Item key={nanoid()}>{`${ingredient.amount} ${ingredient.unit} ${ingredient.name}`}</List.Item>
   ));
@@ -192,17 +188,17 @@ export function Recipe() {
   const tagList = tags.map((tag) => (
     <Label key={nanoid()}>{tag}</Label>
   ));
-  
+
   const slidesList = slides.map((slide) => (
     <div>
-      <Image as="img" className="slide-image" src={slide} inline wrapped/>
+      <Image as="img" className="slide-image" src={slide} inline wrapped />
     </div>
-    ));
+  ));
 
   return (
     <div style={paperback}>
       <Container>
-        <Button icon labelPosition="left" onClick={goToHomePage} style={plainbutton}>
+        <Button icon labelPosition="left" onClick={goToHomePage} style={greenbutton}>
           <Icon name="left arrow" />
           Back to Homepage
         </Button>
@@ -217,13 +213,18 @@ export function Recipe() {
         </div>
         <Rating className="rating" maxRating={5} clearable size="huge" style={stars} />
         <Button.Group className="action-buttons" size="large" basic style={greenbutton}>
-          <Button toggle className="favorite-button" icon="favorite" onClick={favoriteRecipe} />
-          <Button toggle className="bookmark-button" icon="bookmark" onClick={saveRecipe} />
+          <Button className="favorite-button" icon="favorite" onClick={favoriteRecipe} />
+          <Button className="bookmark-button" icon="bookmark" onClick={saveRecipe} />
         </Button.Group>
       &emsp; &emsp; &emsp; &emsp; &emsp;
         <Button animated="fade" style={greenbutton}>
           <Button.Content visible icon labelPosition="right">Fork this Recipe</Button.Content>
-          <Button.Content hidden onClick={() => forkRecipe(recipe.id)}>What's your way</Button.Content>
+          <Button.Content
+            hidden
+            onClick={() => forkRecipe(recipe.id)}
+          >
+            What&apos;s your way
+          </Button.Content>
         </Button>
         <br />
         <br />
@@ -243,65 +244,70 @@ export function Recipe() {
           : (<div> </div>
           )}
         <Divider />
-          <Header style={desc}>
-            How {recipe.title} looked for other users:
-          </Header>
-          <div className="finished-dish-slider" >
+        <Header style={desc}>
+          How
+          {' '}
+          {recipe.title}
+          {' '}
+          looked for other users:
+        </Header>
+        <div className="finished-dish-slider">
           <Carousel>
             {slidesList}
           </Carousel>
-          <Modal 
-          onClose={() => setModalOpen(false)}
-          onOpen={() => setModalOpen(true)}
-          open={modalOpen}
-          trigger={<Button style={greenbutton} >Post finished dish</Button>}>
+          <Modal
+            onClose={() => setModalOpen(false)}
+            onOpen={() => setModalOpen(true)}
+            open={modalOpen}
+            trigger={<Button style={greenbutton}>Post finished dish</Button>}
+          >
             <Modal.Header>Enter an image url:</Modal.Header>
             <Modal.Content>
-              <ImageForm value={modalImage} onChange={onChangeModalImage} handleClose={onModalImageSubmit}/>
+              <ImageForm
+                value={modalImage}
+                onChange={onChangeModalImage}
+                handleClose={onModalImageSubmit}
+              />
             </Modal.Content>
           </Modal>
-          </div>
+        </div>
         <Divider />
-        <Segment>
-          <Header sub style={desc}>
-            Difficulty:
-            {recipe.difficulty}
-          </Header>
-          <Header sub style={desc}>
-            Servings:
-            {recipe.servings}
-          </Header>
-          <Header sub style={desc}>
-            Time:
-            {recipe.readyInMinutes}
-            {' '}
-            Min
-          </Header>
-          <Header as="h3">Description</Header>
-          <p style={desc}>
-            {ReactHtmlParser(recipe.description)}
-          </p>
-          <Header as="h3">Ingredients</Header>
-          <List celled style={desc}>
-            {ingredientList}
-          </List>
-          <Button animated="fade" style={greenbutton}>
-            <Button.Content visible>Add Ingredients to Cart</Button.Content>
-            <Button.Content hidden onClick={() => addToCart(recipe.ingredients)}><Icon name="in cart" /></Button.Content>
-          </Button>
-          <Header as="h3">Instructions</Header>
-          <List ordered style={desc}>
-            {instructionsList}
-          </List>
-          <Header as="h3">Tags</Header>
-          <div className="tags" style={plainbutton}>
-            {tagList}
-          </div>
-          <br />
-        </Segment>
+        <Header sub style={desc}>
+          Difficulty:
+          {recipe.difficulty}
+        </Header>
+        <Header sub style={desc}>
+          Servings:
+          {recipe.servings}
+        </Header>
+        <Header sub style={desc}>
+          Time:
+          {recipe.readyInMinutes}
+          {' '}
+          Min
+        </Header>
+        <Header as="h3">Description</Header>
+        <p style={desc}>
+          {ReactHtmlParser(recipe.description)}
+        </p>
+        <Header as="h3">Ingredients</Header>
+        <List celled style={desc}>
+          {ingredientList}
+        </List>
+        <Button animated="fade" style={greenbutton}>
+          <Button.Content visible>Add Ingredients to Cart</Button.Content>
+          <Button.Content hidden onClick={() => addToCart(recipe.ingredients)}><Icon name="in cart" /></Button.Content>
+        </Button>
+        <Header as="h3">Instructions</Header>
+        <List ordered style={desc}>
+          {instructionsList}
+        </List>
+        <Header as="h3">Tags</Header>
+        <div className="tags" style={plainbutton}>
+          {tagList}
+        </div>
+        <br />
       </Container>
     </div>
   );
 }
-
-export default Recipe;

@@ -1,0 +1,53 @@
+body {
+      background-image: url('https://cdn.hipwallpaper.com/i/92/52/vZp6xG.jpg') ;
+      background-size: 100%;
+      background-attachment: fixed;
+      font-family: Georgia, comic;
+}
+
+h1,h6 { display: inline; } 
+
+img {
+  border: 5px inset white;
+  border-radius: 25px;
+}
+
+#InfiniteRecipes {
+      font-size: 30;
+}
+
+#what {
+      border-radius: 25px;
+      margin: auto;
+      width: 50%;
+      border: 3px solid maroon;
+      padding: 10px;
+      text-align: center;
+}
+
+#cooks{
+      border: 5px outset white;
+      border-radius: 25px;
+      float:left;
+}
+.chef {
+      font-size: 20 ;
+}
+#beautiful_people {
+      width: 45%;
+}
+
+#ingridients {
+      float:right;
+      width:50%;
+}
+#why {
+      clear:both;
+      border: 3px solid maroon;
+      padding: 10px;
+      border-radius: 25px;
+      display: block; 
+      position: relative;
+      margin: auto;
+      width: 50%;
+}

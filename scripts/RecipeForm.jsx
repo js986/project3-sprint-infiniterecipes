@@ -1,14 +1,18 @@
+/* eslint-disable import/no-cycle */
+/* eslint-disable no-unused-vars */
+/* eslint-disable import/prefer-default-export */
+/* eslint-disable react/no-array-index-key */
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  List, Button, Container, Form, Icon, Header, Divider,
+
+  Button, Container, Form, Icon, Header, Divider,
 } from 'semantic-ui-react';
-import ReactPlayer from 'react-player';
 import { Content } from './Content';
 import { Socket } from './Socket';
 import { Recipe } from './Recipe';
 
-const diff_options = [
+const diffOptions = [
   { key: 'easy', text: 'Easy', value: 'easy' },
   { key: 'intermediate', text: 'Intermediate', value: 'intermediate' },
   { key: 'advanced', text: 'Advanced', value: 'advanced' },
@@ -34,6 +38,45 @@ export function RecipeForm() {
   const [video, setVideo] = React.useState('');
   const [difficulty, setDifficulty] = React.useState('');
   const [time, setTime] = React.useState('');
+
+  function onChangeIngredientInput(index, event) {
+    const values = [...ingredientsField];
+    values[index][event.target.name] = event.target.value;
+    setIngredientsField(values);
+  }
+
+  function onChangeInstructionInput(index, event) {
+    const values = [...instructionsField];
+    values[index][event.target.name] = event.target.value;
+    setInstructionsField(values);
+  }
+
+  function onChangeTagInput(index, event) {
+    const values = [...tagsField];
+    values[index][event.target.name] = event.target.value;
+    setTagsField(values);
+  }
+
+  function removeTagsField(index, event) {
+    const remObj = tagsField[index];
+    if (index > 0) {
+      setTagsField(instructionsField.filter((item) => item !== remObj));
+    }
+  }
+
+  function removeInstructionsField(index, event) {
+    const remObj = instructionsField[index];
+    if (index > 0) {
+      setInstructionsField(instructionsField.filter((item) => item !== remObj));
+    }
+  }
+
+  function removeIngredientsField(index, event) {
+    const remObj = ingredientsField[index];
+    if (index > 0) {
+      setIngredientsField(ingredientsField.filter((item) => item !== remObj));
+    }
+  }
 
   const ingredientsVals = ingredientsField.map((ingredient, index) => (
     <Form.Group key={index}>
@@ -110,7 +153,6 @@ export function RecipeForm() {
         setIngredientsField(data.recipe.ingredients);
         setInstructionsField(data.recipe.instructions);
         //   setTagsField(data.recipe.tags);
-        console.log(`recipe title: ${title}`);
       });
       //   console.log("recipe title: " + data);
     });
@@ -131,7 +173,6 @@ export function RecipeForm() {
       tags: tagsField,
       user: localStorage.getItem('user_email'),
     });
-    console.log('Sent recipe to server');
     Socket.emit('content page', {
       'content page': 'content page',
     });
@@ -139,12 +180,10 @@ export function RecipeForm() {
   }
 
   function changeTitle(event) {
-    console.log(event.target.value);
     setTitle(event.target.value);
   }
 
   function changeTime(event) {
-    console.log(event.target.value);
     setTime(event.target.value);
   }
 
@@ -153,7 +192,6 @@ export function RecipeForm() {
   }
 
   function changeDifficulty(event, { value }) {
-    console.log(value);
     setDifficulty(value);
   }
 
@@ -179,45 +217,6 @@ export function RecipeForm() {
 
   function addTag() {
     setTagsField([...tagsField, { tag: '' }]);
-  }
-
-  function removeTagsField(index, event) {
-    const rem_obj = tagsField[index];
-    if (index > 0) {
-      setTagsField(instructionsField.filter((item) => item !== rem_obj));
-    }
-  }
-
-  function removeInstructionsField(index, event) {
-    const rem_obj = instructionsField[index];
-    if (index > 0) {
-      setInstructionsField(instructionsField.filter((item) => item !== rem_obj));
-    }
-  }
-
-  function removeIngredientsField(index, event) {
-    const rem_obj = ingredientsField[index];
-    if (index > 0) {
-      setIngredientsField(ingredientsField.filter((item) => item !== rem_obj));
-    }
-  }
-
-  function onChangeIngredientInput(index, event) {
-    const values = [...ingredientsField];
-    values[index][event.target.name] = event.target.value;
-    setIngredientsField(values);
-  }
-
-  function onChangeInstructionInput(index, event) {
-    const values = [...instructionsField];
-    values[index][event.target.name] = event.target.value;
-    setInstructionsField(values);
-  }
-
-  function onChangeTagInput(index, event) {
-    const values = [...tagsField];
-    values[index][event.target.name] = event.target.value;
-    setTagsField(values);
   }
 
   function goToHomePage() {
@@ -254,15 +253,24 @@ export function RecipeForm() {
     fontSize: '17px',
   };
 
+  const greenbutton = {
+    backgroundColor: '#BDB76B',
+    border: 'none',
+    color: 'white',
+    fontFamily: 'Georgia',
+    fontSize: '17px',
+  };
+
   return (
     <div style={paperback}>
       <Container>
         <br />
-        <Button icon labelPosition="left" onClick={goToHomePage}>
+
+        <Button icon labelPosition="left" onClick={goToHomePage} style={greenbutton}>
           <Icon name="left arrow" />
           Back to Homepage
         </Button>
-        <Button icon labelPosition="left" onClick={() => goToRecipe(recipe.id)}>
+        <Button icon labelPosition="left" onClick={() => goToRecipe(recipe.id)} style={greenbutton}>
           <Icon name="left arrow" />
           Back to Recipe
         </Button>
@@ -280,7 +288,7 @@ export function RecipeForm() {
             <Form.Select
               required
               label="Difficulty"
-              options={diff_options}
+              options={diffOptions}
               value={difficulty}
               placeholder="Difficulty"
               onChange={changeDifficulty}
@@ -312,9 +320,10 @@ export function RecipeForm() {
             />
             <Form.Input
               label="Youtube Video URL"
-              placeholder="Enter youtube video URL"
+              placeholder="Format : https://www.youtube.com/watch?v=xxxxxxxx"
               value={video}
               onChange={changeVideo}
+              style={{ width: '520px' }}
             />
           </Form.Group>
           <Form.Field>

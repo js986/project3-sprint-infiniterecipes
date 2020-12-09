@@ -2,15 +2,9 @@
 app.py
 """
 import os
-from os.path import join, dirname
-from dotenv import load_dotenv
-import os
 import flask
-import flask_sqlalchemy
 import flask_socketio
 import models
-import db_queries
-from db_utils import db
 import db_queries
 import db_utils
 
@@ -22,10 +16,6 @@ app = flask.Flask(__name__)
 
 socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
-spoonacular_key = os.getenv("spoonacular_key")
-
-global username
-username = ""
 
 
 def emit_all_recipes(channel):
@@ -53,8 +43,9 @@ def emit_recipe(channel, recipe):
     emit a recipe
     """
     client_id = flask.request.sid
-    slides = ["https://www.foxandbriar.com/wp-content/uploads/2020/02/Sheet-Pan-Sausage-and-Peppers-6-of-7.jpg",
-    "https://d104wv11b7o3gc.cloudfront.net/wp-content/uploads/2018/04/sausage-and-peppers-4.jpg",
+    slides = [
+        "https://www.foxandbriar.com/wp-content/uploads/2020/02/Sheet-Pan-Sausage-and-Peppers-6-of-7.jpg",
+        "https://d104wv11b7o3gc.cloudfront.net/wp-content/uploads/2018/04/sausage-and-peppers-4.jpg",
     ]
     recipe["slides"] = slides
     socketio.emit(channel, {"recipe": recipe}, room=client_id)
@@ -125,23 +116,26 @@ def on_recipe_page(data):
     username = db_queries.get_user(recipe["user"])["name"]
     # namespace = "/recipe/" + str(id)
     print(recipe["videos"])
-    startAdding = False
-    videoParsed = ""
+    start_adding = False
+    video_parsed = ""
     for video in recipe["videos"]:
         for ch in video:
             if ch == "=":
-                startAdding = True
+                start_adding = True
                 continue
-            if startAdding is True:
-                videoParsed += ch
+            if start_adding is True:
+                video_parsed += ch
     recipe["name"] = username
     emit_recipe(SEND_ONE_RECIPE_CHANNEL, recipe)
-    if startAdding == True:  # If there is a youtube video in the recipe
-        socketio.emit("video available", videoParsed)
+    if start_adding == True:  # If there is a youtube video in the recipe
+        socketio.emit("video available", video_parsed)
 
 
 @socketio.on("fork page")
 def on_fork_page(data):
+    """
+    on fork page
+    """
     print("received data from client " + str(data["id"]))
     recipe = db_queries.get_recipe(data["id"])
     print("RECIPE: " + str(recipe))
@@ -187,7 +181,6 @@ def on_new_user_page(data):
         username = db_queries.get_user(recipe["user"])["name"]
         recipe["name"] = username
         saved_recipes.append(recipe)
-
     owned_recipes = []
     owned_recipes_id = user["owned_recipes"]
     for recipe_id in owned_recipes_id:
@@ -195,7 +188,6 @@ def on_new_user_page(data):
         username = db_queries.get_user(recipe["user"])["name"]
         recipe["name"] = username
         owned_recipes.append(recipe)
-
     favorite_recipes = []
     favorite_recipes_id = user["favorite_recipes"]
     for recipe_id in favorite_recipes_id:
@@ -203,7 +195,6 @@ def on_new_user_page(data):
         username = db_queries.get_user(recipe["user"])["name"]
         recipe["name"] = username
         favorite_recipes.append(recipe)
-
     print(user["email"])
     socketio.emit(
         "user page load",
@@ -315,28 +306,30 @@ def new_recipe(data):
 
 @socketio.on("save recipe")
 def on_save_recipe(data):
+    """
+    save recipe
+    """
     user_id = db_queries.get_user_id(data["user_email"])
     db_queries.add_saved_recipe(data["recipe_id"], user_id)
-    
-@socketio.on("unsave recipe")
-def on_unsave_recipe(data):
-    user_id = db_queries.get_user_id(data["user_email"])
-    db_queries.remove_saved_recipe(data["recipe_id"],user_id)
 
 
 @socketio.on("favorite recipe")
 def on_favorite_recipe(data):
+    """
+    favorite recipe
+    """
     user_id = db_queries.get_user_id(data["user_email"])
     db_queries.add_favorite_recipe(data["recipe_id"], user_id)
-    
-@socketio.on("unfavorite recipe")
-def on_unfavorite_recipe(data):
-    user_id = db_queries.get_user_id(data["user_email"])
-    db_queries.remove_shared_recipe(data["recipe_id"],user_id)
+
 
 @socketio.on("new recipe user image")
 def on_new_recipe_user_image(data):
-    pass
+    """
+    on new recipe user image
+    """
+    if db_queries.get_user_id(data["user_email"]) is not None:
+        db_queries.add_user_submitted_image(data["recipe_id"],[data["image"]])
+
 
 @app.route("/")
 def index():

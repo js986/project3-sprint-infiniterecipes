@@ -1,3 +1,11 @@
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-class-docstring
+# pylint: disable=wrong-import-position
+# pylint: disable=import-error
+# pylint: disable=unused-argument
+# pylint: disable=too-many-public-methods
+
 import os
 import sys
 import unittest
@@ -17,9 +25,11 @@ class MyTest(TestCase):
 
     TEST_ID = 738270100
     TEST_RECIPE_ID = 738270101
+    TEST_ID_2 = 738270102
+    TEST_RECIPE_ID_2 = TEST_ID_2 = 738270103
     DIFFICULTY = "easy"
     TEST_RECIPE = {
-        "user": TEST_ID,
+        "user": TEST_RECIPE_ID,
         "images": ["https://spoonacular.com/recipeImages/657178-556x370.jpg"],
         "videos": ["https://www.youtube.com/watch?v=DHWH2Jt3s0U"],
         "title": "Protein Packed Carrot Muffins",
@@ -30,6 +40,7 @@ class MyTest(TestCase):
         "tags": ["gluten free", "dinner"],
         "ingredients": [{"name": "Spice Rub", "amount": 1.0, "unit": "tbsp"}],
         "instructions": [{"number": 1, "step": "Preheat oven to 350 f."}],
+        "forked_from_recipe": TEST_RECIPE_ID_2,
     }
 
     TEST_USER = {"name": "Mr.Tester", "imageURL": "image", "email": "tester@tester.com"}
@@ -40,6 +51,15 @@ class MyTest(TestCase):
         "email": "tester@tester.com",
         "favorite_recipes": [TEST_RECIPE_ID],
         "shopping_list": ["potato"],
+        "saved_recipes": [TEST_RECIPE_ID],
+    }
+    TEST_ADD_USER_2 = {
+        "id": TEST_ID_2,
+        "name": "Mrs.Tester",
+        "profile_pic": "image",
+        "email": "tester2@tester2.com",
+        "favorite_recipes": [TEST_RECIPE_ID],
+        "shopping_list": ["eggplant"],
         "saved_recipes": [TEST_RECIPE_ID],
     }
     TEST_ADD_RECIPE = {
@@ -54,9 +74,28 @@ class MyTest(TestCase):
         "images": ["https://spoonacular.com/recipeImages/657178-556x370.jpg"],
         "videos": ["https://www.youtube.com/watch?v=DHWH2Jt3s0U"],
         "ingredients": [{"name": "Spice Rub", "amount": 1.0, "unit": "tbsp"}],
+        "forked_from_recipe": TEST_RECIPE_ID_2,
+    }
+
+    TEST_ADD_RECIPE_2 = {
+        "id": TEST_RECIPE_ID_2,
+        "user_id": TEST_ID,
+        "title": "Protein Packed Carrot Muffins",
+        "description": "A description",
+        "difficulty": DIFFICULTY,
+        "instructions": [{"number": 1, "step": "Preheat oven to 350 f."}],
+        "ready_in_minutes": 45,
+        "servings": 6,
+        "images": ["https://spoonacular.com/recipeImages/657178-556x370.jpg"],
+        "videos": ["https://www.youtube.com/watch?v=DHWH2Jt3s0U"],
+        "ingredients": [{"name": "Spice Rub", "amount": 1.0, "unit": "tbsp"}],
+        "number_of_forks": 0,
     }
 
     TEST_ADD_TAG = {"name": "tag"}
+
+    RATING_1 = {"user_id": TEST_ID, "recipe_id": TEST_RECIPE_ID, "rate": 1.0}
+    RATING_2 = {"user_id": TEST_ID_2, "recipe_id": TEST_RECIPE_ID, "rate": 3.0}
 
     def create_app(self):
         app = Flask(__name__)
@@ -95,6 +134,7 @@ class MyTest(TestCase):
         ):
             db.session.add(models.Levels(difficulty=self.DIFFICULTY))
             db.session.add(models.Users(**self.TEST_ADD_USER))
+            db.session.add(models.Recipe(**self.TEST_ADD_RECIPE_2))
             recipe_id = db_queries.add_recipe(self.TEST_RECIPE)
 
             self.assertEqual(
@@ -115,7 +155,7 @@ class MyTest(TestCase):
             )
             self.assertEqual(
                 self.TEST_RECIPE["videos"],
-                db.session.query(models.Recipe).get(recipe_id).videos
+                db.session.query(models.Recipe).get(recipe_id).videos,
             )
             self.assertEqual(
                 self.TEST_RECIPE["difficulty"],
@@ -136,6 +176,13 @@ class MyTest(TestCase):
             self.assertEqual(
                 self.TEST_RECIPE["servings"],
                 db.session.query(models.Recipe).get(recipe_id).servings,
+            )
+
+            forked_recipe = db.session.query(models.Recipe).get(self.TEST_RECIPE_ID_2)
+            self.assertEqual(forked_recipe.number_of_forks, 1)
+            self.assertEqual(
+                db.session.query(models.Recipe).get(recipe_id).forked_from_recipe,
+                self.TEST_RECIPE_ID_2,
             )
 
     def test_get_user_id(self):
@@ -258,12 +305,12 @@ class MyTest(TestCase):
         searched_recipes = db_queries.get_n_recipes(1)
         self.assertEqual(searched_recipes[0]["title"], self.TEST_ADD_RECIPE["title"])
 
-    def test_remove_from_shared_recipe_list(self):
+    def test_remove_from_favorite_recipe_list(self):
         db.session.add(models.Users(**self.TEST_ADD_USER))
-        db_queries.remove_shared_recipe(self.TEST_RECIPE_ID, self.TEST_ID)
+        db_queries.remove_favorite_recipe(self.TEST_RECIPE_ID, self.TEST_ID)
         db_user = db.session.query(models.Users).get(self.TEST_ID)
         assert self.TEST_RECIPE_ID not in db_user.favorite_recipes
-        
+
     def test_remove_from_saved_recipe_list(self):
         db.session.add(models.Users(**self.TEST_ADD_USER))
         db_queries.remove_saved_recipe(self.TEST_RECIPE_ID, self.TEST_ID)
@@ -274,47 +321,85 @@ class MyTest(TestCase):
         db.session.add(models.Levels(difficulty=self.DIFFICULTY))
         db.session.add(models.Users(**self.TEST_ADD_USER))
         db.session.add(models.Recipe(**self.TEST_ADD_RECIPE))
-        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"title":"Edited Title"})
+        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"title": "Edited Title"})
         recipe = db.session.query(models.Recipe).get(self.TEST_RECIPE_ID)
         self.assertEqual(recipe.title, "Edited Title")
-        
-        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"videos":["new test video"]})
+
+        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"videos": ["new test video"]})
         recipe = db.session.query(models.Recipe).get(self.TEST_RECIPE_ID)
         self.assertEqual(recipe.videos, ["new test video"])
-        
-        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"ingredients":{"name":"Edited Ingredients"}})
+
+        db_queries.edit_recipe(
+            self.TEST_RECIPE_ID, {"ingredients": {"name": "Edited Ingredients"}}
+        )
         recipe = db.session.query(models.Recipe).get(self.TEST_RECIPE_ID)
-        self.assertDictEqual(recipe.ingredients, {"name":"Edited Ingredients"})
-        
-        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"images":["new test image"]})
+        self.assertDictEqual(recipe.ingredients, {"name": "Edited Ingredients"})
+
+        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"images": ["new test image"]})
         recipe = db.session.query(models.Recipe).get(self.TEST_RECIPE_ID)
         self.assertEqual(recipe.images, ["new test image"])
-        
-        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"servings":1})
+
+        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"servings": 1})
         recipe = db.session.query(models.Recipe).get(self.TEST_RECIPE_ID)
         self.assertEqual(recipe.servings, 1)
-        
-        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"readyInMinutes":10})
+
+        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"readyInMinutes": 10})
         recipe = db.session.query(models.Recipe).get(self.TEST_RECIPE_ID)
         self.assertEqual(recipe.ready_in_minutes, 10)
-        
-        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"instructions":{"step":"Edited Instructions"}})
+
+        db_queries.edit_recipe(
+            self.TEST_RECIPE_ID, {"instructions": {"step": "Edited Instructions"}}
+        )
         recipe = db.session.query(models.Recipe).get(self.TEST_RECIPE_ID)
-        self.assertDictEqual(recipe.instructions, {"step":"Edited Instructions"})
-        
-        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"difficulty":"advanced"})
+        self.assertDictEqual(recipe.instructions, {"step": "Edited Instructions"})
+
+        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"difficulty": "advanced"})
         recipe = db.session.query(models.Recipe).get(self.TEST_RECIPE_ID)
         self.assertEqual(recipe.difficulty, "advanced")
-        
-        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"description":"New Description"})
+
+        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"description": "New Description"})
         recipe = db.session.query(models.Recipe).get(self.TEST_RECIPE_ID)
         self.assertEqual(recipe.description, "New Description")
-        
-        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"tags":["new tag", "dinner"]})
+
+        db_queries.edit_recipe(self.TEST_RECIPE_ID, {"tags": ["new tag", "dinner"]})
         recipe = db.session.query(models.Recipe).get(self.TEST_RECIPE_ID)
-        assert db.session.query(models.Tag).filter_by(name="new tag").first() in recipe.tags
-        assert db.session.query(models.Tag).filter_by(name="dinner").first() in recipe.tags
-        
+        assert (
+            db.session.query(models.Tag).filter_by(name="new tag").first()
+            in recipe.tags
+        )
+        assert (
+            db.session.query(models.Tag).filter_by(name="dinner").first() in recipe.tags
+        )
+
+    def test_add_rating(self):
+        db.session.add(models.Levels(difficulty=self.DIFFICULTY))
+        db.session.add(models.Users(**self.TEST_ADD_USER))
+        db.session.add(models.Recipe(**self.TEST_ADD_RECIPE))
+        db_queries.add_rating(self.TEST_ID, self.TEST_RECIPE_ID, 3.5)
+        db_queries.add_rating(self.TEST_ID, self.TEST_RECIPE_ID, 5)
+        recipe = db.session.query(models.Recipe).get(self.TEST_RECIPE_ID)
+        self.assertEqual(recipe.ratings[0].rate, 5)
+
+    def test_get_rating(self):
+        db.session.add(models.Levels(difficulty=self.DIFFICULTY))
+        db.session.add(models.Users(**self.TEST_ADD_USER))
+        db.session.add(models.Users(**self.TEST_ADD_USER_2))
+        db.session.add(models.Recipe(**self.TEST_ADD_RECIPE))
+        db.session.add(models.Rating(**self.RATING_1))
+        db.session.add(models.Rating(**self.RATING_2))
+        recipe = db.session.query(models.Recipe).get(self.TEST_RECIPE_ID)
+        recipe_rating = db_queries.get_rating(recipe.id)
+        self.assertEqual(recipe_rating, 2.0)
+
+    def test_add_user_submitted_image(self):
+        db.session.add(models.Levels(difficulty=self.DIFFICULTY))
+        db.session.add(models.Users(**self.TEST_ADD_USER))
+        db.session.add(models.Recipe(**self.TEST_ADD_RECIPE))
+        db_queries.add_user_submitted_image(self.TEST_RECIPE_ID, ["image"])
+        recipe = db.session.query(models.Recipe).get(self.TEST_RECIPE_ID)
+        self.assertEqual(recipe.user_submitted_images, ["image"])
+
+
 def mocked_generate_user_id():
     return 738270100
 

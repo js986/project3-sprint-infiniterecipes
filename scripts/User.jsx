@@ -1,4 +1,4 @@
-/* eslint-disable import/no-cycle, react/no-array-index-key */
+/* eslint-disable import/no-cycle, react/no-array-index-key, import/prefer-default-export */
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import {
@@ -30,7 +30,7 @@ export function User() {
     });
     ReactDOM.render(<Recipe />, document.getElementById('content'));
   }
-  
+
   function handleFavorites(event, index) {
     event.preventDefault();
     const { id } = favoriteRecipes[index];
@@ -61,8 +61,8 @@ export function User() {
     </Card>
 
   ));
-  
-    const favoritedList = favoriteRecipes.map((favoriteRecipe, index) => (
+
+  const favoritedList = favoriteRecipes.map((favoriteRecipe, index) => (
     <Card key={index} onClick={(event) => handleFavorites(event, index)}>
       <Image src={favoriteRecipe.images[0]} wrapped ui={false} />
       <Card.Content>
@@ -83,7 +83,16 @@ export function User() {
     </Card>
 
   ));
-  
+
+  function goToRecipe(event, index) {
+    event.preventDefault();
+    const { id } = ownedRecipes[index];
+    Socket.emit('recipe page', {
+      id,
+    });
+    ReactDOM.render(<Recipe />, document.getElementById('content'));
+  }
+
   const ownedList = ownedRecipes.map((ownedRecipe, index) => (
     <Card key={index} onClick={(event) => goToRecipe(event, index)}>
       <Image src={ownedRecipe.images[0]} wrapped ui={false} />
@@ -124,73 +133,78 @@ export function User() {
     ReactDOM.render(<Content />, document.getElementById('content'));
   }
 
-  function goToRecipe(event, index) {
-    event.preventDefault();
-    const { id } = ownedRecipes[index];
-    Socket.emit('recipe page', {
-      id,
-    });
-    ReactDOM.render(<Recipe />, document.getElementById('content'));
-  }
-
   getUserData();
-  
-  var paperback = {
-    backgroundImage:"url('https://cdn.hipwallpaper.com/i/92/52/vZp6xG.jpg')",
+
+  const paperback = {
+    backgroundImage: "url('https://cdn.hipwallpaper.com/i/92/52/vZp6xG.jpg')",
     backgroundSize: 'cover',
     backgroundPosition: 'center center',
     backgroundRepeat: 'no-repeat',
     backgroundAttachment: 'fixed',
-    margin:'0'
-  }
-  var title = {
-    fontFamily: 'Comic Sans MS'
-  }
-  return (
-    <div  style={paperback}>
-    <Container>
-      <br />
-      <Button icon labelPosition="left" onClick={goToHomePage}>
+    margin: '0',
+  };
+  const title = {
+    fontFamily: 'Comic Sans MS',
+  };
 
-        <Icon name="left arrow" />
-        Back to Homepage
-      </Button>
-      {' '}
-      <br />
-      {' '}
-      <br />
-      <Image src={users.profile_pic} />
-      <h3>
+  const greenbutton = {
+    backgroundColor: '#BDB76B',
+    border: 'none',
+    color: 'white',
+    fontFamily: 'Georgia',
+    fontSize: '17px',
+  };
+
+  return (
+    <div style={paperback}>
+      <Container>
+        <br />
+        <Button icon labelPosition="left" onClick={goToHomePage} style={greenbutton}>
+
+          <Icon name="left arrow" />
+          Back to Homepage
+        </Button>
         {' '}
-        {users.name}
+        <br />
         {' '}
-      </h3>
-      <h3>
-        {users.email}
-        {' '}
-      </h3>
-      <div className="tags">
-        <h2 style={title}> {users.name}'s Recipes </h2>
-        <Divider/>
-        <Card.Group itemsPerRow={6}>
-          {ownedList}
-        </Card.Group>
-      </div>
-      <div className="favorite-recipes">
-        <h2 style={title}> Favorite Recipes </h2>
-        <Divider />
-        <Card.Group itemsPerRow={6}>
-          {favoritedList}
-        </Card.Group>
-      </div>
-      <div className="saved-recipes">
-        <h2 style={title}> Saved Recipes </h2>
-        <Divider />
-        <Card.Group itemsPerRow={6}>
-          {savedList}
-        </Card.Group>
-      </div>
-    </Container>
+        <br />
+        <Image src={users.profile_pic} />
+        <h3>
+          {' '}
+          {users.name}
+          {' '}
+        </h3>
+        <h3>
+          {users.email}
+          {' '}
+        </h3>
+        <div className="tags">
+          <h2 style={title}>
+            {' '}
+            {users.name}
+            &apos;s Recipes
+            {' '}
+          </h2>
+          <Divider />
+          <Card.Group itemsPerRow={6}>
+            {ownedList}
+          </Card.Group>
+        </div>
+        <div className="favorite-recipes">
+          <h2 style={title}> Favorite Recipes </h2>
+          <Divider />
+          <Card.Group itemsPerRow={6}>
+            {favoritedList}
+          </Card.Group>
+        </div>
+        <div className="saved-recipes">
+          <h2 style={title}> Saved Recipes </h2>
+          <Divider />
+          <Card.Group itemsPerRow={6}>
+            {savedList}
+          </Card.Group>
+        </div>
+      </Container>
     </div>
   );
 }
