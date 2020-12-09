@@ -60,29 +60,33 @@ If that doesn't work: `sudo vim $(psql -c "show hba_file;" | grep pg_hba.conf)`
   c) Preview Running Application (might have to clear your cache by doing a hard refresh)    
 
 # Creating food recipes app
-In order to build this app, we planned together and split tasks amongst oursleves:
+To continue building this app, we planned together and split tasks amongst oursleves:
 
 1. Hasan Dulgeroglu
-    - Plan and create models for the database in models.py
-    - Create necessary functions for adding, removing, getting and searching data in the database in db_queries
-    - Write unittests for database functions
-    - Write unittests for socket functions
+    - Edit database model to add rating tables with relation to recipe
+    - Add remove shared and saved recipes, edit recipe functions
 
 2. Jordan Sefah
-    - Create recipes page where information on the recipe such as ingredients and directions are displayed
-    - Create a form to post new recipes
-    - Create cart to add ingredients to the cart
-    - Add filter to search bar
-    - Create main page where various posts are displayed
+    - Favorite button to be able to favorite recipes on home page 
+    - Implement save functionality for recipes
+    - Extend database and socket tests
 
 3. Dominik Nef
-    - Create user profile page where posts of the user are displayed
-    - Create about.html page
-    - Incorporate Google Maps API inside the user's cart page
+    - Implement forking recipes where users can copy edit an existing recipe and re-post
+    - Add youtube url when posting a recipe
+    - Fill out and beautify about page
+    - Portray images and other recipe information on User Page 
 
 4. Risha Shah
-    - Create and style search button to search for recipes 
-    - Use Google oAuth to create Google Login
-    - Use Google oAuth to create Google Logout
-    - Create main page where various posts are displayed
+    - Implement forking recipes where users can copy edit an existing recipe and re-post
+    - Add youtube url when posting a recipe
+    - Styling and designing pages
     - Linting files 
+
+# Technical issues we came across and were able to solve it:
+1. When implementing the youtube url feature whereby a user is able to add a video of their recipe, the youtube video either 
+   did not display or showed an error saying that it cannot be found. After a lot of debugging and going through code the step by step,
+   we istalled another react compenent which worked.
+
+2. When implementing final dish recipe whereby a user has the option to post a picture after using somebody's recipe, the images did not display at first.
+   This was because the client was unable to receive the list of images, therefore after tracing back to the code, we were able to fix the error on the client side.
