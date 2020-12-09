@@ -53,16 +53,13 @@ def on_new_google_user(data):
     """
     login using google
     """
-    print("Got an event for new google user input with data:", data)
     user = db_queries.add_user(data)
-    print("USER IS: " + str(user))
     user_obj = db_queries.get_user(user)
     username = user_obj["name"]
     user_email = user_obj["email"]
     client_id = flask.request.sid
     shopping_list = db_queries.get_shopping_list(user_obj["id"])
     cart_num_items = len(shopping_list)
-    print("THIS IS " + str(username))
     socketio.emit(
         "logged in",
         {
@@ -80,7 +77,6 @@ def on_old_google_user(data):
     """
     logout using google
     """
-    print("Got an event for old google user input with data:", data)
     logout = "logout"
     client_id = flask.request.sid
     socketio.emit("logged out", {"logout": logout}, room=client_id)
@@ -108,11 +104,8 @@ def on_recipe_page(data):
     """
     recipe page
     """
-    print("received data from client " + str(data["id"]))
     recipe = db_queries.get_recipe(data["id"])
     username = db_queries.get_user(recipe["user"])["name"]
-    # namespace = "/recipe/" + str(id)
-    print(recipe["videos"])
     start_adding = False
     video_parsed = ""
     for video in recipe["videos"]:
@@ -145,7 +138,6 @@ def on_new_search(data):
     """
     search for recipe
     """
-    print("Got an event for new search input with data:", data)
     client_id = flask.request.sid
     search_filter = data["filter"]
     if search_filter == "name":
@@ -168,7 +160,6 @@ def on_new_user_page(data):
     """
     new user
     """
-    print("received data from client " + str(data["user_id"]))
     user = db_queries.get_user(data["user_id"])
     saved_recipes = []
     saved_recipes_id = user["saved_recipes"]
@@ -191,7 +182,6 @@ def on_new_user_page(data):
         username = db_queries.get_user(recipe["user"])["name"]
         recipe["name"] = username
         favorite_recipes.append(recipe)
-    print(user["email"])
     socketio.emit(
         "user page load",
         {
@@ -225,7 +215,6 @@ def add_to_cart(data):
         {"cart_num": str(len(shopping_list))},
         room=flask.request.sid,
     )
-    print("There are " + str(len(shopping_list)) + " in the cart!")
 
 
 @socketio.on("new zipcode query")
@@ -269,7 +258,6 @@ def new_recipe(data):
     """
     new recipe
     """
-    print("Received new recipe" + str(data))
     email = data["user"]
     name = data["name"]
     servings = data["servings"]
