@@ -1,3 +1,5 @@
+# pylint: disable=unused-argument
+# pylint: disable=invalid-envvar-default
 """
 app.py
 """
@@ -16,6 +18,7 @@ app = flask.Flask(__name__)
 
 socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
+
 
 def emit_all_recipes(channel):
     """
@@ -110,26 +113,27 @@ def on_recipe_page(data):
     username = db_queries.get_user(recipe["user"])["name"]
     # namespace = "/recipe/" + str(id)
     print(recipe["videos"])
-    startAdding = False
-    videoParsed = ""
+    start_adding = False
+    video_parsed = ""
     for video in recipe["videos"]:
-        for ch in video:
-            if ch == "=":
-                startAdding = True
+        for character in video:
+            if character == "=":
+                start_adding = True
                 continue
-            if startAdding is True:
-                videoParsed += ch
+            if start_adding is True:
+                video_parsed += character
     recipe["name"] = username
     emit_recipe(SEND_ONE_RECIPE_CHANNEL, recipe)
-    if startAdding == True:  # If there is a youtube video in the recipe
-        socketio.emit("video available", videoParsed)
+    if start_adding:  # If there is a youtube video in the recipe
+        socketio.emit("video available", video_parsed)
 
 
 @socketio.on("fork page")
 def on_fork_page(data):
-    print("received data from client " + str(data["id"]))
+    """
+    on fork page
+    """
     recipe = db_queries.get_recipe(data["id"])
-    print("RECIPE: " + str(recipe))
     username = db_queries.get_user(recipe["user"])["name"]
     # namespace = "/recipe/" + str(id)
     recipe["name"] = username
@@ -146,6 +150,7 @@ def on_new_search(data):
     search_filter = data["filter"]
     if search_filter == "name":
         search_query = db_queries.search_with_name(data["search"])
+
     if search_filter == "tag":
         search_query = db_queries.search_by_tag(data["search"])
     if search_filter == "difficulty":
@@ -313,6 +318,15 @@ def on_favorite_recipe(data):
     db_queries.add_favorite_recipe(data["recipe_id"], user_id)
 
 
+@socketio.on("new recipe user image")
+def on_new_recipe_user_image(data):
+    """
+    on new recipe user image
+    """
+    if db_queries.get_user_id(data["user_email"]) is not None:
+        db_queries.add_user_submitted_image(data["recipe_id"], [data["image"]])
+
+
 @app.route("/")
 def index():
     """
@@ -323,7 +337,7 @@ def index():
 
 
 @app.route("/about")
-def UserPage():
+def user_page():
     """
     to about.html
     """

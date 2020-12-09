@@ -3,7 +3,7 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  Container, Header, Divider, Button, Icon, List,
+  Container, Header, Divider, Button, Icon, List, Segment,
 } from 'semantic-ui-react';
 import { Socket } from './Socket';
 import { Content } from './Content';
@@ -82,9 +82,11 @@ export function Cart() {
           <Icon name="left arrow" />
           Back to Homepage
         </Button>
-        <Header as="h1" style={titlestyle}>Your Items:</Header>
-        <Divider />
-        { empty === true ? <Header as="h2" style={desc}>Your cart is empty</Header> : <List divided verticalAlign="middle">{itemList}</List>}
+        <Segment>
+          <Header as="h1" style={titlestyle}>Your Items:</Header>
+          <Divider />
+          { empty === true ? <Header as="h2" style={desc}>Your cart is empty</Header> : <List divided verticalAlign="middle">{itemList}</List>}
+        </Segment>
         <br />
         <br />
         <br />

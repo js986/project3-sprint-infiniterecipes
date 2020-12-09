@@ -1,3 +1,11 @@
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-class-docstring
+# pylint: disable=wrong-import-position
+# pylint: disable=import-error
+# pylint: disable=unused-argument
+# pylint: disable=too-many-public-methods
+
 import os
 import sys
 import unittest

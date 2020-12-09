@@ -6,7 +6,7 @@ module.exports = {
     },
     module: {
         rules: [
-            { test: /\.css$/, loader: "style!css" },
+            { test: /.css$/, loader: "style-loader!css-loader" },
             {
                 test: /\.(js|jsx)$/,
                 exclude: /(node_modules)/,
@@ -27,7 +27,10 @@ module.exports = {
             }
         ]
     },
+    devServer: {
+        historyApiFallback: true,
+    },
     resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.css', '.jpg'],
   }
 };

@@ -1,9 +1,11 @@
 /* eslint-disable import/no-cycle */
 /* eslint-disable no-unused-vars */
 /* eslint-disable import/prefer-default-export */
+/* eslint-disable react/no-array-index-key */
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import {
+
   Button, Container, Form, Icon, Header, Divider,
 } from 'semantic-ui-react';
 import { Content } from './Content';
@@ -263,6 +265,7 @@ export function RecipeForm() {
     <div style={paperback}>
       <Container>
         <br />
+
         <Button icon labelPosition="left" onClick={goToHomePage} style={greenbutton}>
           <Icon name="left arrow" />
           Back to Homepage

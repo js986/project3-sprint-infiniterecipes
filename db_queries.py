@@ -1,3 +1,9 @@
+# pylint: disable=no-member
+# pylint: disable=too-few-public-methods
+# pylint: disable=inconsistent-return-statements
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-module-docstring
+# pylint: disable=too-many-branches
 import random
 import models
 from db_utils import db
@@ -28,6 +34,12 @@ def add_recipe(recipe_dict):
         new_recipe.videos = recipe_dict["videos"]
     else:
         new_recipe.videos = []
+        
+    if 'forked_from_recipe' in recipe_dict.keys():
+        new_recipe.forked_from_recipe = recipe_dict['forked_from_recipe']
+        forked_recipe = models.Recipe.query.filter_by(id=recipe_dict['forked_from_recipe']).first()
+        num = forked_recipe.number_of_forks
+        forked_recipe.number_of_forks = num + 1
 
     for tag_text in recipe_dict["tags"]:
         tag = db.session.query(models.Tag).filter_by(name=tag_text).first()
@@ -161,8 +173,6 @@ def get_user(user_id):
 
 def get_recipe(recipe_id):
     db_recipe = models.Recipe.query.get(recipe_id)
-    # print(str(db_recipe.videos) + " videos here")
-    # print(db_recipe.images)
     if not db_recipe:
         return "ID not in db"
     rating = get_rating(db_recipe.id)
@@ -214,8 +224,7 @@ def get_rating(recipe_id):
 
     if count != 0:
         return float(total) / float(count)
-    else:
-        return 0.0
+    return 0.0
 
 
 def add_to_shopping_list(ingredient_list, user_id):
@@ -252,7 +261,8 @@ def add_favorite_recipe(recipe_id, user_id):
         user.favorite_recipes = shared_recipe_list
         db.session.commit()
 
-def remove_shared_recipe(recipe_id, user_id):
+
+def remove_favorite_recipe(recipe_id, user_id):
     user = models.Users.query.filter_by(id=user_id).first()
     shared_recipe_list = user.favorite_recipes.copy()
     try:

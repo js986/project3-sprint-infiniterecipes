@@ -28,3 +28,10 @@
 .saved-recipes {
     padding: 1.5rem 0rem;
 }
+
+.slide-image {
+    height: 400px;
+    width: 400px;
+    background-size:cover;
+    background-repeat: no-repeat;
+}
