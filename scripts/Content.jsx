@@ -1,6 +1,8 @@
 /* eslint-disable import/no-cycle */
 /* eslint-disable no-unused-vars */
 /* eslint-disable import/prefer-default-export */
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable no-shadow */
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -21,9 +23,6 @@ import { User } from './User';
 
 export function Content() {
   const [recipe, setRecipe] = React.useState({});
-  const [ingredients, setIngredients] = React.useState([]);
-  const [instructions, setInstructions] = React.useState([]);
-  const [tags, setTags] = React.useState([]);
   const [recipes, setRecipes] = React.useState([]);
   const [guser, setGUser] = React.useState([]);
   const [guserId, setGUserId] = React.useState([]);
@@ -71,9 +70,6 @@ export function Content() {
     React.useEffect(() => {
       Socket.on('search results received', (data) => {
         setRecipes(data.search_output);
-        setIngredients(data.recipe.ingredients);
-        setInstructions(data.recipe.instructions);
-        setTags(data.recipe.tags);
       });
     });
   }

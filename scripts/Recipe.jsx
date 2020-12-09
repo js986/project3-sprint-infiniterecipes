@@ -3,7 +3,7 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  Container, Header, Divider, Rating, Button, Icon, Image, List, Label, Modal,
+  Container, Header, Divider, Button, Icon, Image, List, Label, Modal, Segment,
 } from 'semantic-ui-react';
 import ReactHtmlParser from 'react-html-parser';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
@@ -23,6 +23,7 @@ export function Recipe() {
   const [video, setVideo] = React.useState([]);
   const [hasVideo, setHasVideo] = React.useState(false);
   const [slides, setSlides] = React.useState([]);
+  const [hasUserImages, setHasUserImages] = React.useState(false);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [modalImage, setModalImage] = React.useState('');
   function getRecipeData() {
@@ -32,8 +33,10 @@ export function Recipe() {
         setIngredients(data.recipe.ingredients);
         setInstructions(data.recipe.instructions);
         setTags(data.recipe.tags);
-        setSlides(data.recipe.slides);
-        // DOMINIK:  setVideo(data.recipe.videos);
+        setSlides(data.recipe.user_submitted_images);
+        if (data.recipe.user_submitted_images.length > 0) {
+          setHasUserImages(true);
+        }
       });
     });
   }
@@ -163,13 +166,8 @@ export function Recipe() {
     fontSize: '17px',
   };
 
-  const stars = {
-    backgroundColor: '#BDB76B',
-    border: 'none',
-  };
-
   const title = {
-    fontFamily: 'Comic Sans MS',
+    fontFamily: 'Georgia',
   };
 
   const desc = {
@@ -211,22 +209,6 @@ export function Recipe() {
         <div id="recipeImage">
           <Image src={recipe.images} size="large" bordered />
         </div>
-        <Rating className="rating" maxRating={5} clearable size="huge" style={stars} />
-        <Button.Group className="action-buttons" size="large" basic style={greenbutton}>
-          <Button className="favorite-button" icon="favorite" onClick={favoriteRecipe} />
-          <Button className="bookmark-button" icon="bookmark" onClick={saveRecipe} />
-        </Button.Group>
-      &emsp; &emsp; &emsp; &emsp; &emsp;
-        <Button animated="fade" style={greenbutton}>
-          <Button.Content visible icon labelPosition="right">Fork this Recipe</Button.Content>
-          <Button.Content
-            hidden
-            onClick={() => forkRecipe(recipe.id)}
-          >
-            What&apos;s your way
-          </Button.Content>
-        </Button>
-        <br />
         <br />
         { hasVideo === true
           ? (
@@ -243,6 +225,61 @@ export function Recipe() {
           )
           : (<div> </div>
           )}
+        <br />
+        <Button.Group className="action-buttons" size="large" basic style={greenbutton}>
+          <Button className="favorite-button" icon="favorite" onClick={favoriteRecipe} />
+          <Button className="bookmark-button" icon="bookmark" onClick={saveRecipe} />
+        </Button.Group>
+      &emsp; &emsp; &emsp; &emsp; &emsp;
+        <Button animated="fade" style={greenbutton}>
+          <Button.Content visible icon labelPosition="right">Fork this Recipe</Button.Content>
+          <Button.Content
+            hidden
+            onClick={() => forkRecipe(recipe.id)}
+          >
+            What&apos;s your way
+          </Button.Content>
+        </Button>
+        <br />
+        <br />
+        <Divider />
+        <Segment>
+          <Header sub style={desc}>
+            Difficulty:
+            {recipe.difficulty}
+          </Header>
+          <Header sub style={desc}>
+            Servings:
+            {recipe.servings}
+          </Header>
+          <Header sub style={desc}>
+            Time:
+            {recipe.readyInMinutes}
+            {' '}
+            Min
+          </Header>
+          <Header as="h3">Description</Header>
+          <p style={desc}>
+            {ReactHtmlParser(recipe.description)}
+          </p>
+          <Header as="h3">Ingredients</Header>
+          <List celled style={desc}>
+            {ingredientList}
+          </List>
+          <Button animated="fade" style={greenbutton}>
+            <Button.Content visible>Add Ingredients to Cart</Button.Content>
+            <Button.Content hidden onClick={() => addToCart(recipe.ingredients)}><Icon name="in cart" /></Button.Content>
+          </Button>
+          <Header as="h3">Instructions</Header>
+          <List ordered style={desc}>
+            {instructionsList}
+          </List>
+          <Header as="h3">Tags</Header>
+          <div className="tags" style={plainbutton}>
+            {tagList}
+          </div>
+          <br />
+        </Segment>
         <Divider />
         <Header style={desc}>
           How
@@ -252,9 +289,13 @@ export function Recipe() {
           looked for other users:
         </Header>
         <div className="finished-dish-slider">
-          <Carousel>
-            {slidesList}
-          </Carousel>
+          { hasUserImages === true
+            ? (
+              <Carousel>
+                {slidesList}
+              </Carousel>
+            ) : (<Header>Be the first to add your finished dish!</Header>
+            )}
           <Modal
             onClose={() => setModalOpen(false)}
             onOpen={() => setModalOpen(true)}
@@ -271,42 +312,6 @@ export function Recipe() {
             </Modal.Content>
           </Modal>
         </div>
-        <Divider />
-        <Header sub style={desc}>
-          Difficulty:
-          {recipe.difficulty}
-        </Header>
-        <Header sub style={desc}>
-          Servings:
-          {recipe.servings}
-        </Header>
-        <Header sub style={desc}>
-          Time:
-          {recipe.readyInMinutes}
-          {' '}
-          Min
-        </Header>
-        <Header as="h3">Description</Header>
-        <p style={desc}>
-          {ReactHtmlParser(recipe.description)}
-        </p>
-        <Header as="h3">Ingredients</Header>
-        <List celled style={desc}>
-          {ingredientList}
-        </List>
-        <Button animated="fade" style={greenbutton}>
-          <Button.Content visible>Add Ingredients to Cart</Button.Content>
-          <Button.Content hidden onClick={() => addToCart(recipe.ingredients)}><Icon name="in cart" /></Button.Content>
-        </Button>
-        <Header as="h3">Instructions</Header>
-        <List ordered style={desc}>
-          {instructionsList}
-        </List>
-        <Header as="h3">Tags</Header>
-        <div className="tags" style={plainbutton}>
-          {tagList}
-        </div>
-        <br />
       </Container>
     </div>
   );

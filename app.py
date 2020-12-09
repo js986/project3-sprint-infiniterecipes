@@ -1,3 +1,5 @@
+# pylint: disable=unused-argument
+# pylint: disable=invalid-envvar-default
 """
 app.py
 """
@@ -43,11 +45,6 @@ def emit_recipe(channel, recipe):
     emit a recipe
     """
     client_id = flask.request.sid
-    slides = [
-        "https://www.foxandbriar.com/wp-content/uploads/2020/02/Sheet-Pan-Sausage-and-Peppers-6-of-7.jpg",
-        "https://d104wv11b7o3gc.cloudfront.net/wp-content/uploads/2018/04/sausage-and-peppers-4.jpg",
-    ]
-    recipe["slides"] = slides
     socketio.emit(channel, {"recipe": recipe}, room=client_id)
 
 
@@ -119,15 +116,15 @@ def on_recipe_page(data):
     start_adding = False
     video_parsed = ""
     for video in recipe["videos"]:
-        for ch in video:
-            if ch == "=":
+        for character in video:
+            if character == "=":
                 start_adding = True
                 continue
             if start_adding is True:
-                video_parsed += ch
+                video_parsed += character
     recipe["name"] = username
     emit_recipe(SEND_ONE_RECIPE_CHANNEL, recipe)
-    if start_adding == True:  # If there is a youtube video in the recipe
+    if start_adding:  # If there is a youtube video in the recipe
         socketio.emit("video available", video_parsed)
 
 
@@ -136,9 +133,7 @@ def on_fork_page(data):
     """
     on fork page
     """
-    print("received data from client " + str(data["id"]))
     recipe = db_queries.get_recipe(data["id"])
-    print("RECIPE: " + str(recipe))
     username = db_queries.get_user(recipe["user"])["name"]
     # namespace = "/recipe/" + str(id)
     recipe["name"] = username
@@ -155,6 +150,7 @@ def on_new_search(data):
     search_filter = data["filter"]
     if search_filter == "name":
         search_query = db_queries.search_with_name(data["search"])
+
     if search_filter == "tag":
         search_query = db_queries.search_by_tag(data["search"])
     if search_filter == "difficulty":
@@ -328,7 +324,7 @@ def on_new_recipe_user_image(data):
     on new recipe user image
     """
     if db_queries.get_user_id(data["user_email"]) is not None:
-        db_queries.add_user_submitted_image(data["recipe_id"],[data["image"]])
+        db_queries.add_user_submitted_image(data["recipe_id"], [data["image"]])
 
 
 @app.route("/")
@@ -341,7 +337,7 @@ def index():
 
 
 @app.route("/about")
-def UserPage():
+def user_page():
     """
     to about.html
     """
